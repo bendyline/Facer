@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{27575206-0A9C-45EB-B59A-FD9789B3AD1A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BL.BS</RootNamespace>
+    <AssemblyName>BL.BS</AssemblyName>
+    <ScriptTemplate>Properties\Script.template</ScriptTemplate>
+    <CodeAnalysisRuleSet>Properties\FxCop.ruleset</CodeAnalysisRuleSet>
+    <GenerateScript>True</GenerateScript>
+    <GenerateResources>True</GenerateResources>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\web\gs\Facer\Bootstrap\dbg\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0028, 1591, 1684</NoWarn>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\..\web\gs\Facer\Bootstrap\1.0\</OutputPath>
+    <DefineConstants>CODE_ANALYSIS;SCRIPTSHARP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0028, 1591, 1684</NoWarn>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Properties\FxCop.ruleset" />
+    <None Include="Properties\Script.template" />
+    <Compile Include="Breadcrumb.cs" />
+    <Compile Include="NavbarLinkSection.cs" />
+    <Compile Include="Jumbotron.cs" />
+    <Compile Include="Nav.cs" />
+    <Compile Include="Item.cs" />
+    <Compile Include="NavbarButton.cs" />
+    <Compile Include="NavbarSectionBase.cs" />
+    <Compile Include="NavbarText.cs" />
+    <Compile Include="Navbar.cs" />
+    <Compile Include="NavbarSection.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Button.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Script.jQuery">
+      <HintPath>..\..\packages\ScriptSharp.Lib.jQuery.0.7.5.0\lib\Script.jQuery.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Script.Web">
+      <HintPath>..\..\packages\ScriptSharp.Lib.HTML.0.7.5.0\lib\Script.Web.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Native\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Baser\Script\Baser.script.csproj">
+      <Project>{674D49A1-23AD-45C2-A93E-B637418B772F}</Project>
+      <Name>Baser.script</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Script\Facer.script.csproj">
+      <Project>{527CAA8A-9E4C-4E54-955C-DC5CB58EA062}</Project>
+      <Name>Facer.script</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Item.htm" />
+    <Content Include="Jumbotron.htm" />
+    <Content Include="NavbarSection.htm" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\packages\ScriptSharp.0.7.5.1\tools\ScriptSharp.targets" Condition="Exists('..\..\packages\ScriptSharp.0.7.5.1\tools\ScriptSharp.targets')" />
+  <Import Project="..\..\Facer\TemplateCompilerTask\TemplateCompiler.targets" Condition="Exists('..\..\Facer\TemplateCompilerTask\TemplateCompiler.targets')" />
+</Project>

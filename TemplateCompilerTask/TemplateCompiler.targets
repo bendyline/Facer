@@ -1,0 +1,17 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="TemplateCompilerTask" AssemblyFile="bin\debug\Bendyline.UI.TemplateCompiler.Tasks.dll" />
+
+  <Target Name="CompileTemplates">
+    <TemplateCompilerTask
+      InputFolder="$(MSBuildProjectDirectory)"
+      OutputFolder="$(OutputPath)"
+      Name="$(AssemblyName)"
+      >
+      <Output TaskParameter="OutputPath"  PropertyName="TemplateOutputFilePath"  />
+    </TemplateCompilerTask>
+  </Target>
+
+  <PropertyGroup>
+    <BuildDependsOn Condition="'$(GenerateScript)' == 'True'">$(BuildDependsOn);CompileTemplates</BuildDependsOn>
+  </PropertyGroup>
+</Project>
