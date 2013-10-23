@@ -566,6 +566,7 @@ namespace BL.UI
             }
             else
             {
+                Log.DebugMessage(String.Format("Expected template '{0}' was not found.", templateId));
                 this.OnBaseControlsElementsPostInit();
             }
         }
