@@ -9,7 +9,7 @@ using jQueryApi;
 namespace BL.BS
 {
 
-    public class Button : ElementContentControl
+    public class Button : ElementContentItemControl
     {
         public override string DefaultClass
         {

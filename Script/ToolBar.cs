@@ -8,5 +8,24 @@ namespace BL.UI
 {
     public class ToolBar : ItemsControl
     {
+        public event ControlEventHandler ItemClicked;
+
+        protected override void OnItemControlAdded(Control c)
+        {
+            if (c is ToolBarButton)
+            {
+                ((ToolBarButton)c).Clicked += new EventHandler(ToolBar_Clicked);
+            }
+        }
+
+        private void ToolBar_Clicked(object sender, EventArgs e)
+        {
+            if (this.ItemClicked != null)
+            {
+                ControlEventArgs cea = new ControlEventArgs((Control)sender);
+
+                this.ItemClicked(this, cea);
+            }
+        }
     }
 }

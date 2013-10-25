@@ -2,16 +2,26 @@
 <html>
 	<head>
     <style>
+        
         #panel
         {
-          background-color: #C0C0C0;  
+          background-color: #C0C0C0;
+          width: 200px;  
+        }
+        
+        #log
+        {
+            font-size: .75em;
+            hegiht:300px;
         }
         </style>
 	</head>
 	<body>
             <div id='panel'>
                 <h4>DEBUG PANEL</h4>
-        	    <BL.UI.List id='logList'/>
+                <div id='log'>
+        	        <BL.UI.List id='logList' />
+                </div>
             </div>
 	</body>
 </html>

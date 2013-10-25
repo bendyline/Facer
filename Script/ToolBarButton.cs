@@ -6,8 +6,25 @@ using System.Collections.Generic;
 
 namespace BL.UI
 {
-    public class ToolBarButton : ElementContentControl
+    public class ToolBarButton : ContentItemControl
     {
+        public event EventHandler Clicked;
 
+        protected override void OnInit()
+        {
+            base.OnInit();
+
+            this.TrackInteractionEvents = true;
+        }
+
+        protected override void OnClick(System.Html.ElementEvent e)
+        {
+            base.OnClick(e);
+
+            if (this.Clicked != null)
+            {
+                this.Clicked(this, EventArgs.Empty);
+            }
+        }
     }
 }

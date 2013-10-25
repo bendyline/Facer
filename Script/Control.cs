@@ -190,6 +190,7 @@ namespace BL.UI
             }
         }
 
+        [ScriptName("b_visible")]
         public bool Visible
         {
             get
@@ -200,44 +201,11 @@ namespace BL.UI
             set
             {
                 this.visible = value;
-
-                Element thisElement = this.Element;
-
-                if (thisElement != null)
-                {
-                    if (this.visible)
-                    {
-                        if (this.oldDisplayMode != null)
-                        {
-                          //  thisElement.Style.Display = this.oldDisplayMode;
-                            this.oldDisplayMode = null;
-                        }
-                        else
-                        {
-                    //        thisElement.Style.Display = "inherit";
-                        }
-
-                        this.DoResize();
-                    }
-                    else 
-                    {
-                        String displayMode = thisElement.Style.Display;
-
-                        if (displayMode != "none" && !String.IsNullOrEmpty(displayMode))
-                        {
-                            this.oldDisplayMode = displayMode;
-                        }
-                        else
-                        {
-                            this.oldDisplayMode = "inherit";
-                        }
-                    }
-
-                    this.HandleResizeEventing();
-                }
+                this.ApplyVisible();
             }
         }
 
+        [ScriptName("s_id")]
         public String Id
         {
             get
@@ -710,6 +678,46 @@ namespace BL.UI
             if (this.trackResizeEvents)
             {
                 this.DoResize();
+            }
+
+            this.ApplyVisible();
+        }
+
+        private void ApplyVisible()
+        {
+            Element thisElement = this.Element;
+
+            if (thisElement != null)
+            {
+                if (this.visible)
+                {
+                    if (this.oldDisplayMode != null)
+                    {
+                        thisElement.Style.Display = this.oldDisplayMode;
+                        this.oldDisplayMode = null;
+                    }
+                    else
+                    {
+                        thisElement.Style.Display = "inherit";
+                    }
+
+                   // this.DoResize();
+                }
+                else
+                {
+                    String displayMode = thisElement.Style.Display;
+
+                    if (displayMode != "none" && !String.IsNullOrEmpty(displayMode))
+                    {
+                        this.oldDisplayMode = displayMode;
+                    }
+                    else
+                    {
+                        this.oldDisplayMode = null;
+                    }
+
+                    thisElement.Style.Display = "none";
+                }
             }
         }
 

@@ -8,21 +8,21 @@ using System.Runtime.CompilerServices;
 
 namespace BL
 {
-    public class ElementContentControl : Control
+    public class ElementContentItemControl : Control
     {
-        private String text;
+        private String title;
 
-        [ScriptName("s_text")]
-        public String Text
+        [ScriptName("s_title")]
+        public String Title
         {
             get
             {
-                return this.text;
+                return this.title;
             }
 
             set
             {
-                this.text = value;
+                this.title = value;
 
                 this.Update();
             }
@@ -36,9 +36,9 @@ namespace BL
 
         protected override void  OnUpdate()
         {
-            if (this.text != null)
+            if (this.title != null)
             {
-                this.Element.InnerText = this.text;
+                this.Element.InnerText = this.title;
             }
         }
     }

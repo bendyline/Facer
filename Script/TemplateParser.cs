@@ -344,11 +344,21 @@ namespace BL.UI
         {
             foreach (KeyValuePair<String, String> kvp in attributeColl)
             {
-                if (kvp.Key != "id")
+                if (!IsRestrictedHtmlPropertyName(kvp.Key))
                 {
                     c.SetProperty(kvp.Key, kvp.Value);
                 }
             }
+        }
+
+        private bool IsRestrictedHtmlPropertyName(String propName)
+        {
+            if (propName == "id" || propName == "style" || propName == "class" || propName == "width" || propName == "height")
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -58,6 +58,13 @@ namespace BL.UI
             {
                 this.AppendControl(c);
             }
+
+            this.OnItemControlAdded(c);
+        }
+
+        protected virtual void OnItemControlAdded(Control c)
+        {
+
         }
 
         public void ClearItemControls()

@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 
 namespace BL.JQM
 {
-    public class Button : ElementContentControl
+    public class Button : ElementContentItemControl
     {
         private bool? inline;
         private bool? mini;

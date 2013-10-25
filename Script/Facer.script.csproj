@@ -34,15 +34,16 @@
     </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ContentControl.cs" />
+    <Compile Include="ContentItemControl.cs" />
     <Compile Include="ContentItem.cs" />
     <Compile Include="ContentItemSet.cs" />
     <Compile Include="ControlManager.cs" />
     <Compile Include="BaseControlFactory.cs" />
     <Compile Include="DebugPanel.cs" />
-    <Compile Include="ElementContentControl.cs" />
+    <Compile Include="ElementContentItemControl.cs" />
     <Compile Include="ListItem.cs" />
     <Compile Include="List.cs" />
+    <Compile Include="ControlEvent.cs" />
     <Compile Include="Template.cs" />
     <Compile Include="TemplateFile.cs" />
     <Compile Include="TemplateManager.cs" />
