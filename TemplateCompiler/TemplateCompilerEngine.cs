@@ -171,11 +171,23 @@ namespace Bendyline.UI.TemplateCompiler
                     String content = css.Substring(lastStart, nextLeft - lastStart);
 
                     int nextHash = content.IndexOf("#");
-
-                    while (nextHash >= 0)
+         
+                    if (nextHash < 0)
                     {
-                        content = String.Format("{0}.{1}-{2}", content.Substring(0, nextHash), t.Id.Replace(".", "-"), content.Substring(nextHash + 1, content.Length - (nextHash + 1)));
-                        nextHash = content.IndexOf("#", nextHash + 1);
+                        String tagStart = content.Trim().ToLowerCase();
+
+                        if (tagStart == "body")
+                        {
+                            content = String.Format(" .{0}", t.Id.Replace(".", "-"));
+                        }
+                    }
+                    else
+                    {
+                        while (nextHash >= 0)
+                        {
+                            content = String.Format("{0}.{1}-{2}", content.Substring(0, nextHash), t.Id.Replace(".", "-"), content.Substring(nextHash + 1, content.Length - (nextHash + 1)));
+                            nextHash = content.IndexOf("#", nextHash + 1);
+                        }
                     }
                    
                     result.Append(content.Trim());

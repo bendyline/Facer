@@ -51,7 +51,7 @@ namespace BL.BS
             }
         }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate()
         {
             if (this.titleElement != null)
             {

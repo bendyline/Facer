@@ -1,0 +1,62 @@
+﻿ <!DOCTYPE html>
+<html>
+	<head>
+    <style>
+        body
+        {
+            display:block;
+            height:100%;
+        }
+        #frame
+        {
+            display:table;
+            width: 100%;
+            height: 100%;
+        }
+        
+        #browser
+        {
+            width: 100%;
+            border: solid 0px;
+            height: 100%;
+            display:table-cell;
+        }
+            
+        #toolBarRow
+        {
+            display: table-row;
+            height:40px;
+        }
+            
+        #toolBarContainer
+        {
+            display: table-cell;
+        }
+            
+        #browserRow
+        {
+            display: table-row;
+            height:100%;
+        }
+            
+    </style>
+	</head>
+	<body>
+    
+        <div id='frame'>
+            <div id='toolBarRow'>
+                <div id='toolBarContainer'>
+                    <BL.UI.App.ToolBar>
+                        <Items>
+                            <BL.UI.App.ToolBarButton Title='Back' Id='test'></BL.UI.App.ToolBarButton>                
+                            <BL.UI.App.ToolBarButton Title='Next' Id='launchWeaponsButton'></BL.UI.App.ToolBarButton>                
+                        </Items>
+                    </BL.UI.App.ToolBar>
+                </div>
+            </div>
+            <div id='browserRow'>
+    	        <iframe id='browser'></iframe>
+            </div>
+	    </div>
+    </body>
+</html>

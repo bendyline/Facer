@@ -43,6 +43,25 @@ namespace BL.UI
         {
         }
 
+        public void InsertItemControl(int index, Control c)
+        {
+            if (this.itemControls == null)
+            {
+                this.itemControls = new List<Control>();
+            }
+
+            Debug.Assert(!this.itemControls.Contains(c));
+
+            this.itemControls.Insert(index, c);
+
+            if (this.ElementsEnsured)
+            {
+                this.AppendControl(c);
+            }
+
+            this.OnItemControlAdded(c);
+        }
+
         public void AddItemControl(Control c)
         {
             if (this.itemControls == null)
@@ -95,6 +114,11 @@ namespace BL.UI
 
         private void AppendControl(Control c)
         {
+            this.InsertControl(-1, c);
+        }
+
+        private void InsertControl(int index, Control c)
+        {
             Element e = this.ItemsContainerElement;
 
             if (this.itemControls == null || e == null)
@@ -120,7 +144,14 @@ namespace BL.UI
                 c.EnsureElements();
             }
 
-            e.AppendChild(c.Element);
+            if (index < 0)
+            {
+                e.AppendChild(c.Element);
+            }
+            else
+            {
+                e.InsertBefore(this.Element.Children[index], c.Element);
+            }
         }
     }
 }

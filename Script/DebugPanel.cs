@@ -26,7 +26,7 @@ namespace BL.UI
             ci.Id = logItemId.ToString();
             ci.Title = e.Item.Message;
 
-            this.logItems.Items.Add(ci);
+            this.logItems.Items.Insert(0, ci);
 
             logItemId++;
 
@@ -36,7 +36,7 @@ namespace BL.UI
             }
         }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
 

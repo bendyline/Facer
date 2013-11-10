@@ -310,7 +310,7 @@ namespace BL.UI
         {
             int nextEqualSign = attributes.IndexOf("=");
             int lastEnd = 0;
-            String id = null;
+
             Dictionary<String, String> attributeColl = new Dictionary<string, string>();
 
             while (nextEqualSign >= 0)

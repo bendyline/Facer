@@ -1,0 +1,29 @@
+﻿using kendo.data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+
+namespace Kendo.UI
+{
+    [Imported]
+    [IgnoreNamespace]
+    [ScriptName("Object")]
+    public class GridOptions
+    {
+        public String AltRowTemplate;
+        public bool AutoBind;
+        public double ColumnResizeHandleWidth;
+        public GridColumnOptions Columns;
+        public GridEditableOptions Editable;
+        public GridColumnMenuOptions ColumnMenu;
+        public object DataSource;
+        public object DetailTemplate;
+        public GridGroupableOptions Groupable;
+        public double Height;
+        public bool Navigatable;
+        public object Pageable;
+        public GridSortableOptions Sortable;
+        public List<GridToolbarOptions> Toolbar;
+    }
+}

@@ -42,6 +42,23 @@ namespace BL.UI
             }
         }
 
+        private int GetContentItemIndex(ContentItem ci)
+        {
+            int index = 0;
+
+            foreach (ContentItem target in this.items.Items)
+            {
+                if (target == ci)
+                {
+                    return index;
+                }
+
+                index++;
+            }
+
+            return index;
+        }
+
         public void NotifyItemUpdated(ContentItem ci)
         {
             ListItem s = existingItems[ci.Id];
@@ -49,6 +66,8 @@ namespace BL.UI
             if (s == null)
             {
                 s = new ListItem();
+
+                int contentItemIndex = GetContentItemIndex(ci);
 
                 if (ci.TemplateId != null)
                 {
@@ -59,7 +78,7 @@ namespace BL.UI
 
                 existingItems[ci.Id] = s;
 
-                this.AddItemControl(s);
+                this.InsertItemControl(contentItemIndex, s);
             }
         }
     }

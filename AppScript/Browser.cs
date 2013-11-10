@@ -1,34 +1,32 @@
 /* Copyright (c) Bendyline LLC. All rights reserved. Licensed under the Apache License, Version 2.0.
     You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. */
-
+ 
 using System;
 using System.Collections.Generic;
-using BL.UI;
-using System.Runtime.CompilerServices;
 using System.Html;
+using System.Runtime.CompilerServices;
 
-namespace BL
+namespace BL.UI.App
 {
-    public class ContentItemControl : Control
+    public class Browser : Control
     {
-        private String title;
+        [ScriptName("e_browser")]
+        private IFrameElement browser;
 
-        [ScriptName("e_title")]
-        private Element titleElement;
+        private String url;
 
-        [ScriptName("s_title")]
-        public String Title
+        public String Url
         {
             get
             {
-                return this.title;
+                return this.url;
             }
 
             set
             {
-                this.title = value
-;
-                this.OnUpdate();
+                this.url = value;
+
+                this.Update();
             }
         }
 
@@ -36,9 +34,9 @@ namespace BL
         {
             base.OnUpdate();
 
-            if (this.titleElement != null)
+            if (this.browser != null)
             {
-                this.titleElement.InnerText = this.title;
+                this.browser.Src = this.url;
             }
         }
     }

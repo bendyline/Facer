@@ -124,7 +124,7 @@ namespace BL.BS
             }
         }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
 

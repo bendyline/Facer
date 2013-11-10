@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace BL.UI
+namespace BL.UI.App
 {
     public class ToolBarButton : ContentItemControl
     {

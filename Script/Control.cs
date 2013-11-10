@@ -201,6 +201,7 @@ namespace BL.UI
             set
             {
                 this.visible = value;
+
                 this.ApplyVisible();
             }
         }
@@ -344,10 +345,11 @@ namespace BL.UI
                 {
                     return;
                 }
+
                 this.interactionEventsRegistered = false;
 
                 this.element = value;
-
+                this.jqueryObject = null;
                 this.HandleInteractionEventing();
 
                 this.EnsureElements();
@@ -463,6 +465,8 @@ namespace BL.UI
         {
             Script.Literal(@"if (elementOrId != null) {{ if (elementOrId.tagName != null) {{ {0} = elementOrId; }} if (typeof(elementOrId) == ""string"") {{ {0} = document.getElementById(elementOrId); }}}}", this.element);
 
+            this.HandleInteractionEventing();
+
             if (this.Element != null)
             {
                 this.EnsureElements();
@@ -481,10 +485,11 @@ namespace BL.UI
             this.initted = true;
         }
 
-        public virtual void OnApplyTemplate()
+        protected virtual void OnApplyTemplate()
         {
 
         }
+
         public void CreateChildControls()
         {
             if (!this.initted)
@@ -624,6 +629,11 @@ namespace BL.UI
             if (thisElement == null)
             {
                 this.element = Document.CreateElement(this.TagName);
+
+                this.jqueryObject = null;
+
+                this.HandleInteractionEventing();
+
                 this.templateWasApplied = false;
                 this.elementsEnsured = false;
 
@@ -698,7 +708,7 @@ namespace BL.UI
                     }
                     else
                     {
-                        thisElement.Style.Display = "inherit";
+                        thisElement.Style.Display = "";
                     }
 
                    // this.DoResize();
