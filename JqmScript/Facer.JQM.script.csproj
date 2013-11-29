@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BL.JQM</RootNamespace>
-    <AssemblyName>BL.JQM</AssemblyName>
+    <AssemblyName>bl.jqm</AssemblyName>
     <ScriptTemplate>Properties\Script.template</ScriptTemplate>
     <CodeAnalysisRuleSet>Properties\FxCop.ruleset</CodeAnalysisRuleSet>
     <GenerateScript>True</GenerateScript>
@@ -25,7 +25,7 @@
     </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\web\gs\Facer\JQM\1.0\</OutputPath>
+    <OutputPath>..\..\web\gs\facer\jqm\1.0\</OutputPath>
     <DefineConstants>CODE_ANALYSIS;SCRIPTSHARP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

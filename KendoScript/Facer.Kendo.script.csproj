@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BL.UI.KendoControls</RootNamespace>
-    <AssemblyName>BL.UI.KendoControls</AssemblyName>
+    <AssemblyName>bl.ui.kendocontrols</AssemblyName>
     <ScriptTemplate>Properties\Script.template</ScriptTemplate>
     <CodeAnalysisRuleSet>Properties\FxCop.ruleset</CodeAnalysisRuleSet>
     <GenerateScript>True</GenerateScript>
@@ -25,12 +25,13 @@
     </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\web\gs\facer\kendo\1.0\</OutputPath>
     <DefineConstants>CODE_ANALYSIS;SCRIPTSHARP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0028, 1591, 1684</NoWarn>
-    <DocumentationFile>bin\Release\BL.UI.KendoControls.xml</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <None Include="packages.config" />

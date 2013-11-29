@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BL.UI</RootNamespace>
-    <AssemblyName>BL.UI</AssemblyName>
+    <AssemblyName>bl.ui</AssemblyName>
     <ScriptTemplate>Properties\Script.template</ScriptTemplate>
     <CodeAnalysisRuleSet>Properties\FxCop.ruleset</CodeAnalysisRuleSet>
     <GenerateScript>True</GenerateScript>
@@ -25,7 +25,7 @@
     </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\web\gs\Facer\1.0\</OutputPath>
+    <OutputPath>..\..\web\gs\facer\1.0\</OutputPath>
     <DefineConstants>CODE_ANALYSIS;SCRIPTSHARP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
