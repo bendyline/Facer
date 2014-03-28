@@ -37,6 +37,7 @@
     <Compile Include="ContentItemControl.cs" />
     <Compile Include="ContentItem.cs" />
     <Compile Include="ContentItemSet.cs" />
+    <Compile Include="ControlValueEvent.cs" />
     <Compile Include="ControlManager.cs" />
     <Compile Include="BaseControlFactory.cs" />
     <Compile Include="DebugPanel.cs" />

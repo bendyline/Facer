@@ -6,22 +6,42 @@
         #panel
         {
           background-color: #C0C0C0;
-          width: 200px;  
+          width: 100%;  
+          height:100%;
         }
         
         #log
         {
-            font-size: .75em;
-            hegiht:300px;
+            font-size: 8pt;
+            font-family:Arial;
+            height:100%;
+            display:block;
+        }
+
+        #logList
+        {
+            height:100%;
+        }
+
+        #collapse
+        {
+            position:absolute;
+            top:0px;
+            left:10px;
+            font-size:20pt;
+            color: white;
+            z-index: 30;
+            background:#C0C0C0;
+            display:block;
         }
         </style>
 	</head>
 	<body>
-            <div id='panel'>
-                <h4>DEBUG PANEL</h4>
+            <input type="button" value="&lt;" id="collapse" />
+           <div id='panel'>
                 <div id='log'>
-        	        <BL.UI.List id='logList' />
+                    <BL.UI.List id='logList' />
                 </div>
             </div>
-	</body>
+ 	</body>
 </html>

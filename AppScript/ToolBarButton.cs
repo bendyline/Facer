@@ -3,12 +3,54 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace BL.UI.App
 {
     public class ToolBarButton : ContentItemControl
     {
         public event EventHandler Clicked;
+
+        private bool isToggle;
+
+        [ScriptName("b_isToggle")]
+        public bool IsToggle
+        {
+            get
+            {
+                return this.isToggle;
+            }
+
+            set
+            {
+                this.isToggle = value;
+            }
+        }
+
+        private bool toggled;
+
+        [ScriptName("b_toggled")]
+        public bool Toggled
+        {
+            get
+            {
+                return this.toggled;
+            }
+
+            set
+            {
+                this.toggled = value;
+
+                if (this.toggled)
+                {
+                    this.ClassName = this.TypeId + "-toggled";
+                }
+                else
+                {
+                    this.ClassName = null;
+                }
+            }
+        }
 
         protected override void OnInit()
         {
@@ -19,6 +61,11 @@ namespace BL.UI.App
 
         protected override void OnClick(System.Html.ElementEvent e)
         {
+            if (this.IsToggle)
+            {
+                this.Toggled = !this.Toggled;
+            }
+
             base.OnClick(e);
 
             if (this.Clicked != null)

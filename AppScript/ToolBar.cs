@@ -9,12 +9,19 @@ namespace BL.UI.App
     public class ToolBar : ItemsControl
     {
         public event ControlEventHandler ItemClicked;
+        public event ControlValueEventHandler ValueChanged;
 
         protected override void OnItemControlAdded(Control c)
         {
             if (c is ToolBarButton)
             {
                 ((ToolBarButton)c).Clicked += new EventHandler(ToolBar_Clicked);
+            }
+
+            if (c is ToolBarPopoutButton)
+            {
+                ((ToolBarPopoutButton)c).Clicked += new StringEventHandler(ToolBarPopoutButton_Clicked);
+                ((ToolBarPopoutButton)c).ValueChanged += new ControlValueEventHandler(ToolBarPopoutButton_ValueChanged);
             }
         }
 
@@ -23,6 +30,27 @@ namespace BL.UI.App
             if (this.ItemClicked != null)
             {
                 ControlEventArgs cea = new ControlEventArgs((Control)sender);
+
+                this.ItemClicked(this, cea);
+            }
+        }
+
+        private void ToolBarPopoutButton_ValueChanged(object sender, ControlValueEventArgs e)
+        {
+            if (this.ValueChanged != null)
+            {
+                this.ValueChanged(this, e);
+            }
+        }
+
+
+        private void ToolBarPopoutButton_Clicked(object sender, StringEventArgs e)
+        {
+            if (this.ItemClicked != null)
+            {
+                ControlEventArgs cea = new ControlEventArgs((Control)sender);
+
+                cea.Id = e.Value;
 
                 this.ItemClicked(this, cea);
             }

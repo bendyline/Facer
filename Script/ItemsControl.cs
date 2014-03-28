@@ -12,6 +12,7 @@ namespace BL.UI
     {
         private Element itemsContainerElement;
         private List<Control> itemControls;
+        private Dictionary<String, Control> itemControlsById;
 
         public Element ItemsContainerElement
         {
@@ -43,20 +44,27 @@ namespace BL.UI
         {
         }
 
+        public Control GetById(String id)
+        {
+            return this.itemControlsById[id];
+        }
+
         public void InsertItemControl(int index, Control c)
         {
             if (this.itemControls == null)
             {
                 this.itemControls = new List<Control>();
+                this.itemControlsById = new Dictionary<string, Control>();
             }
 
             Debug.Assert(!this.itemControls.Contains(c));
 
             this.itemControls.Insert(index, c);
+            this.itemControlsById[c.Id] = c;
 
             if (this.ElementsEnsured)
             {
-                this.AppendControl(c);
+                this.InsertControl(index, c);
             }
 
             this.OnItemControlAdded(c);
@@ -67,11 +75,13 @@ namespace BL.UI
             if (this.itemControls == null)
             {
                 this.itemControls = new List<Control>();
+                this.itemControlsById = new Dictionary<string, Control>();
             }
 
             Debug.Assert(!this.itemControls.Contains(c));
 
             this.itemControls.Add(c);
+            this.itemControlsById[c.Id] = c;
 
             if (this.ElementsEnsured)
             {
@@ -97,6 +107,7 @@ namespace BL.UI
             }
 
             this.itemControls = null;
+            this.itemControlsById = null;
         }
 
         protected override void OnBaseControlsElementsPostInit()
@@ -144,13 +155,16 @@ namespace BL.UI
                 c.EnsureElements();
             }
 
-            if (index < 0)
+            if (c.Element.ParentNode != e)
             {
-                e.AppendChild(c.Element);
-            }
-            else
-            {
-                e.InsertBefore(this.Element.Children[index], c.Element);
+                if (index < 0 || index >= e.Children.Length)
+                {
+                    e.AppendChild(c.Element);
+                }
+                else
+                {
+                    e.InsertBefore(c.Element, e.Children[index]);
+                }
             }
         }
     }

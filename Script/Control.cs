@@ -86,6 +86,7 @@ namespace BL.UI
             }
         }
 
+        [ScriptName("i_width")]
         public int? Width
         {
             get
@@ -107,6 +108,7 @@ namespace BL.UI
             }
         }
 
+        [ScriptName("i_height")]
         public int? Height
         {
             get
@@ -398,6 +400,36 @@ namespace BL.UI
 
         }
 
+        private void HandleMouseOver(ElementEvent e)
+        {
+            this.OnMouseOver(e);
+        }
+
+        protected virtual void OnMouseOver(ElementEvent e)
+        {
+
+        }
+
+        private void HandleMouseOut(ElementEvent e)
+        {
+            this.OnMouseOut(e);
+        }
+
+        protected virtual void OnMouseOut(ElementEvent e)
+        {
+
+        }
+
+        private void HandleMouseMove(ElementEvent e)
+        {
+            this.OnMouseMove(e);
+        }
+
+        protected virtual void OnMouseMove(ElementEvent e)
+        {
+
+        }
+
         private void HandleInteractionEventing()
         {
             if (!this.trackInteractionEvents)
@@ -405,6 +437,9 @@ namespace BL.UI
                 if (this.interactionEventsRegistered)
                 {
                     this.element.RemoveEventListener("click", this.HandleClick, true);
+                    this.element.RemoveEventListener("mouseover", this.HandleMouseOver, true);                    
+                    this.element.RemoveEventListener("mouseout", this.HandleMouseOut, true);
+                    this.element.RemoveEventListener("mousemove", this.HandleMouseMove, true);
                     this.interactionEventsRegistered = false;
                 }
 
@@ -414,6 +449,9 @@ namespace BL.UI
             if (!interactionEventsRegistered && this.element != null)
             {
                 this.element.AddEventListener("click", this.HandleClick, true);
+                this.element.AddEventListener("mouseover", this.HandleMouseOver, true);
+                this.element.AddEventListener("mouseout", this.HandleMouseOut, true);
+                this.element.AddEventListener("mousemove", this.HandleMouseMove, true);
                 this.interactionEventsRegistered = true;
             }
         }

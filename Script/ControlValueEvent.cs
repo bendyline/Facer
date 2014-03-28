@@ -6,12 +6,26 @@ using BL.UI;
 
 namespace BL
 {
-    public delegate void ControlEventHandler(object sender, ControlEventArgs e);
+    public delegate void ControlValueEventHandler(object sender, ControlValueEventArgs e);
 
-    public class ControlEventArgs : EventArgs
+    public class ControlValueEventArgs : EventArgs
     {
         private Control c;
         private String id;
+        private String stringValue;
+
+        public String Value
+        {
+            get
+            {
+                return this.stringValue;
+            }
+
+            set
+            {
+                this.stringValue = value;
+            }
+        }
 
         public String Id
         {
@@ -37,7 +51,7 @@ namespace BL
             set { this.c= value; }
         }
 
-        public ControlEventArgs(Control c)
+        public ControlValueEventArgs(Control c)
         {
             this.c = c;
         }       

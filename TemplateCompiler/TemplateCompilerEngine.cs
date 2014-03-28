@@ -176,9 +176,9 @@ namespace Bendyline.UI.TemplateCompiler
                     {
                         String tagStart = content.Trim().ToLowerCase();
 
-                        if (tagStart == "body")
+                        if (tagStart.StartsWith("body"))
                         {
-                            content = String.Format(" .{0}", t.Id.Replace(".", "-"));
+                            content = String.Format(" .{0}{1}", t.Id.Replace(".", "-"), tagStart.Substring(4));
                         }
                     }
                     else

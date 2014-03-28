@@ -24,6 +24,11 @@ namespace BL.UI.App
 
             set
             {
+                if (this.url == value)
+                {
+                    return;
+                }
+
                 this.url = value;
 
                 this.Update();
@@ -34,7 +39,7 @@ namespace BL.UI.App
         {
             base.OnUpdate();
 
-            if (this.browser != null)
+            if (this.browser != null && this.url != null)
             {
                 this.browser.Src = this.url;
             }

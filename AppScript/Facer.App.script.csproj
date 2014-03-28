@@ -36,7 +36,11 @@
   <ItemGroup>
     <Compile Include="Browser.cs" />
     <Compile Include="ExpanderPanel.cs" />
+    <Compile Include="TemplateImageArea.cs" />
     <Compile Include="ToolBar.cs" />
+    <Compile Include="TemplateImageButton.cs" />
+    <Compile Include="ToolBarPopoutButton.cs" />
+    <Compile Include="ToolBarLabel.cs" />
     <Compile Include="ToolBarButton.cs" />
     <None Include="packages.config" />
     <None Include="Properties\FxCop.ruleset" />
@@ -54,6 +58,9 @@
   <ItemGroup>
     <Content Include="Browser.htm" />
     <Content Include="ToolBar.htm" />
+    <Content Include="TemplateImageButton.htm" />
+    <Content Include="ToolBarPopoutButton.htm" />
+    <Content Include="ToolBarLabel.htm" />
     <Content Include="ToolBarButton.htm" />
   </ItemGroup>
   <ItemGroup>
