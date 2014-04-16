@@ -499,6 +499,43 @@ namespace BL.UI
             }
         }
 
+        public void AttachToElement(Element e)
+        {
+            this.element = e;
+
+            this.LoadFromElement();
+            this.HandleInteractionEventing();
+
+            if (this.Element != null)
+            {
+                this.EnsureElements();
+            }
+        }
+
+        private void LoadFromElement()
+        {
+            ElementAttributeCollection eac = this.element.Attributes;
+            
+            for (int i = 0; i < eac.Length; i++)
+            {
+                ElementAttribute ea = null;
+
+                Script.Literal("{0}={1}[{2}]", ea, eac, i);
+
+                String attrName = ea.Name;
+
+                if (attrName.StartsWith("data-bl-"))
+                {
+                    String propName = attrName.Substring(8, attrName.Length);
+
+                    if (propName != "type")
+                    {
+                        this.SetProperty(propName, ea.Value);
+                    }
+                }
+            }
+        }
+
         public void AttachTo(object elementOrId, object options)
         {
             Script.Literal(@"if (elementOrId != null) {{ if (elementOrId.tagName != null) {{ {0} = elementOrId; }} if (typeof(elementOrId) == ""string"") {{ {0} = document.getElementById(elementOrId); }}}}", this.element);
@@ -666,7 +703,11 @@ namespace BL.UI
 
             if (thisElement == null)
             {
-                this.element = Document.CreateElement(this.TagName);
+                String tagName = this.TagName;
+
+                if (tagName == null) { tagName = "div"; }
+
+                this.element = Document.CreateElement(tagName);
 
                 this.jqueryObject = null;
 

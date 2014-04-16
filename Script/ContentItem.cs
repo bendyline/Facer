@@ -14,6 +14,7 @@ namespace BL.UI
         public String Id;
         public String Content;
         public String Title;
+        public String Url;
         public String VideoUrl;
         public String TemplateId;
         public object Data;

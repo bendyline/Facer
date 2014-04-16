@@ -49,7 +49,6 @@ web.config
 [Rr]elease/
 x64/
 _gen/
-build/
 [Bb]in/
 [Oo]bj/
 *Test/
@@ -204,7 +203,6 @@ $RECYCLE.BIN/
 *.egg
 *.egg-info
 dist/
-build/
 eggs/
 parts/
 var/

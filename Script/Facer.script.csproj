@@ -42,6 +42,7 @@
     <Compile Include="BaseControlFactory.cs" />
     <Compile Include="DebugPanel.cs" />
     <Compile Include="ElementContentItemControl.cs" />
+    <Compile Include="Facer.cs" />
     <Compile Include="ListItem.cs" />
     <Compile Include="List.cs" />
     <Compile Include="ControlEvent.cs" />

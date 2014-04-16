@@ -37,6 +37,21 @@ namespace BL.UI
             return (Control)c;
         }
 
+        public Control CreateControlFromFullName(String fullName)
+        {
+            int lastPeriod = fullName.LastIndexOf(".");
+
+            if (lastPeriod < 0)
+            {
+                return null;
+            }
+
+            String namespaceStr = fullName.Substring(0, lastPeriod);
+            String typeNameStr = fullName.Substring(lastPeriod + 1, fullName.Length);
+
+            return CreateControl(namespaceStr, typeNameStr);
+        }
+
         public Control CreateControl(string controlNamespace, String controlName)
         {
             controlNamespace = controlNamespace.ToLowerCase();

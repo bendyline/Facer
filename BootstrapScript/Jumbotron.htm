@@ -2,15 +2,26 @@
 <html>
 	<head>
     <style>
-     
+        #image { border: solid 1px black; }
+        #imageOuter { border: solid 3px white; }
     </style>
 	</head>
 	<body>
         <div  class="jumbotron">
-            <h1 id='title'>|* lorem ipsum *|</h1>
+            <div class="row">
+                <div class="col-md-3" id="imageCell">
+                    <div id="imageOuter">
+                        <img id="image" class="img-responsive"></img>
+                    </div>
+                </div>
+                <div  class="col-md-9">
+                    <h1 id='title'>|* lorem ipsum *|</h1>
             
-            <h4 id="lead">|* Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. *|</h4>
-            <div><ItemsContainer/></div>
+                    <h4 id="lead">|* Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. *|</h4>
+                </div>
+            </div>
+
+             <div><ItemsContainer/></div>
      
         </div>
 	</body>

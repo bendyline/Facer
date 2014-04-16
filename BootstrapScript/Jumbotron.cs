@@ -17,11 +17,18 @@ namespace BL.BS
         [ScriptName("e_lead")]
         protected Element leadElement;
 
+        [ScriptName("e_image")]
+        protected ImageElement imageElement;
+
+        [ScriptName("e_imageCell")]
+        protected ImageElement imageCellElement;
+
         [ScriptName("e_callToAction")]
         protected Element callToActionElement;
 
         private String title;
         private String lead;
+        private String imageUrl;
 
         [ScriptName("s_title")]
         public String Title
@@ -34,6 +41,8 @@ namespace BL.BS
             set
             {
                 this.title = value;
+
+                this.Update();
             }
         }
 
@@ -48,6 +57,24 @@ namespace BL.BS
             set
             {
                 this.lead = value;
+
+                this.Update();
+            }
+        }
+
+        [ScriptName("s_imageUrl")]
+        public String ImageUrl
+        {
+            get
+            {
+                return this.imageUrl;
+            }
+
+            set
+            {
+                this.imageUrl = value;
+
+                this.Update();
             }
         }
 
@@ -61,6 +88,19 @@ namespace BL.BS
             if (this.leadElement != null)
             {
                 this.leadElement.InnerText = this.Lead;
+            }
+
+            if (this.imageElement != null && this.imageCellElement != null)
+            {
+                if (String.IsNullOrEmpty(this.ImageUrl))
+                {
+                    this.imageCellElement.Style.Display = "none";
+                }
+                else
+                {
+                    this.imageElement.Src = this.ImageUrl;
+                    this.imageCellElement.Style.Display = "block";
+                }
             }
         }
     }
