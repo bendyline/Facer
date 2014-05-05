@@ -7,6 +7,7 @@ using System.Html;
 using System.Diagnostics;
 using jQueryApi;
 using System.Runtime.CompilerServices;
+using Bendyline.Base;
 
 namespace BL.UI
 {
@@ -202,7 +203,17 @@ namespace BL.UI
 
             set
             {
+                if (this.visible == value)
+                {
+                    return;
+                }
+
                 this.visible = value;
+
+                if (!this.ElementsEnsured && this.visible == true)
+                {
+                    this.EnsureElements();
+                }
 
                 this.ApplyVisible();
             }
@@ -276,7 +287,7 @@ namespace BL.UI
 
                 if (this.ElementsEnsured)
                 {
-                    this.ContentElement.InnerHTML = value;
+                    HtmlUtilities.SetInnerHtml(this.ContentElement, value);
                 }
             }
         }
@@ -475,6 +486,24 @@ namespace BL.UI
             }
         }
 
+        public String GetElementClass(String componentName)
+        {
+            String[] components = componentName.Split(' ');
+
+            String summ = "";
+
+            foreach (String component in components)
+            {
+                if (summ.Length > 0)
+                {
+                    summ += " ";
+                }
+
+                summ += this.TypeId + "-" + component;
+            }
+
+            return summ;
+        }
 
         public void EnsureId()
         {
@@ -632,7 +661,7 @@ namespace BL.UI
 
                 TemplateParserResult tpr = tp.Parse(this.Id, this.TemplateId, template);
 
-                this.Element.InnerHTML = tpr.Markup;
+                HtmlUtilities.SetInnerHtml(this.Element, tpr.Markup);
 
                 if (tpr.ItemsContainer != null)
                 {
@@ -721,54 +750,56 @@ namespace BL.UI
                 thisElement = this.Element;
             }
 
-            this.ApplyTemplate();
-            
-            if (!this.childControlsCreated)
+            if (this.Visible)
             {
-                this.CreateChildControls();
-            }
+                this.ApplyTemplate();
 
-            if (!this.ElementsEnsured)
-            {
-                this.elementsEnsured = true;
-
-                this.ApplyClass();
-
-                this.OnEnsureElements();
-
-                if (this.innerHtml != null)
+                if (!this.childControlsCreated)
                 {
-                    this.ContentElement.InnerHTML = this.innerHtml;
+                    this.CreateChildControls();
                 }
 
-                if (this.templateControls != null)
+                if (!this.ElementsEnsured)
                 {
-                    foreach (Control c in this.templateControls)
+                    this.elementsEnsured = true;
+
+                    this.ApplyClass();
+
+                    this.OnEnsureElements();
+
+                    if (this.innerHtml != null)
                     {
-                        this.EnsureElementForBaseControl(c);
+                        HtmlUtilities.SetInnerHtml(this.ContentElement, this.innerHtml);
                     }
+
+                    if (this.templateControls != null)
+                    {
+                        foreach (Control c in this.templateControls)
+                        {
+                            this.EnsureElementForBaseControl(c);
+                        }
+                    }
+
+                    this.HandleResizeEventing();
+
+                    if (this.height != null)
+                    {
+                        thisElement.Style.PosHeight = (int)this.Height;
+                    }
+
+                    if (this.width != null)
+                    {
+                        thisElement.Style.PosWidth = (int)this.Width;
+                    }
+
+                    this.OnUpdate();
                 }
 
-                this.HandleResizeEventing();
-
-                if (this.height != null)
+                if (this.trackResizeEvents)
                 {
-                    thisElement.Style.PosHeight = (int)this.Height;
+                    this.DoResize();
                 }
-
-                if (this.width != null)
-                {
-                    thisElement.Style.PosWidth = (int)this.Width;
-                }
-
-                this.OnUpdate();
             }
-
-            if (this.trackResizeEvents)
-            {
-                this.DoResize();
-            }
-
             this.ApplyVisible();
         }
 
@@ -814,8 +845,6 @@ namespace BL.UI
         {
 
         }
-
-
 
         /// <summary>
         /// Internal function that helps set up a child control and creates an element for it if it doesn't exist.
@@ -887,7 +916,7 @@ namespace BL.UI
         {
             Element e = Document.CreateElement(type);
 
-            e.ClassName = this.TypeId + "-" + elementClass;
+            e.ClassName = this.GetElementClass(elementClass);
 
             return e;
         }

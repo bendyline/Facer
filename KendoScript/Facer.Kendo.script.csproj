@@ -37,6 +37,45 @@
     <None Include="packages.config" />
     <None Include="Properties\FxCop.ruleset" />
     <None Include="Properties\Script.template" />
+    <Compile Include="Chart.cs" />
+    <Compile Include="ChartDataPoint.cs" />
+    <Compile Include="Kendo\DataViz\UI\ValueAxis.cs" />
+    <Compile Include="Kendo\DataViz\UI\SeriesDefaults.cs" />
+    <Compile Include="Kendo\DataViz\UI\SeriesTarget.cs" />
+    <Compile Include="Kendo\DataViz\UI\Overlay.cs" />
+    <Compile Include="Kendo\DataViz\UI\Stack.cs" />
+    <Compile Include="Kendo\DataViz\UI\ValueDisplay.cs" />
+    <Compile Include="Kendo\DataViz\UI\Markers.cs" />
+    <Compile Include="Kendo\DataViz\UI\Highlight.cs" />
+    <Compile Include="Kendo\DataViz\UI\ErrorBars.cs" />
+    <Compile Include="Kendo\DataViz\UI\SeriesLine.cs" />
+    <Compile Include="Kendo\DataViz\UI\SeriesLabel.cs" />
+    <Compile Include="Kendo\DataViz\UI\Series.cs" />
+    <Compile Include="Kendo\DataViz\UI\Pane.cs" />
+    <Compile Include="Kendo\DataViz\UI\ItemArea.cs" />
+    <Compile Include="Kendo\DataViz\UI\Legend.cs" />
+    <Compile Include="Kendo\DataViz\UI\Area.cs" />
+    <Compile Include="Kendo\DataViz\UI\Icon.cs" />
+    <Compile Include="Kendo\DataViz\UI\ConnectingLine.cs" />
+    <Compile Include="Kendo\DataViz\UI\NoteData.cs" />
+    <Compile Include="Kendo\DataViz\UI\Note.cs" />
+    <Compile Include="Kendo\DataViz\UI\AxisMousewheel.cs" />
+    <Compile Include="Kendo\DataViz\UI\AxisSelection.cs" />
+    <Compile Include="Kendo\DataViz\UI\Band.cs" />
+    <Compile Include="Kendo\DataViz\UI\DateFormats.cs" />
+    <Compile Include="Kendo\DataViz\UI\GridStep.cs" />
+    <Compile Include="Kendo\DataViz\UI\TitleLabel.cs" />
+    <Compile Include="Kendo\DataViz\UI\Label.cs" />
+    <Compile Include="Kendo\DataViz\UI\GridLine.cs" />
+    <Compile Include="Kendo\DataViz\UI\Step.cs" />
+    <Compile Include="Kendo\DataViz\UI\Thickness.cs" />
+    <Compile Include="Kendo\DataViz\UI\Line.cs" />
+    <Compile Include="Kendo\DataViz\UI\BaseLabel.cs" />
+    <Compile Include="Kendo\DataViz\UI\Crosshair.cs" />
+    <Compile Include="Kendo\DataViz\UI\Axis.cs" />
+    <Compile Include="Kendo\DataViz\UI\Chart.cs" />
+    <Compile Include="Kendo\DataViz\UI\ChartOptions.cs" />
+    <Compile Include="Kendo\DataViz\UI\BaseUnitSteps.cs" />
     <Compile Include="Kendo\UI\NumericTextBox.cs" />
     <Compile Include="Kendo\UI\NumericTextBoxOptions.cs" />
     <Compile Include="NumericTextBox.cs" />
@@ -107,4 +146,5 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\ScriptSharp.0.7.5.1\tools\ScriptSharp.targets" Condition="Exists('..\..\packages\ScriptSharp.0.7.5.1\tools\ScriptSharp.targets')" />
+  <Import Project="..\TemplateCompilerTask\TemplateCompiler.targets" Condition="Exists('..\TemplateCompilerTask\TemplateCompiler.targets')" />
 </Project>
