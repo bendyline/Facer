@@ -94,6 +94,8 @@ namespace BL.UI
                 return;
             }
 
+            id = id.Replace(".", "-");
+
             int lastDash = id.LastIndexOf("-");
 
             if (lastDash >= 0)
@@ -107,8 +109,8 @@ namespace BL.UI
                     if (tf.IsLoaded)
                     {
                         CallbackResult cr = new CallbackResult();
-                        cr.AsyncState = this.templatesById[id];
-                        cr.Data = null;
+                        cr.AsyncState = state;
+                        cr.Data = this.templatesById[id];
                         cr.CompletedSynchronously = true;
                         cr.IsCompleted = true;
                         ac(cr);

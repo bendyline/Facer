@@ -67,7 +67,7 @@ namespace BL.UI
 
                         String tagName = markup.Substring(nextLeftSign + 2, nextRightSign);
 
-                        if (tagName.IndexOf(".") >= 0 || tagName == "Items")
+                        if (tagName.IndexOf(".") >= 0 || tagName == "Items" || tagName == "Content")
                         {
                             String lastControlTagName = controlTagNames[controlTagNames.Count - 1];
 
@@ -91,7 +91,7 @@ namespace BL.UI
                         lastWhitespace = nextRightSign + 1;
                         nextLeftSign = markup.IndexOf("<", lastWhitespace);
 
-                        // if we're within a <.Items> section, then end it.
+                        // if we're within a <Items> section, then end it.
                         if (controlParsingMode > 0 && tagName == "Items")
                         {
                             if (controlToAddItemsTo is ItemsControl)
@@ -104,14 +104,42 @@ namespace BL.UI
 
                             int lastIndex = controlStack.Count - 1;
 
-                            // look up the control stack to find the previous control that was an items control
-                            Control lastItemsControl = controlToAddItemsTo;
+                            // look up the control stack to find the previous control that was an items or content control
+                            Control lastItemsOrContentControl = controlToAddItemsTo;
+
                             do
                             {
                                 controlToAddItemsTo = controlStack[lastIndex];
                                 lastIndex--;
                             }
-                            while (lastIndex >= 0 && !(controlToAddItemsTo is ItemsControl && controlToAddItemsTo != lastItemsControl));
+                            while (lastIndex >= 0 && !( (controlToAddItemsTo is ItemsControl || controlToAddItemsTo is ContentControl) && controlToAddItemsTo != lastItemsOrContentControl));
+
+                            controlParsingMode--;
+                            ignoreAppendMarkup--;
+                        }
+                        // are we in a content control and seeing a <Content>
+                        else if (controlParsingMode > 0 && tagName == "Content")
+                        {
+                            if (controlToAddItemsTo is ContentControl)
+                            {
+                                // note that there really should only be one control in this set.
+                                foreach (Control c in itemStacks[controlParsingMode - 1])
+                                {
+                                    ((ContentControl)controlToAddItemsTo).Content = c;
+                                }
+                            }
+
+                            int lastIndex = controlStack.Count - 1;
+
+                            // look up the control stack to find the previous control that was an items or content control
+                            Control lastItemsOrContentControl = controlToAddItemsTo;
+
+                            do
+                            {
+                                controlToAddItemsTo = controlStack[lastIndex];
+                                lastIndex--;
+                            }
+                            while (lastIndex >= 0 && !((controlToAddItemsTo is ItemsControl || controlToAddItemsTo is ContentControl) && controlToAddItemsTo != lastItemsOrContentControl));
 
                             controlParsingMode--;
                             ignoreAppendMarkup--;
@@ -169,10 +197,24 @@ namespace BL.UI
                                 controlStack.Add(c);
                                 controlLevel.Add(curDepth);
 
+
+                                if (id != null)
+                                {
+                                    c.Id = parentId + "-" + id;
+                                }
+
+
+                                // if we're within a <Content> or <Items> section, save the control
                                 if (controlParsingMode > 0)
                                 {
                                     itemStacks[controlParsingMode-1].Add(c);
+
+                                    if (id != null)
+                                    {
+                                        tpr.AddControl(c, null, id);
+                                    }
                                 }
+                                // otherwise keep editing the resulting markup.
                                 else
                                 {
                                     tagName = c.TagName;
@@ -184,14 +226,8 @@ namespace BL.UI
                                         resultingMarkup.Append("<" + tagName);
                                     }
 
-                                    if (id != null)
-                                    {
-                                        c.Id = parentId + "-" + id;
-                                    }
-
                                     tpr.AddControl(c, depthStack.Clone(), id);
                                 }
-
                             }
                             else
                             {
@@ -199,6 +235,17 @@ namespace BL.UI
                             }
                         }
                         else if (tagName == "Items")
+                        {
+                            if (controlStack.Count > 0)
+                            {
+                                itemStacks[controlParsingMode] = new List<Control>();
+                                controlParsingMode++;
+                                controlToAddItemsTo = controlStack[controlStack.Count - 1];
+                            }
+
+                            ignoreAppendMarkup++;
+                        }
+                        else if (tagName == "Content")
                         {
                             if (controlStack.Count > 0)
                             {
@@ -219,6 +266,12 @@ namespace BL.UI
                             if (tagName == "ItemsContainer")
                             {
                                 tpr.ItemsContainer = depthStack.Clone();
+
+                                tagName = "div";
+                            }
+                            else if (tagName == "ContentContainer")
+                            {
+                                tpr.ContentContainer = depthStack.Clone();
 
                                 tagName = "div";
                             }
@@ -257,7 +310,14 @@ namespace BL.UI
                             {
                                 if (kvp.Key != "id" && kvp.Key != "class")
                                 {
-                                    resultingMarkup.Append(String.Format(" {0}=\"{1}\"", kvp.Key, kvp.Value));
+                                    if (kvp.Key == "src")
+                                    {
+                                        resultingMarkup.Append(String.Format(" {0}=\"{1}\"", kvp.Key, Context.Current.ResourceBasePath + kvp.Value));
+                                    }
+                                    else
+                                    {
+                                        resultingMarkup.Append(String.Format(" {0}=\"{1}\"", kvp.Key, kvp.Value));
+                                    }
                                 }
                             }
                         }
@@ -271,7 +331,6 @@ namespace BL.UI
                                 controlLevel.RemoveAt(controlLevel.Count - 1);
                                 controlStack.RemoveAt(controlStack.Count - 1);
                             }
-
 
                             if (ignoreAppendMarkup <= 0)
                             {

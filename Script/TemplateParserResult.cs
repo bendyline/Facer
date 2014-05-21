@@ -14,6 +14,7 @@ namespace BL.UI
         private List<Control> controls;
         private List<String> controlIds;
         private List<int> itemsContainer;
+        private List<int> contentContainer;
 
         private List<List<int>> elementElementPaths;
         private List<String> elementIds;
@@ -28,6 +29,19 @@ namespace BL.UI
             set
             {
                 this.itemsContainer = value;
+            }
+        }
+
+        public List<int> ContentContainer
+        {
+            get
+            {
+                return this.contentContainer;
+            }
+
+            set
+            {
+                this.contentContainer = value;
             }
         }
 

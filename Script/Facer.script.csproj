@@ -33,7 +33,33 @@
     <DocumentationFile>
     </DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\web\gs\facer\stg\</OutputPath>
+    <DefineConstants>CODE_ANALYSIS;SCRIPTSHARP</DefineConstants>
+    <NoWarn>0028, 1591, 1684</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>ISO-2</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>Properties\FxCop.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LocalRelease|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\web\gs\facer\1.0\</OutputPath>
+    <DefineConstants>CODE_ANALYSIS;SCRIPTSHARP</DefineConstants>
+    <NoWarn>0028, 1591, 1684</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>ISO-2</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>Properties\FxCop.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
+    <Compile Include="PointElementEvent.cs" />
+    <Compile Include="ElementEffects.cs" />
     <Compile Include="ContentItemControl.cs" />
     <Compile Include="ContentItem.cs" />
     <Compile Include="ContentItemSet.cs" />
@@ -43,6 +69,7 @@
     <Compile Include="DebugPanel.cs" />
     <Compile Include="ElementContentItemControl.cs" />
     <Compile Include="Facer.cs" />
+    <Compile Include="ContentControl.cs" />
     <Compile Include="ListItem.cs" />
     <Compile Include="List.cs" />
     <Compile Include="ControlEvent.cs" />

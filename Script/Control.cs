@@ -32,6 +32,7 @@ namespace BL.UI
         private Element element;
         private Element contentElement;
         private List<Control> templateControls;
+        private List<Control> templateDescendentControls;
         private List<Element> templateElements;
         private String templateId;
         private String template;
@@ -49,9 +50,35 @@ namespace BL.UI
         private String oldDisplayMode;
         private int? height;
         private int? width;
+        private bool delayApplyTemplate = false;
+        private bool ensureElementsRequested = false;
         private bool templateWasApplied = false;
         private bool trackInteractionEvents = false;
         private bool interactionEventsRegistered = false;
+        private ElementEffects effects;
+
+        protected bool DelayApplyTemplate
+        {
+            get
+            {
+                return this.delayApplyTemplate;
+            }
+
+            set
+            {
+                if (this.delayApplyTemplate == value)
+                {
+                    return;
+                }
+
+                this.delayApplyTemplate = value;
+
+                if (!this.delayApplyTemplate && this.element != null && !this.templateWasApplied)
+                {
+                    this.EnsureElements();
+                }
+            }
+        }
 
         [ScriptName("s_templateId")]
         public String TemplateId
@@ -69,7 +96,26 @@ namespace BL.UI
             set
             {
                 this.templateId = value;
-                this.templateWasApplied = false;
+
+                if (this.templateWasApplied)
+                {
+                    this.template = null;
+                    this.templateWasApplied = false;
+                    this.ApplyTemplate();
+                }
+            }
+        }
+
+        public ElementEffects Effects
+        {
+            get
+            {
+                if (this.effects == null && this.element != null)
+                {
+                    this.effects = new ElementEffects(this.element);
+                }
+
+                return this.effects;
             }
         }
 
@@ -210,7 +256,7 @@ namespace BL.UI
 
                 this.visible = value;
 
-                if (!this.ElementsEnsured && this.visible == true)
+                if (!this.ElementsEnsured && this.visible == true && this.ensureElementsRequested)
                 {
                     this.EnsureElements();
                 }
@@ -302,6 +348,19 @@ namespace BL.UI
                 }
 
                 return this.templateControls;
+            }
+        }
+
+        public List<Control> TemplateDescendentControls
+        {
+            get
+            {
+                if (this.templateDescendentControls == null)
+                {
+                    this.templateDescendentControls = new List<Control>();
+                }
+
+                return this.templateDescendentControls;
             }
         }
 
@@ -653,6 +712,7 @@ namespace BL.UI
             String template = this.Template;
 
             this.templateControls = new List<Control>();
+            this.templateDescendentControls = new List<Control>();
             this.templateElements = new List<Element>();
 
             if (template != null)
@@ -670,21 +730,41 @@ namespace BL.UI
                     Script.Literal("var fn = {0}[\"set_itemsContainerElement\"];  if (fn != null) {{ fn.apply(this, new Array({1})); }}", this, e);
                 }
 
+                if (tpr.ContentContainer != null)
+                {
+                    Element e = this.GetElementFromPath(this.Element, tpr.ContentContainer);
+
+                    Script.Literal("var fn = {0}[\"set_contentContainerElement\"];  if (fn != null) {{ fn.apply(this, new Array({1})); }}", this, e);
+                }
+
                 for (int i = 0; i < tpr.Controls.Count; i++)
                 {
                     List<int> path = tpr.ControlElementPaths[i];
                     Control c = tpr.Controls[i];
                     String controlId = tpr.ControlIds[i];
 
-                    Element element = this.GetElementFromPath(this.Element, path);
+                    // note Path will be null in cases where you have a ContentControl or ItemControl child with an ID
+                    if (path != null)
+                    {
+                        this.templateControls.Add(c);
 
-                    this.templateControls.Add(c);
-                    this.templateElements.Add(element);
+                        Element element = this.GetElementFromPath(this.Element, path);
+
+                        this.templateElements.Add(element);
+
+                        if (controlId != null)
+                        {
+                            Script.Literal("{0}['e_' + {1}]={2}", this, controlId, element);
+                        }
+                    }
+                    else
+                    {
+                        this.templateDescendentControls.Add(c);
+                    }
 
                     if (controlId != null)
                     {
                         Script.Literal("{0}['c_' + {1}]={2}", this, controlId, c);
-                        Script.Literal("{0}['e_' + {1}]={2}", this, controlId, element);
                     }
                 }
 
@@ -694,7 +774,6 @@ namespace BL.UI
                     String elementId = tpr.ElementIds[i];
 
                     Element element = this.GetElementFromPath(this.Element, path);
-
                  
                     if (elementId != null)
                     {
@@ -707,6 +786,8 @@ namespace BL.UI
             {
                 Control c = this.templateControls[i];
                 Element e = this.templateElements[i];
+                
+                Debug.Assert(e != null);
 
                 c.AttachTo(e, null);
             }
@@ -750,7 +831,7 @@ namespace BL.UI
                 thisElement = this.Element;
             }
 
-            if (this.Visible)
+            if (this.Visible && !this.delayApplyTemplate)
             {
                 this.ApplyTemplate();
 
@@ -800,6 +881,11 @@ namespace BL.UI
                     this.DoResize();
                 }
             }
+            else
+            {
+                this.ensureElementsRequested = true;
+            }
+
             this.ApplyVisible();
         }
 

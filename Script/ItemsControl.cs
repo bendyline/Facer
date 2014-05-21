@@ -28,7 +28,22 @@ namespace BL.UI
 
             set
             {
+                if (this.itemsContainerElement == value)
+                {
+                    return;
+                }
+
+                this.ClearItemContainerElement();
+
                 this.itemsContainerElement = value;
+
+                if (this.itemsContainerElement != null)
+                {
+                    foreach (Control c in this.ItemControls)
+                    {
+                        this.AppendControl(c);
+                    }
+                }
             }
         }
 
@@ -96,7 +111,7 @@ namespace BL.UI
 
         }
 
-        public void ClearItemControls()
+        private void ClearItemContainerElement()
         {
             if (this.itemsContainerElement != null)
             {
@@ -105,7 +120,10 @@ namespace BL.UI
                     this.itemsContainerElement.RemoveChild(c.Element);
                 }
             }
-
+        }
+        public void ClearItemControls()
+        {
+            this.ClearItemContainerElement();
             this.itemControls = null;
             this.itemControlsById = null;
         }
@@ -137,6 +155,9 @@ namespace BL.UI
                 return;
             }
 
+            Element elt = null;
+            bool isNew = false;
+
             if (c.Element == null)
             {
                 String tagName = c.TagName;
@@ -146,25 +167,30 @@ namespace BL.UI
                     tagName = "DIV";
                 }
 
-                Element elt = Document.CreateElement(tagName);
-
-                c.Element = elt;
+                 elt = Document.CreateElement(tagName);
+                 isNew = true;
             }
             else
             {
                 c.EnsureElements();
+                elt = c.Element;
             }
 
-            if (c.Element.ParentNode != e)
+            if (elt.ParentNode != e)
             {
                 if (index < 0 || index >= e.Children.Length)
                 {
-                    e.AppendChild(c.Element);
+                    e.AppendChild(elt);
                 }
                 else
                 {
-                    e.InsertBefore(c.Element, e.Children[index]);
+                    e.InsertBefore(elt, e.Children[index]);
                 }
+            }
+
+            if (isNew)
+            {
+                c.Element = elt;
             }
         }
     }

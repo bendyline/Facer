@@ -33,12 +33,37 @@
     <DocumentationFile>
     </DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\web\gs\facer\kendo\stg\</OutputPath>
+    <DefineConstants>CODE_ANALYSIS;SCRIPTSHARP</DefineConstants>
+    <NoWarn>0028, 1591, 1684</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>ISO-2</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>Properties\FxCop.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LocalRelease|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\web\gs\facer\kendo\1.0\</OutputPath>
+    <DefineConstants>CODE_ANALYSIS;SCRIPTSHARP</DefineConstants>
+    <NoWarn>0028, 1591, 1684</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>ISO-2</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>Properties\FxCop.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Properties\FxCop.ruleset" />
     <None Include="Properties\Script.template" />
     <Compile Include="Chart.cs" />
     <Compile Include="ChartDataPoint.cs" />
+    <Compile Include="Editor.cs" />
     <Compile Include="Kendo\DataViz\UI\ValueAxis.cs" />
     <Compile Include="Kendo\DataViz\UI\SeriesDefaults.cs" />
     <Compile Include="Kendo\DataViz\UI\SeriesTarget.cs" />
@@ -76,6 +101,9 @@
     <Compile Include="Kendo\DataViz\UI\Chart.cs" />
     <Compile Include="Kendo\DataViz\UI\ChartOptions.cs" />
     <Compile Include="Kendo\DataViz\UI\BaseUnitSteps.cs" />
+    <Compile Include="Kendo\UI\Editor.cs" />
+    <Compile Include="Kendo\UI\EditorOptions.cs" />
+    <Compile Include="Kendo\UI\ToolOptions.cs" />
     <Compile Include="Kendo\UI\NumericTextBox.cs" />
     <Compile Include="Kendo\UI\NumericTextBoxOptions.cs" />
     <Compile Include="NumericTextBox.cs" />
