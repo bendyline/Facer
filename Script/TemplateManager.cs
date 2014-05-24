@@ -11,6 +11,7 @@ namespace BL.UI
         private static TemplateManager current = null;
         private Dictionary<String, Template> templatesById;
         private Dictionary<String, TemplateFile> templateFilesById;
+        private Dictionary<String, String> templateOverrides;
 
         public Dictionary<String, Template> Templates
         {
@@ -45,6 +46,12 @@ namespace BL.UI
         {
             this.templatesById = new Dictionary<string, Template>();
             this.templateFilesById = new Dictionary<string, TemplateFile>();
+            this.templateOverrides = new Dictionary<String, String>();
+        }
+
+        public void AddTemplateOverride(String from, String to)
+        {
+            this.templateOverrides[from.ToLowerCase()] = to.ToLowerCase();
         }
 
         public void AddTemplateFile(String fileName, List<Template> templates)
@@ -79,6 +86,13 @@ namespace BL.UI
         public void GetTemplateAsync(String id, AsyncCallback ac, object state)
         {
             id = id.ToLowerCase();
+
+            String overrideId = this.templateOverrides[id];
+
+            if (overrideId != null)
+            {
+                id = overrideId;
+            }
 
             if (this.templatesById[id] != null)
             {

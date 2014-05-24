@@ -11,20 +11,11 @@ namespace BL.UI
     public static class ControlUtilities
     {
 
-        public static ClientRect GetBodyBoundingRect(Element e)
-        {
-            ClientRect cr = null;
-
-            Script.Literal("{0}={1}.getBoundingClientRect(); var bcr=document.body.getBoundingClientRect();{0}.top-=bcr.top;", cr, e);
-
-            return cr;
-        }
-
         public static double GetPageX(ElementEvent e)
         {
             double pageX = 0;
 
-            Script.Literal("{0}={1}.pageX", pageX, e);
+            Script.Literal("if ({1}.touches != null) {{ {0}=e.touches[0].pageX; }} else {{ {0}={1}.pageX;}}", pageX, e);
 
             return pageX;
         }
@@ -33,7 +24,7 @@ namespace BL.UI
         {
             double pageY = 0;
 
-            Script.Literal("{0}={1}.pageY", pageY, e);
+            Script.Literal("if({1}.touches != null) {{ {0}=e.touches[0].pageY;}} else {{ {0}={1}.pageY;}}", pageY, e);
 
             return pageY;
         }
@@ -45,6 +36,16 @@ namespace BL.UI
             Script.Literal("{0}={1}.getBoundingClientRect()", cr, e);
 
             return cr;
+        }
+
+
+        public static double GetBoundingHeight(Element e)
+        {
+            double height = 0;
+
+            Script.Literal("var cr={0}.getBoundingClientRect();return cr.bottom-cr.top", e);
+
+            return height;
         }
 
         public static void DisableElementTouchMove(Element e)

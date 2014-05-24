@@ -13,6 +13,7 @@ namespace BL.UI
         private Element itemsContainerElement;
         private List<Control> itemControls;
         private Dictionary<String, Control> itemControlsById;
+        private bool wrapItems = false;
 
         public Element ItemsContainerElement
         {
@@ -57,6 +58,18 @@ namespace BL.UI
 
         public ItemsControl()
         {
+        }
+
+        public Element GetWrapper(int index)
+        {
+            if (this.Element != null)
+            {
+                if (this.Element.ChildNodes.Length > index)
+                {
+                    return this.Element.ChildNodes[index];
+                }
+            }
+            return null;
         }
 
         public Control GetById(String id)
@@ -167,6 +180,7 @@ namespace BL.UI
                     tagName = "DIV";
                 }
 
+
                  elt = Document.CreateElement(tagName);
                  isNew = true;
             }
@@ -176,15 +190,37 @@ namespace BL.UI
                 elt = c.Element;
             }
 
+            Element eltWrapper = null;
+
+            if (this.wrapItems)
+            {
+                eltWrapper = Document.CreateElement("itemWrapper");
+                eltWrapper.AppendChild(elt);
+            }
+
             if (elt.ParentNode != e)
             {
                 if (index < 0 || index >= e.Children.Length)
                 {
-                    e.AppendChild(elt);
+                    if (eltWrapper != null)
+                    {
+                        e.AppendChild(eltWrapper);
+                    }
+                    else
+                    {
+                        e.AppendChild(elt);
+                    }
                 }
                 else
                 {
-                    e.InsertBefore(elt, e.Children[index]);
+                    if (eltWrapper != null)
+                    {
+                        e.InsertBefore(eltWrapper, e.Children[index]);
+                    }
+                    else
+                    {
+                        e.InsertBefore(elt, e.Children[index]);
+                    }
                 }
             }
 

@@ -51,10 +51,13 @@ namespace BL.UI
         private Date animationStart;
         private int animationLength;
 
-        private double startLeft;
-        private double startTop;
-        private double endLeft;
-        private double endTop;
+        private double originLeft;
+        private double originTop;
+
+        private double animationStartLeft;
+        private double animationStartTop;
+        private double animationEndLeft;
+        private double animationEndTop;
 
         private double initialMouseDownLeft;
         private double initialMouseDownTop;
@@ -74,17 +77,18 @@ namespace BL.UI
         private static bool isAnimatingAtLeastOne = false;
 
         public event EventHandler AnimationComplete;
-        public event PointElementEventHandler DragComplete;
-        public event PointElementEventHandler DragStart;
-        public event PointElementEventHandler DragMoved;
+        public event PointAndStartElementEventHandler DragComplete;
+        public event PointAndStartElementEventHandler DragStart;
+        public event PointAndStartElementEventHandler DragMoved;
 
 
         private ElementEventListener draggingElementMouseMoveHandler = null;
         private ElementEventListener draggingElementMouseUpHandler = null;
+        private ElementEventListener draggingElementMouseOutHandler = null;
 
         private ElementAnimationEndBehavior endBehavior = ElementAnimationEndBehavior.ResetToPosition;
 
-        private ElementBehavior behavior;
+        private ElementBehavior behavior = ElementBehavior.None;
 
         public ElementBehavior Behavior
         {
@@ -103,6 +107,32 @@ namespace BL.UI
                 this.behavior = value;
 
                 this.ApplyBehavior();
+            }
+        }
+
+        public double OriginLeft
+        {
+            get
+            {
+                return this.originLeft;
+            }
+
+            set
+            {
+                this.originLeft = value;
+            }
+        }
+
+        public double OriginTop
+        {
+            get
+            {
+                return this.originTop;
+            }
+
+            set
+            {
+                this.originTop = value;
             }
         }
 
@@ -152,6 +182,19 @@ namespace BL.UI
             }
         }
 
+        public double EffectiveWidth
+        {
+            get
+            {
+                if (this.overrideWidth != null)
+                {
+                    return (double)this.overrideWidth;
+                }
+
+                return this.width;
+            }
+        }
+
         public double? OverrideWidth
         {
             get
@@ -178,17 +221,49 @@ namespace BL.UI
             }
         }
 
-        public ElementEffects(Element element)
+        public Element Element
+        {
+            get
+            {
+                return this.element;
+            }
+
+            set
+            {
+                this.element = value;
+
+                this.ApplyBehavior();
+            }
+        }
+
+        public ElementEffects()
         {
             this.element = element;
         }
 
         public void ApplyBehavior()
         {
+            if (this.element == null)
+            {
+                return;
+            }
             if (this.behavior == ElementBehavior.DragHorizontal || this.behavior == ElementBehavior.DragVertical || this.behavior == ElementBehavior.Drag2D)
             {
-                this.element.AddEventListener("mousedown", this.HandleElementMouseDown, true);
-                this.element.AddEventListener("mouseup", this.HandleElementMouseUp, true);
+                this.element.SetAttribute("unselectable", "on");
+                Script.Literal("{0}.userSelect=\"none\"", this.element.Style);
+
+
+                if (Context.Current.IsTouchOnly)
+                {
+                    this.element.AddEventListener("touchstart", this.HandleElementMouseDown, true);
+                    this.element.AddEventListener("touchend", this.HandleElementMouseUp, true);
+                }
+                else
+                {
+                    this.element.AddEventListener("mousedown", this.HandleElementMouseDown, true);
+                    this.element.AddEventListener("mouseup", this.HandleElementMouseUp, true);
+                    this.element.AddEventListener("dragstart", this.HandleDragStartEvent, true);
+                }
             }
         }
 
@@ -199,6 +274,11 @@ namespace BL.UI
             this.initialMouseDownLeft = ControlUtilities.GetPageX(e);
             this.initialMouseDownTop = ControlUtilities.GetPageY(e);
 
+
+            Script.Literal(@"
+ if (window.getSelection().empty) { window.getSelection().empty(); }
+");
+
             Window.SetTimeout(this.ConsiderStartDragging, 200);
         }
 
@@ -207,6 +287,14 @@ namespace BL.UI
             this.isMouseDown = false;
 
             this.HandleDragMouseUpBehavior();
+        }
+
+        private void HandleDragStartEvent(ElementEvent e)
+        {
+            e.CancelBubble = true;
+
+            e.PreventDefault();
+            e.StopPropagation();
         }
 
         private void HandleElementDragging(ElementEvent e)
@@ -220,17 +308,34 @@ namespace BL.UI
             {
                 this.Top = this.dragStartElementTop + (ControlUtilities.GetPageY(e) - this.initialMouseDownTop);
             }
+/*
+            Script.Literal(@"
+ if (window.getSelection().empty) { window.getSelection().empty(); }
+");
+*/
 
             if (this.DragMoved != null)
             {
-                PointElementEventArgs ee = new PointElementEventArgs(this.Left, this.Top, this.element);
+                PointAndStartElementEventArgs ee = new PointAndStartElementEventArgs(this.animationStartLeft, this.animationStartTop, this.Left, this.Top, this.element);
 
                 this.DragMoved(this, ee);
             }
 
+            e.PreventDefault();
+            e.CancelBubble = true;
+ //           e.StopImmediatePropagation();
+    //        e.StopPropagation();
+        }
+        private void HandleDragMouseOut(ElementEvent e)
+        {
+            // has the mouse left the window?
+            if (e.ToElement == null || e.ToElement.NodeName == "HTML")
+            {
+                this.HandleDragMouseUpBehavior();
+            }
+
             e.CancelBubble = true;
         }
-
 
         private void HandleDragMouseUp(ElementEvent e)
         {
@@ -240,35 +345,53 @@ namespace BL.UI
 
         private void HandleDragMouseUpBehavior()
         {
+            if (!this.isDragging)
+            {
+                return;
+            }
+
             this.isDragging = false;
+
+
+            Script.Literal(@"
+  document.onselectstart = null;
+  document.onmousedown = null");
 
 
             if (this.DragComplete != null)
             {
-                PointElementEventArgs ee = new PointElementEventArgs(this.Left, this.Top, this.element);
+                PointAndStartElementEventArgs ee = new PointAndStartElementEventArgs(this.animationStartLeft, this.animationStartTop, this.Left, this.Top, this.element);
 
                 this.DragComplete(this, ee);
             }
 
             Document.Body.RemoveEventListener("mousemove", this.draggingElementMouseMoveHandler, true);
             Document.Body.RemoveEventListener("mouseup", this.draggingElementMouseUpHandler, true);
+            Document.Body.RemoveEventListener("mouseout", this.draggingElementMouseOutHandler, true);
         }
 
         private void ConsiderStartDragging()
         {
-            if (!this.isMouseDown)
+            if (!this.isMouseDown || this.behavior == ElementBehavior.None)
             {
                 return;
             }
 
             this.StartMove();
-
+            
             this.dragStartElementLeft = this.Left;
             this.dragStartElementTop = this.Top;
 
+            Script.Literal(@"
+ if (window.getSelection().empty) { window.getSelection().empty(); }
+
+  document.onselectstart = function() {return false;}
+  document.onmousedown = function() {return false;}");
+
+
             if (this.DragStart != null)
             {
-                PointElementEventArgs ee = new PointElementEventArgs(this.Left, this.Top, this.element);
+                PointAndStartElementEventArgs ee = new PointAndStartElementEventArgs(this.animationStartLeft, this.animationStartTop, this.Left, this.Top, this.element);
 
                 this.DragStart(this, ee);
             }
@@ -277,13 +400,28 @@ namespace BL.UI
 
             this.draggingElementMouseMoveHandler = this.HandleElementDragging;
             this.draggingElementMouseUpHandler = this.HandleDragMouseUp;
+            this.draggingElementMouseOutHandler = this.HandleDragMouseOut;
 
-            Document.Body.AddEventListener("mousemove", this.draggingElementMouseMoveHandler, true);
-            Document.Body.AddEventListener("mouseup", this.draggingElementMouseUpHandler, true);
+            if (Context.Current.IsTouchOnly)
+            {
+                Document.Body.AddEventListener("touchmove", this.draggingElementMouseMoveHandler, true);
+                Document.Body.AddEventListener("touchend", this.draggingElementMouseUpHandler, true);
+            }
+            else
+            {
+                Document.Body.AddEventListener("mousemove", this.draggingElementMouseMoveHandler, true);
+                Document.Body.AddEventListener("mouseup", this.draggingElementMouseUpHandler, true);
+                Document.Body.AddEventListener("mouseout", this.HandleDragMouseOut, true);
+            }
         }
 
         public void StartMove()
         {
+            if (this.isMoving)
+            {
+                return;
+            }
+
             this.isMoving = true;
             Style elementStyle = this.element.Style;
 
@@ -293,7 +431,7 @@ namespace BL.UI
             this.originalWidth = elementStyle.Width;
             this.originalPosition = elementStyle.Position;
 
-            ClientRect rect = ControlUtilities.GetBodyBoundingRect(this.element);
+            ClientRect rect = ControlUtilities.GetBoundingRect(this.element);
 
             this.parentElement = this.element.ParentNode;
 
@@ -321,10 +459,10 @@ namespace BL.UI
 
             this.element.Style.Position = "absolute";
 
-            ClientRect parentRect = ControlUtilities.GetBodyBoundingRect(this.parentElement);
+            ClientRect parentRect = ControlUtilities.GetBoundingRect(this.parentElement);
 
-            this.left = parentRect.Left;
-            this.top = parentRect.Top;
+            this.left = parentRect.Left + Window.PageXOffset;
+            this.top = parentRect.Top + Window.PageYOffset;
 
             elementStyle.Left = left + "px";
             elementStyle.Top = top + "px";
@@ -353,6 +491,9 @@ namespace BL.UI
             elementStyle.ZIndex = 255;
 
             Document.Body.AppendChild(this.element);
+
+            this.originLeft = this.Left;
+            this.originTop = this.Top;
         }
 
         public void Animate(ElementAnimationType animationType, ElementAnimationEndBehavior endBehavior, int millisecondsLength)
@@ -360,45 +501,67 @@ namespace BL.UI
             this.endBehavior = endBehavior;
             isAnimating = true;
 
-            this.animationStart = Date.Now;
-            this.animationLength = millisecondsLength;
+            bool wasMoving = this.isMoving;
 
             this.StartMove();
+
+            if (wasMoving)
+            {
+                animationStartTop = this.Top;
+                animationStartLeft = this.Left;
+            }
 
             switch (animationType)
             {
                 case ElementAnimationType.LeftInToPos:
-                    startTop = this.Top;
-                    startLeft = -this.width;
+                    animationStartTop = this.Top;
+                    if (!wasMoving)
+                    {
+                        animationStartLeft = -this.EffectiveWidth;
+                    }
 
-                    endTop = this.Top;
-                    endLeft = this.Left;
+                    animationEndTop = this.OriginTop;
+                    animationEndLeft = this.OriginLeft;
                     break;
 
                 case ElementAnimationType.RightInToPos:
-                    startTop = this.Top;
-                    startLeft = Document.Body.OffsetWidth;
+                    if (!wasMoving)
+                    {
+                        animationStartTop = this.Top;
+                        animationStartLeft = Document.Body.OffsetWidth;
+                    }
 
-                    endTop = this.Top;
-                    endLeft = this.Left;
+                    animationEndTop = this.OriginTop;
+                    animationEndLeft = this.OriginLeft;
                     break;
 
                 case ElementAnimationType.PosOutToLeft:
-                    startTop = this.Top;
-                    startLeft = this.Left;
 
-                    endTop = this.Top;
-                    endLeft = -this.width;
+                    if (!wasMoving)
+                    {
+                        animationStartTop = this.Top;
+                        animationStartLeft = this.Left;
+                    }
+
+                    animationEndTop = this.OriginTop;
+                    animationEndLeft = -this.EffectiveWidth;
                     break;
 
                 case ElementAnimationType.PosOutToRight:
-                    startTop = this.Top;
-                    startLeft = this.Left;
+                    if (!wasMoving)
+                    {
+                        animationStartTop = this.Top;
+                        animationStartLeft = this.Left;
+                    }
 
-                    endTop = this.Top;
-                    endLeft = Document.Body.OffsetWidth;
+                    animationEndTop = this.OriginTop;
+                    animationEndLeft = Document.Body.OffsetWidth;
                     break;
             }
+
+
+            this.animationStart = Date.Now;
+            this.animationLength = millisecondsLength;
 
             AddToAnimationList(this);
         }
@@ -444,8 +607,8 @@ namespace BL.UI
             }
             else
             {
-                double newLeft = startLeft + ((endLeft - startLeft) * proportion);
-                double newTop = startTop + ((endTop - startTop) * proportion);
+                double newLeft = animationStartLeft + ((animationEndLeft - animationStartLeft) * proportion);
+                double newTop = animationStartTop + ((animationEndTop - animationStartTop) * proportion);
 
                 if (!this.isAnimating)
                 {

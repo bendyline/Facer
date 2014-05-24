@@ -84,6 +84,7 @@ namespace BL.UI
                 }
 
                 elt = Document.CreateElement(tagName);
+                isNew = true;
             }
             else
             {
@@ -91,7 +92,7 @@ namespace BL.UI
                 elt = c.Element;
             }
 
-            if (c.Element.ParentNode != e)
+            if (elt.ParentNode != e)
             {
                 if (index < 0 || index >= e.Children.Length)
                 {

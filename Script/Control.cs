@@ -57,6 +57,13 @@ namespace BL.UI
         private bool interactionEventsRegistered = false;
         private ElementEffects effects;
 
+
+        private ElementEventListener mouseOverHandler;
+        private ElementEventListener mouseOutHandler;
+        private ElementEventListener mouseMoveHandler;
+        private ElementEventListener mouseDownHandler;
+        private ElementEventListener clickHandler;
+
         protected bool DelayApplyTemplate
         {
             get
@@ -103,6 +110,8 @@ namespace BL.UI
                     this.templateWasApplied = false;
                     this.ApplyTemplate();
                 }
+
+                this.ApplyClass();
             }
         }
 
@@ -110,9 +119,10 @@ namespace BL.UI
         {
             get
             {
-                if (this.effects == null && this.element != null)
+                if (this.effects == null)
                 {
-                    this.effects = new ElementEffects(this.element);
+                    this.effects = new ElementEffects();
+                    this.effects.Element = this.element;
                 }
 
                 return this.effects;
@@ -421,6 +431,12 @@ namespace BL.UI
                 this.interactionEventsRegistered = false;
 
                 this.element = value;
+
+                if (this.effects != null)
+                {
+                    this.effects.Element = this.element;
+                }
+
                 this.jqueryObject = null;
                 this.HandleInteractionEventing();
 
@@ -506,10 +522,12 @@ namespace BL.UI
             {
                 if (this.interactionEventsRegistered)
                 {
-                    this.element.RemoveEventListener("click", this.HandleClick, true);
-                    this.element.RemoveEventListener("mouseover", this.HandleMouseOver, true);                    
-                    this.element.RemoveEventListener("mouseout", this.HandleMouseOut, true);
-                    this.element.RemoveEventListener("mousemove", this.HandleMouseMove, true);
+                    this.element.RemoveEventListener("click", this.clickHandler, true);
+                    this.element.RemoveEventListener("touchstart", this.clickHandler, true);
+                    this.element.RemoveEventListener("mouseover", this.mouseOverHandler, true);                    
+                    this.element.RemoveEventListener("mouseout", this.mouseOutHandler, true);
+                    this.element.RemoveEventListener("mousemove", this.mouseMoveHandler, true);
+
                     this.interactionEventsRegistered = false;
                 }
 
@@ -518,10 +536,21 @@ namespace BL.UI
 
             if (!interactionEventsRegistered && this.element != null)
             {
-                this.element.AddEventListener("click", this.HandleClick, true);
-                this.element.AddEventListener("mouseover", this.HandleMouseOver, true);
-                this.element.AddEventListener("mouseout", this.HandleMouseOut, true);
-                this.element.AddEventListener("mousemove", this.HandleMouseMove, true);
+                if (this.mouseOutHandler == null)
+                {
+                    this.mouseOverHandler = this.HandleMouseOver;
+                    this.mouseOutHandler = this.HandleMouseOut;
+                    this.mouseMoveHandler = this.HandleMouseMove;
+
+                    this.clickHandler = this.HandleClick;
+                }
+
+                this.element.AddEventListener("click", this.clickHandler , true);
+                this.element.AddEventListener("touchstart", this.clickHandler, true);
+                this.element.AddEventListener("mouseover", this.mouseOverHandler, true);
+                this.element.AddEventListener("mouseout", this.mouseOutHandler, true);
+                this.element.AddEventListener("mousemove", this.mouseMoveHandler, true);
+
                 this.interactionEventsRegistered = true;
             }
         }
@@ -532,15 +561,15 @@ namespace BL.UI
             {
                 if (this.className != null)
                 {
-                    this.Element.ClassName = this.TypeId + " " + this.className;
+                    this.Element.ClassName = this.TemplateId + " " + this.className;
                 }
                 else if (this.DefaultClass != null)
                 {
-                    this.Element.ClassName = this.TypeId + " " + this.DefaultClass;
+                    this.Element.ClassName = this.TemplateId + " " + this.DefaultClass;
                 }
                 else
                 {
-                    this.Element.ClassName = this.TypeId;
+                    this.Element.ClassName = this.TemplateId;
                 }
             }
         }
@@ -558,7 +587,7 @@ namespace BL.UI
                     summ += " ";
                 }
 
-                summ += this.TypeId + "-" + component;
+                summ += this.TemplateId + "-" + component;
             }
 
             return summ;
@@ -590,6 +619,11 @@ namespace BL.UI
         public void AttachToElement(Element e)
         {
             this.element = e;
+
+            if (this.effects != null)
+            {
+                this.effects.Element = e;
+            }
 
             this.LoadFromElement();
             this.HandleInteractionEventing();
@@ -697,6 +731,7 @@ namespace BL.UI
 
             if (t != null)
             {
+                this.templateId = t.Id;
                 this.template = t.Content;
                 this.ApplyTemplateContinue();
             }
@@ -819,6 +854,11 @@ namespace BL.UI
 
                 this.element = Document.CreateElement(tagName);
 
+                if (this.effects != null)
+                {
+                    this.effects.Element = this.element;
+                }
+
                 this.jqueryObject = null;
 
                 this.HandleInteractionEventing();
@@ -889,6 +929,39 @@ namespace BL.UI
             this.ApplyVisible();
         }
 
+        private String GetControlShortId(String id)
+        {
+            int lastEqual = id.LastIndexOf("-");
+
+            if (lastEqual > 0)
+            {
+                return id.Substring(lastEqual + 1, id.Length);
+            }
+
+            return id;
+        }
+
+        public Control GetTemplateControlById(String id)
+        {
+            foreach (Control c in this.templateControls)
+            {
+                if (this.GetControlShortId(c.Id) == id)
+                {
+                    return c;
+                }
+            }
+
+            foreach (Control c in this.templateDescendentControls)
+            {
+                if (this.GetControlShortId(c.Id) == id)
+                {
+                    return c;
+                }
+            }
+
+            return null;
+        }
+
         private void ApplyVisible()
         {
             Element thisElement = this.Element;
@@ -907,7 +980,7 @@ namespace BL.UI
                         thisElement.Style.Display = "";
                     }
 
-                   // this.DoResize();
+                    this.OnVisibilityChanged();
                 }
                 else
                 {
@@ -923,8 +996,15 @@ namespace BL.UI
                     }
 
                     thisElement.Style.Display = "none";
+
+                    this.OnVisibilityChanged();
                 }
             }
+        }
+
+        protected virtual void OnVisibilityChanged()
+        {
+
         }
 
         public virtual void Dispose()
@@ -1015,7 +1095,7 @@ namespace BL.UI
         {
             Element e = Document.CreateElement("DIV");
 
-            e.ClassName = this.TypeId + "-" + elementClass;
+            e.ClassName = this.GetElementClass(elementClass);
 
             return e;
         }
@@ -1025,7 +1105,7 @@ namespace BL.UI
         {
             Element e = Document.CreateElement("DIV");
 
-            e.ClassName = this.TypeId + "-" + elementName;
+            e.ClassName = this.GetElementClass(elementName);
 
             return e;
         }

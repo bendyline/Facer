@@ -16,5 +16,9 @@ namespace Kendo.UI
         public EditorOptions Options;
         public Element Body;
 
+        public String Value(params string[] newValue)
+        {
+            return null;
+        }
     }
 }
