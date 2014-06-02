@@ -155,7 +155,11 @@ namespace Bendyline.UI.TemplateCompiler
 
         public String ParseCss(Template t)
         {
-            String css = t.Css;
+            return ParseCss(t.Css, t.Id);
+        }
+
+        public String ParseCss(String css, String id)
+        {
             StringBuilder result = new StringBuilder();
 
             int nextLeft = css.IndexOf("{");
@@ -164,9 +168,27 @@ namespace Bendyline.UI.TemplateCompiler
 
             while (nextLeft >= 0)
             {
-                nextRight = css.IndexOf("}", nextLeft);
+                int interiorGroups = 0;
+                nextRight = nextLeft + 1;
 
-                if (nextRight > nextLeft)
+                nextRight = css.IndexOf("}", nextRight);
+                int interiorLeft = css.IndexOf("{", nextLeft + 1);
+
+                while ((interiorLeft >= 0 && interiorLeft < nextRight) || interiorGroups > 0)
+                {
+                    if (interiorLeft >= 0 && interiorLeft < nextRight)
+                    {
+                        interiorGroups++;
+                        interiorLeft = css.IndexOf("{", interiorLeft + 1);
+                    }
+                    else
+                    {
+                        nextRight = css.IndexOf("}", nextRight + 1);
+                        interiorGroups--;
+                    }
+                }
+
+                if (nextRight > 0)
                 {
                     String content = css.Substring(lastStart, nextLeft - lastStart);
 
@@ -178,14 +200,14 @@ namespace Bendyline.UI.TemplateCompiler
 
                         if (tagStart.StartsWith("body"))
                         {
-                            content = String.Format(" .{0}{1}", t.Id.Replace(".", "-"), tagStart.Substring(4));
+                            content = String.Format(" .{0}{1}", id.Replace(".", "-"), tagStart.Substring(4));
                         }
                     }
                     else
                     {
                         while (nextHash >= 0)
                         {
-                            content = String.Format("{0}.{1}-{2}", content.Substring(0, nextHash), t.Id.Replace(".", "-"), content.Substring(nextHash + 1, content.Length - (nextHash + 1)));
+                            content = String.Format("{0}.{1}-{2}", content.Substring(0, nextHash), id.Replace(".", "-"), content.Substring(nextHash + 1, content.Length - (nextHash + 1)));
                             nextHash = content.IndexOf("#", nextHash + 1);
                         }
                     }
@@ -193,8 +215,9 @@ namespace Bendyline.UI.TemplateCompiler
                     result.Append(content.Trim());
 
                     nextRight++;
-
-                    String interior = css.Substring(nextLeft, nextRight - nextLeft);
+                    
+                    // recursively process the interior of a CSS elemnet (e.g., a @media query)
+                    String interior = "{" + ParseCss(css.Substring(nextLeft + 1, (nextRight - nextLeft) - 2), id) + "}";
                     result.Append(interior);
                     lastStart = nextRight;
                     nextLeft = css.IndexOf("{", nextRight);
@@ -204,6 +227,8 @@ namespace Bendyline.UI.TemplateCompiler
                     nextLeft = -1;
                 }
             }
+
+            result.Append(css.Substring(lastStart, css.Length - lastStart).Trim());
 
             return result.ToString();
         }

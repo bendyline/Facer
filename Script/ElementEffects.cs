@@ -77,6 +77,11 @@ namespace BL.UI
         private static bool isAnimatingAtLeastOne = false;
 
         public event EventHandler AnimationComplete;
+
+        private ClientRect originalClientRect;
+        private ClientRect originalParentRect;
+
+        public event PointAndStartElementEventHandler DragPreStart;
         public event PointAndStartElementEventHandler DragComplete;
         public event PointAndStartElementEventHandler DragStart;
         public event PointAndStartElementEventHandler DragMoved;
@@ -89,7 +94,29 @@ namespace BL.UI
         private ElementAnimationEndBehavior endBehavior = ElementAnimationEndBehavior.ResetToPosition;
 
         private ElementBehavior behavior = ElementBehavior.None;
+        private bool updatePositionRequested = false;
 
+        private Control control;
+
+        private Action updateElementPositionAction;
+        private Action startMoveAction;
+        private Action endMoveAction;
+        private ElementEvent dragStartEvent;
+
+        public Control Control 
+        {
+            get
+            {
+                return this.control;
+            }
+
+            set
+
+            {
+                this.control = value;
+            }
+
+        }
         public ElementBehavior Behavior
         {
             get
@@ -145,9 +172,18 @@ namespace BL.UI
 
             set
             {
+                if (this.left == value)
+                {
+                    return;
+                }
+
                 this.left = value;
 
-                this.element.Style.Left= this.left + "px";
+                if (!this.updatePositionRequested)
+                {
+                    this.updatePositionRequested = true;
+                    Script.Literal("if (window.requestAnimationFrame) {{window.requestAnimationFrame({0});}}else{{window.setTimeout({0}, 20);}}", this.updateElementPositionAction);
+                }
             }
         }
 
@@ -160,9 +196,19 @@ namespace BL.UI
 
             set
             {
+                if (this.top == value)
+                {
+                    return;
+                }
+
                 this.top = value;
 
-                this.element.Style.Top = this.top + "px";
+                if (!this.updatePositionRequested)
+                {
+                    this.updatePositionRequested = true;
+                    Script.Literal("if (window.requestAnimationFrame) {{window.requestAnimationFrame({0});}}else{{window.setTimeout({0}, 20);}}",this.updateElementPositionAction);
+                }
+
             }
         }
 
@@ -239,6 +285,15 @@ namespace BL.UI
         public ElementEffects()
         {
             this.element = element;
+            this.updateElementPositionAction = new Action(this.UpdateElementPosition);
+            this.startMoveAction = new Action(this.StartMoveContinue);
+            this.endMoveAction = new Action(this.EndMoveContinue);
+        }
+
+        public void SetLeftImmediate(double left)
+        {
+            this.left = left;
+            this.UpdateElementPosition();
         }
 
         public void ApplyBehavior()
@@ -279,7 +334,16 @@ namespace BL.UI
  if (window.getSelection().empty) { window.getSelection().empty(); }
 ");
 
+            this.dragStartEvent = e;
+
             Window.SetTimeout(this.ConsiderStartDragging, 200);
+        
+            if (this.DragPreStart != null)
+            {
+                PointAndStartElementEventArgs psea = new PointAndStartElementEventArgs(this.initialMouseDownLeft, this.initialMouseDownTop, 0, 0, this.Element);
+
+                this.DragPreStart(this, psea);
+            }
         }
 
         private void HandleElementMouseUp(ElementEvent e)
@@ -308,11 +372,6 @@ namespace BL.UI
             {
                 this.Top = this.dragStartElementTop + (ControlUtilities.GetPageY(e) - this.initialMouseDownTop);
             }
-/*
-            Script.Literal(@"
- if (window.getSelection().empty) { window.getSelection().empty(); }
-");
-*/
 
             if (this.DragMoved != null)
             {
@@ -323,9 +382,16 @@ namespace BL.UI
 
             e.PreventDefault();
             e.CancelBubble = true;
- //           e.StopImmediatePropagation();
-    //        e.StopPropagation();
         }
+
+        private void UpdateElementPosition()
+        {
+            this.element.Style.Left = this.left + "px";
+            this.element.Style.Top = this.top + "px";
+
+            this.updatePositionRequested = false;
+        }
+
         private void HandleDragMouseOut(ElementEvent e)
         {
             // has the mouse left the window?
@@ -376,8 +442,6 @@ namespace BL.UI
             {
                 return;
             }
-
-            this.StartMove();
             
             this.dragStartElementLeft = this.Left;
             this.dragStartElementTop = this.Top;
@@ -388,6 +452,7 @@ namespace BL.UI
   document.onselectstart = function() {return false;}
   document.onmousedown = function() {return false;}");
 
+            this.StartMove();
 
             if (this.DragStart != null)
             {
@@ -395,6 +460,8 @@ namespace BL.UI
 
                 this.DragStart(this, ee);
             }
+
+            this.HandleElementDragging(this.dragStartEvent);
 
             this.isDragging = true;
 
@@ -431,19 +498,21 @@ namespace BL.UI
             this.originalWidth = elementStyle.Width;
             this.originalPosition = elementStyle.Position;
 
-            ClientRect rect = ControlUtilities.GetBoundingRect(this.element);
+            this.originalClientRect = ControlUtilities.GetBoundingRect(this.element);
 
             this.parentElement = this.element.ParentNode;
+
+            this.originalParentRect = ControlUtilities.GetBoundingRect(this.parentElement);
 
             this.beforeInParentElement = null;
 
             int childNodeCount = this.parentElement.ChildNodes.Length;
 
-            for (int i = 0; i < childNodeCount; i++ )
+            for (int i = 0; i < childNodeCount; i++)
             {
                 Element e = this.parentElement.ChildNodes[i];
 
-                if (e == this.element && i < childNodeCount-1)
+                if (e == this.element && i < childNodeCount - 1)
                 {
                     this.beforeInParentElement = this.parentElement.ChildNodes[i + 1];
                 }
@@ -451,13 +520,26 @@ namespace BL.UI
 
             this.placeHolderElement = Document.CreateElement("DIV");
             this.placeHolderElement.InnerHTML = "&#160;";
-            this.placeHolderElement.Style.Width = (rect.Right - rect.Left) + "px";
-            this.placeHolderElement.Style.Height = ((rect.Bottom - rect.Top) + 4) + "px";
+            this.placeHolderElement.Style.Width = (originalClientRect.Right - originalClientRect.Left) + "px";
+            this.placeHolderElement.Style.Height = ((originalClientRect.Bottom - originalClientRect.Top) + 4) + "px";
+
+            ClientRect parentRect = ControlUtilities.GetBoundingRect(this.parentElement);
+
+            
+            this.originLeft = parentRect.Left + Window.PageXOffset;
+            this.originTop = parentRect.Top + Window.PageYOffset;
+
+            this.StartMoveContinue();
+         //   Script.Literal("if (window.requestAnimationFrame) {{window.requestAnimationFrame({0});}}else{{window.setTimeout({0}, 1);}}", this.startMoveAction);
+        }
+
+        public void StartMoveContinue()
+        {
+       //     ClientRect originalClientRect = ControlUtilities.GetBoundingRect(this.element);
+            Style elementStyle = this.element.Style;
 
             this.parentElement.RemoveChild(this.element);
             this.parentElement.InsertBefore(this.placeHolderElement, beforeInParentElement);
-
-            this.element.Style.Position = "absolute";
 
             ClientRect parentRect = ControlUtilities.GetBoundingRect(this.parentElement);
 
@@ -467,10 +549,12 @@ namespace BL.UI
             elementStyle.Left = left + "px";
             elementStyle.Top = top + "px";
 
-            this.width = (rect.Right - rect.Left);
-            this.height = (rect.Bottom - rect.Top);
+            elementStyle.Position = "absolute";
 
-            if (this.overrideWidth != null)
+            this.width = (originalClientRect.Right - originalClientRect.Left);
+            this.height = (originalClientRect.Bottom - originalClientRect.Top);
+
+            if (this.overrideWidth != null && this.overrideWidth > 0)
             {
                 elementStyle.Width = ((double)this.overrideWidth) + "px";
             }
@@ -479,7 +563,7 @@ namespace BL.UI
                 elementStyle.Width = width + "px";
             }
 
-            if (this.overrideHeight != null)
+            if (this.overrideHeight != null && this.overrideHeight > 0)
             {
                 elementStyle.Height = ((double)this.overrideHeight) + "px";
             }
@@ -491,9 +575,6 @@ namespace BL.UI
             elementStyle.ZIndex = 255;
 
             Document.Body.AppendChild(this.element);
-
-            this.originLeft = this.Left;
-            this.originTop = this.Top;
         }
 
         public void Animate(ElementAnimationType animationType, ElementAnimationEndBehavior endBehavior, int millisecondsLength)
@@ -514,7 +595,7 @@ namespace BL.UI
             switch (animationType)
             {
                 case ElementAnimationType.LeftInToPos:
-                    animationStartTop = this.Top;
+                    animationStartTop = this.OriginTop;
                     if (!wasMoving)
                     {
                         animationStartLeft = -this.EffectiveWidth;
@@ -527,7 +608,7 @@ namespace BL.UI
                 case ElementAnimationType.RightInToPos:
                     if (!wasMoving)
                     {
-                        animationStartTop = this.Top;
+                        animationStartTop = this.OriginTop;
                         animationStartLeft = Document.Body.OffsetWidth;
                     }
 
@@ -539,8 +620,8 @@ namespace BL.UI
 
                     if (!wasMoving)
                     {
-                        animationStartTop = this.Top;
-                        animationStartLeft = this.Left;
+                        animationStartTop = this.OriginTop;
+                        animationStartLeft = this.OriginLeft;
                     }
 
                     animationEndTop = this.OriginTop;
@@ -550,8 +631,8 @@ namespace BL.UI
                 case ElementAnimationType.PosOutToRight:
                     if (!wasMoving)
                     {
-                        animationStartTop = this.Top;
-                        animationStartLeft = this.Left;
+                        animationStartTop = this.OriginTop;
+                        animationStartLeft = this.OriginLeft;
                     }
 
                     animationEndTop = this.OriginTop;
@@ -578,7 +659,15 @@ namespace BL.UI
             }
             else if (this.endBehavior == ElementAnimationEndBehavior.HideAndResetToPosition)
             {
-                this.element.Style.Display = "none";
+                if (this.Control != null)
+                {
+                    this.Control.Visible = false;
+                }
+                else
+                {
+                    this.element.Style.Display = "none";
+                }
+
                 this.EndMove();
             }
 
@@ -692,10 +781,23 @@ namespace BL.UI
            elementStyle.Height = this.originalHeight;
            elementStyle.Position = this.originalPosition;
 
-           Document.Body.RemoveChild(this.element);
+           this.overrideWidth = null;
+           this.overrideHeight = null;
 
-           this.parentElement.InsertBefore(this.element, this.placeHolderElement);
-           this.parentElement.RemoveChild(this.placeHolderElement);
+           this.left = 0;
+           this.top = 0;
+
+         
+
+            Script.Literal("if (window.requestAnimationFrame) {{window.requestAnimationFrame({0});}}else{{window.setTimeout({0}, 1);}}", this.endMoveAction);
+        }
+
+        public void EndMoveContinue()
+        {
+            Document.Body.RemoveChild(this.element);
+
+            this.parentElement.InsertBefore(this.element, this.placeHolderElement);
+            this.parentElement.RemoveChild(this.placeHolderElement);
         }
     }
 }

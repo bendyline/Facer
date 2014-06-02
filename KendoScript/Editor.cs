@@ -68,7 +68,8 @@ namespace BL.UI.KendoControls
 
         protected override void OnEnsureElements()
         {
-            this.Element.Style.Height = "140px";
+            this.Element.Style.Height = "80px";
+            this.Element.Style.Width = "100%";
 
             // note we are try catching to work around an exception issue in IE
             Script.Literal("var j={0};j.kendoEditor({2});{1}=j.data('kendoEditor')", this.J, this.editor, this.editorOptions);
@@ -77,6 +78,11 @@ namespace BL.UI.KendoControls
             {
                 this.editor.Bind("change", this.HandleDateChange);
             }
+        }
+
+        public void Blur()
+        {
+            this.Element.Blur();
         }
 
         private void HandleDateChange(object e)

@@ -10,12 +10,15 @@ namespace BL.UI
 {
     public class ScrollAnimator
     {
-        private double fromY;
-        private double toY;
+        private double? fromY;
+        private double? toY;
+        private double? fromX;
+        private double? toX;
+
         private Date start;
         private double length;
 
-        public double FromY
+        public double? FromY
         {
             get
             {
@@ -28,7 +31,7 @@ namespace BL.UI
             }
         }
 
-        public double ToY
+        public double? ToY
         {
             get
             {
@@ -38,6 +41,32 @@ namespace BL.UI
             set
             {
                 this.toY = value;
+            }
+        }
+
+        public double? FromX
+        {
+            get
+            {
+                return this.fromX;
+            }
+
+            set
+            {
+                this.fromX = value;
+            }
+        }
+
+        public double? ToX
+        {
+            get
+            {
+                return this.toX;
+            }
+
+            set
+            {
+                this.toX = value;
             }
         }
 
@@ -59,13 +88,19 @@ namespace BL.UI
 
             if (proportion < 1)
             {
-                Window.Scroll(Window.PageXOffset, (int)  (this.fromY + ((this.toY - this.fromY) * proportion)));
+                if (this.fromY != null && this.toY != null)
+                {
+                    Window.Scroll(Window.PageXOffset, (int)(this.fromY + ((this.toY - this.fromY) * proportion)));
+                }
 
                 Window.SetTimeout(this.AnimateTick, 10);
             }
             else
             {
-                Window.Scroll(Window.PageXOffset, (int)this.toY);
+                if (this.toY != null)
+                {
+                    Window.Scroll(Window.PageXOffset, (int)this.toY);
+                }
             }
         }
     }

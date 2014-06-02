@@ -34,14 +34,6 @@ namespace BL.UI.KendoControls
             }
         }
 
-        public override string TagName
-        {
-            get
-            {
-                return "INPUT";
-            }
-        }
-
         [ScriptName("o_value")]
         public object Value
         {
@@ -79,6 +71,44 @@ namespace BL.UI.KendoControls
             set
             {
                 this.dropDownListOptions.DataValueField = value;
+            }
+        }
+
+        public String HeaderTemplate
+        {
+            get
+            {
+                return this.dropDownListOptions.HeaderTemplate;
+            }
+
+            set
+            {
+                this.dropDownListOptions.HeaderTemplate = value;
+            }
+        }
+
+        public String Template
+        {
+            get
+            {
+                return this.dropDownListOptions.Template;
+            }
+
+            set
+            {
+                this.dropDownListOptions.Template = value;
+            }
+        }
+        public String ValueTemplate
+        {
+            get
+            {
+                return this.dropDownListOptions.ValueTemplate;
+            }
+
+            set
+            {
+                this.dropDownListOptions.ValueTemplate = value;
             }
         }
 

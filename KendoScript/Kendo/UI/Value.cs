@@ -12,6 +12,5 @@ namespace Kendo.UI
     {
         public String Text;
         public object Value;
-
     }
 }

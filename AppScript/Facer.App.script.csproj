@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="Browser.cs" />
     <Compile Include="ExpanderPanel.cs" />
+    <Compile Include="SliderSwipePanel.cs" />
     <Compile Include="TemplateImageArea.cs" />
     <Compile Include="SwipePanel.cs" />
     <Compile Include="ToolBar.cs" />
@@ -58,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Browser.htm" />
+    <Content Include="SliderSwipePanel.htm" />
     <Content Include="SwipePanel.htm" />
     <Content Include="ToolBar.htm" />
     <Content Include="TemplateImageButton.htm" />

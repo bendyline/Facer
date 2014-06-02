@@ -58,6 +58,7 @@
     <CodeAnalysisRuleSet>Properties\FxCop.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Dialog.cs" />
     <Compile Include="ControlIntegerEvent.cs" />
     <Compile Include="PointAndStartElementEvent.cs" />
     <Compile Include="ScrollAnimator.cs" />
@@ -110,6 +111,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Dialog.htm" />
     <Content Include="DebugPanel.htm" />
     <Content Include="ListItem.htm" />
     <Content Include="List.htm" />

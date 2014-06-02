@@ -61,6 +61,8 @@
     <None Include="packages.config" />
     <None Include="Properties\FxCop.ruleset" />
     <None Include="Properties\Script.template" />
+    <Compile Include="TextImageValue.cs" />
+    <Compile Include="TextValue.cs" />
     <Compile Include="Chart.cs" />
     <Compile Include="ChartDataPoint.cs" />
     <Compile Include="Editor.cs" />

@@ -23,6 +23,9 @@ namespace Kendo.UI
         public double Index;
         public String OptionLabel;
         public String Template;
+        public String HeaderTemplate;
+        public String ValueTemplate;
+
         public String Text;
         public String Value;
 

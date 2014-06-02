@@ -55,8 +55,11 @@ namespace BL.UI
         private bool templateWasApplied = false;
         private bool trackInteractionEvents = false;
         private bool interactionEventsRegistered = false;
+        private bool fireUpdateOnTemplateComplete = false;
         private ElementEffects effects;
 
+
+        private Action applyVisibleOnFrameAction;
 
         private ElementEventListener mouseOverHandler;
         private ElementEventListener mouseOutHandler;
@@ -101,13 +104,19 @@ namespace BL.UI
             }
 
             set
-            {
+            { 
+                if (this.templateId == value)
+                {
+                    return;
+                }
+
                 this.templateId = value;
 
                 if (this.templateWasApplied)
                 {
                     this.template = null;
                     this.templateWasApplied = false;
+                    this.fireUpdateOnTemplateComplete = true;
                     this.ApplyTemplate();
                 }
 
@@ -123,6 +132,7 @@ namespace BL.UI
                 {
                     this.effects = new ElementEffects();
                     this.effects.Element = this.element;
+                    this.effects.Control = this;
                 }
 
                 return this.effects;
@@ -179,10 +189,12 @@ namespace BL.UI
 
                 Element thisElement = this.Element;
 
-                if (thisElement != null)
+                if (thisElement != null && this.height != null)
                 {
-                    thisElement.Style.PosHeight = (int)this.height;
+                    thisElement.Style.Height = ((int)this.height).ToString() + "px";
                 }
+
+                this.OnDimensionChanged();
             }
         }
 
@@ -266,9 +278,12 @@ namespace BL.UI
 
                 this.visible = value;
 
-                if (!this.ElementsEnsured && this.visible == true && this.ensureElementsRequested)
+                if (this.visible)
                 {
-                    this.EnsureElements();
+                    if (!this.ElementsEnsured && this.ensureElementsRequested)
+                    {
+                        this.EnsureElementsForce(false);
+                    } 
                 }
 
                 this.ApplyVisible();
@@ -473,8 +488,21 @@ namespace BL.UI
 
         public Control() : base()
         {
+            this.applyVisibleOnFrameAction = new Action(this.ApplyVisibleOnAnimationFrame);
         }
 
+        public void EnsurePrepared()
+        {
+            if (!this.ElementsEnsured && this.ensureElementsRequested)
+            {
+                this.EnsureElementsForce(true);
+           } 
+        }
+
+        protected virtual void OnDimensionChanged()
+        {
+
+        }
 
         private void HandleClick(ElementEvent e)
         {
@@ -830,6 +858,13 @@ namespace BL.UI
             this.OnApplyTemplate();
 
             this.OnBaseControlsElementsPostInit();
+
+            if (this.fireUpdateOnTemplateComplete)
+            {
+                this.fireUpdateOnTemplateComplete = false;
+
+                this.OnUpdate();
+            }
         }
 
         private Element GetElementFromPath(Element element, List<int> path)
@@ -843,6 +878,11 @@ namespace BL.UI
         }
 
         public void EnsureElements()
+        {
+            this.EnsureElementsForce(false);
+        }
+
+        private void EnsureElementsForce(bool force)
         {
             Element thisElement = this.Element;
 
@@ -869,9 +909,14 @@ namespace BL.UI
                 this.EnsureId();
 
                 thisElement = this.Element;
+
+                if (!this.Visible)
+                {
+                    thisElement.Style.Display = "none";
+                }
             }
 
-            if (this.Visible && !this.delayApplyTemplate)
+            if (force || (this.Visible && !this.delayApplyTemplate))
             {
                 this.ApplyTemplate();
 
@@ -962,7 +1007,13 @@ namespace BL.UI
             return null;
         }
 
+
         private void ApplyVisible()
+        {
+            Script.Literal("if (window.requestAnimationFrame) {{window.requestAnimationFrame({0});}}else{{window.setTimeout({0}, 1);}}", this.applyVisibleOnFrameAction);
+        }
+
+        private void ApplyVisibleOnAnimationFrame()
         {
             Element thisElement = this.Element;
 

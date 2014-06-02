@@ -56,6 +56,19 @@ namespace BL.UI
             }
         }
 
+        protected bool WrapItems
+        {
+            get
+            {
+                return this.wrapItems;
+            }
+
+            set
+            {
+                this.wrapItems = value;
+            }
+        }
+
         public ItemsControl()
         {
         }
@@ -169,6 +182,8 @@ namespace BL.UI
             }
 
             Element elt = null;
+            Element eltWrapper = null;
+
             bool isNew = false;
 
             if (c.Element == null)
@@ -180,23 +195,26 @@ namespace BL.UI
                     tagName = "DIV";
                 }
 
-
                  elt = Document.CreateElement(tagName);
+
+                 if (this.wrapItems)
+                 {
+                     eltWrapper = this.CreateElement("itemWrapper");
+                     eltWrapper.AppendChild(elt);
+                 }
                  isNew = true;
             }
             else
             {
                 c.EnsureElements();
                 elt = c.Element;
+
+                if (this.wrapItems)
+                {
+                    eltWrapper = elt.ParentNode;
+                }
             }
 
-            Element eltWrapper = null;
-
-            if (this.wrapItems)
-            {
-                eltWrapper = Document.CreateElement("itemWrapper");
-                eltWrapper.AppendChild(elt);
-            }
 
             if (elt.ParentNode != e)
             {

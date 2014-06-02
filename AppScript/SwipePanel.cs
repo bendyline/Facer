@@ -12,13 +12,13 @@ namespace BL.UI.App
     {
         private const int animationLength = 400;
         private int activeIndex = 0;
-        private int previousIndex = 0;
+        private int previousIndex = -1;
 
         [ScriptName("e_topAreaOuter")]
         private Element topAreaOuter;
 
-        private int leftIndex = 0;
-        private int rightIndex = 0;
+        private int leftIndex = -1;
+        private int rightIndex = -1;
 
         private bool allowSwiping = true;
         private bool isAnimating;
@@ -276,11 +276,23 @@ namespace BL.UI.App
         {
             if (this.leftElementAnimator != null)
             {
-                this.leftElementAnimator.Left = this.activeElementAnimator.Left - (double)this.leftElementAnimator.EffectiveWidth;
+                this.leftElementAnimator.Left = this.activeElementAnimator.Left - ((double)this.leftElementAnimator.EffectiveWidth + 4);
             }
+
             if (this.rightElementAnimator != null)
             {
-                this.rightElementAnimator.Left = this.activeElementAnimator.Left + (double)this.rightElementAnimator.EffectiveWidth;
+                this.rightElementAnimator.Left = this.activeElementAnimator.Left + ((double)this.rightElementAnimator.EffectiveWidth + 4);
+            }
+        }
+
+        private void Effects_DragPreStart(object sender, PointAndStartElementEventArgs e)
+        {
+            foreach (Control c in this.ItemControls)
+            {
+                if (c.Element == e.Element)
+                {
+                    c.EnsurePrepared();
+                }
             }
         }
 
@@ -291,14 +303,15 @@ namespace BL.UI.App
             if (this.activeIndex > 0)
             {
                 this.leftIndex = this.activeIndex - 1;
-                this.ItemControls[this.leftIndex].Visible = true;
                 this.leftElementAnimator = this.ItemControls[this.leftIndex].Effects;
                 this.leftElementAnimator.OverrideHeight = this.activeElementAnimator.Height;
                 this.leftElementAnimator.OverrideWidth = this.activeElementAnimator.Width;
-                this.leftElementAnimator.Left = this.activeElementAnimator.Left - (double)this.leftElementAnimator.EffectiveWidth;
 
                 this.leftElementAnimator.StartMove();
 
+                this.Effects_DragMoved(sender, e);
+
+                this.ItemControls[this.leftIndex].Visible = true;
             }
             else
             {
@@ -309,14 +322,15 @@ namespace BL.UI.App
             if (this.activeIndex < this.ItemControls.Count - 1)
             {
                 this.rightIndex = this.activeIndex + 1;
-                this.ItemControls[this.rightIndex].Visible = true;
                 this.rightElementAnimator = this.ItemControls[this.rightIndex].Effects;
                 this.rightElementAnimator.OverrideHeight = this.activeElementAnimator.Height;
                 this.rightElementAnimator.OverrideWidth = this.activeElementAnimator.Width;
-                this.rightElementAnimator.Left = this.activeElementAnimator.Left + (double)this.rightElementAnimator.EffectiveWidth;
 
                 this.rightElementAnimator.StartMove();
 
+                this.Effects_DragMoved(sender, e);
+
+                this.ItemControls[this.rightIndex].Visible = true;
             }
             else
             {
@@ -327,7 +341,6 @@ namespace BL.UI.App
 
         private void Effects_DragComplete(object sender, PointAndStartElementEventArgs e)
         {
-
             ElementEffects eff =  this.ItemControls[this.activeIndex].Effects;
            
             if (e.MovedRight && this.activeIndex < this.ItemControls.Count - 1)
@@ -354,6 +367,9 @@ namespace BL.UI.App
 
                 this.activeElementAnimator.Animate(ElementAnimationType.RightInToPos, ElementAnimationEndBehavior.ResetToPosition, animationLength);
 
+                this.leftIndex = -1;
+                this.rightIndex = -1;
+
                 this.ApplyVisibility();
 
                 if (this.ActiveControlChanged != null)
@@ -369,7 +385,6 @@ namespace BL.UI.App
             else if (e.MovedLeft && this.activeIndex > 0)
             {
                 this.previousIndex = this.activeIndex;
-
 
                 if (this.rightElementAnimator != null)
                 {
@@ -391,6 +406,8 @@ namespace BL.UI.App
 
                 this.activeElementAnimator.Animate(ElementAnimationType.LeftInToPos, ElementAnimationEndBehavior.ResetToPosition, animationLength);
 
+                this.leftIndex = -1;
+                this.rightIndex = -1;
                 this.ApplyVisibility();
 
                 if (this.ActiveControlChanged != null)
@@ -404,6 +421,9 @@ namespace BL.UI.App
             }
             else
             {
+                this.leftIndex = -1;
+                this.rightIndex = -1;
+
                 eff.EndMove();
 
                 if (this.leftElementAnimator != null)
@@ -415,6 +435,8 @@ namespace BL.UI.App
                 {
                     this.rightElementAnimator.EndMove();
                 }
+
+                this.ApplyVisibility();
             }
         }
 
@@ -436,7 +458,8 @@ namespace BL.UI.App
             {
                 c.Effects.Behavior = ElementBehavior.DragHorizontal;
                 c.Effects.DragMoved += Effects_DragMoved;
-                c.Effects.DragStart += Effects_DragStart;
+                c.Effects.DragStart += Effects_DragStart; 
+                c.Effects.DragPreStart += Effects_DragPreStart;
                 c.Effects.DragComplete += Effects_DragComplete;
             }
              else if (!this.allowSwiping && c.Effects.Behavior == ElementBehavior.DragHorizontal)
@@ -454,7 +477,7 @@ namespace BL.UI.App
 
             foreach (Control c in this.ItemControls)
             {
-                if (index == activeIndex || index == previousIndex)
+                if (index == activeIndex || index == previousIndex || index == leftIndex || index == rightIndex)
                 {
                     c.Visible = true;
                 }

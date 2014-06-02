@@ -10,6 +10,20 @@ namespace BL.UI
 {
     public static class ControlUtilities
     {
+        public static int? GetDimension(String dimension)
+        {
+            if (String.IsNullOrEmpty(dimension))
+            {
+                return null;
+            }
+
+            if (dimension.EndsWith("px"))
+            {
+                return Int32.Parse(dimension.Substring(0, dimension.Length - 2));
+            }
+
+            return null;
+        }
 
         public static double GetPageX(ElementEvent e)
         {
