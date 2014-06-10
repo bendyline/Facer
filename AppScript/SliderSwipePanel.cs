@@ -1,8 +1,9 @@
 /* Copyright (c) Bendyline LLC. All rights reserved. Licensed under the Apache License, Version 2.0.
     You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. */
- 
+
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Html;
 using System.Runtime.CompilerServices;
 
@@ -25,6 +26,8 @@ namespace BL.UI.App
         [ScriptName("e_containerLinkRight")]
         private Element containerLinkRight;
 
+        private List<bool> visibilities;
+
         public event ControlIntegerEventHandler ActiveControlChanged;
 
         private int activeIndex;
@@ -44,6 +47,7 @@ namespace BL.UI.App
         private int gapBetweenSections = 30;
 
         private double initialScrollX;
+        private double initialScrollY;
         private ElementEventListener windowSizeChanged;
 
         private double fromX;
@@ -55,6 +59,8 @@ namespace BL.UI.App
         private ElementEventListener draggingElementMouseMoveHandler = null;
         private ElementEventListener draggingElementMouseUpHandler = null;
         private ElementEventListener draggingElementMouseOutHandler = null;
+
+        public event IntegerEventHandler VerticalScrollChanged;
 
 
         [ScriptName("q_linkTitles")]
@@ -90,6 +96,18 @@ namespace BL.UI.App
             }
         }
 
+        public double InitialScrollY
+        {
+            get
+            {
+                return this.initialScrollY;
+            }
+            
+            set
+            {
+                this.initialScrollY = value;
+            }
+        }
 
         public int ActiveIndex
         {
@@ -113,6 +131,12 @@ namespace BL.UI.App
 
                 this.UpdateLinkHighlights();
 
+                if (this.containerLinkBin != null && this.containerLinkBin.ChildNodes.Length > this.activeIndex)
+                {
+                    Element activeTab = this.containerLinkBin.ChildNodes[this.activeIndex];
+                    activeTab.Focus();
+                }
+
                 if (this.ActiveControlChanged != null)
                 {
                     ControlIntegerEventArgs ciea = new ControlIntegerEventArgs(this.ItemControls[this.activeIndex], this.activeIndex);
@@ -127,10 +151,56 @@ namespace BL.UI.App
             this.WrapItems = true;
             this.windowSizeChanged = this.UpdateSizings;
 
-            Document.Body.AddEventListener("mouseout", this.HandleDragMouseOut, true);
+            this.visibilities = new List<bool>();
+
+            if (!Context.Current.IsTouchOnly)
+            {
+                Document.Body.AddEventListener("mouseout", this.HandleDragMouseOut, true);
+            }
 
             this.draggingElementMouseMoveHandler = this.HandleElementMouseMove;
             this.draggingElementMouseUpHandler = this.HandleElementMouseUp;
+        }
+
+        public void SetVisible(int index, bool isVisible)
+        {
+            while (this.visibilities.Count < index)
+            {
+                this.visibilities.Add(true);
+            }
+
+            this.visibilities[index] = isVisible;
+
+            this.ApplyVisibility();
+        }
+
+        private void ApplyVisibility()
+        {
+            int index = 0;
+
+            foreach (bool vis in this.visibilities)
+            {
+                if (this.containerLinkBin.ChildNodes.Length > index)
+                {
+                    Element elt = this.containerLinkBin.ChildNodes[index];
+
+                    if (vis)
+                    {
+                        elt.Style.Display = String.Empty;
+                    }
+                    else
+                    {
+                        elt.Style.Display = "none";
+                    }
+                }
+
+                if (this.ItemControls.Count > index)
+                {
+                    this.ItemControls[index].Visible = vis;
+                }
+
+                index++;
+            }
         }
 
         private void SetToX()
@@ -141,7 +211,11 @@ namespace BL.UI.App
             }
             else
             {
-                this.toX = (ControlUtilities.GetBoundingRect(this.ItemControls[this.ActiveIndex].Element).Left + this.itemsBin.ScrollLeft) - 16;
+                double baseLeft = ControlUtilities.GetBoundingRect(this.Element).Left;
+
+                double elementLeft = ControlUtilities.GetBoundingRect(this.ItemControls[this.ActiveIndex].Element).Left;
+
+                this.toX = ((elementLeft + this.itemsBin.ScrollLeft) - baseLeft) - 4;
             }
         }
 
@@ -246,6 +320,7 @@ namespace BL.UI.App
 
                 linkTitleElement = this.CreateElement(cssBase);
 
+                linkTitleElement.TabIndex = 1;
                 linkTitleElement.InnerText = linkTitle;
 
                 linkTitleElement.SetAttribute("linkIndex", i);
@@ -256,7 +331,6 @@ namespace BL.UI.App
                 i++;
             }
         }
-
 
         private void UpdateLinkHighlights()
         {
@@ -301,16 +375,19 @@ namespace BL.UI.App
 
             if (Context.Current.IsTouchOnly)
             {
-                Document.Body.AddEventListener("touchstart", this.HandleElementMouseDown, true);
+                Debug.WriteLine("SliderSwipePanel: Registering touch events " + ControlUtilities.GetTouchStartEventName());
+                this.Element.AddEventListener(ControlUtilities.GetTouchStartEventName(), this.HandleElementMouseDown, true);
             }
             else
             {
+                Debug.WriteLine("SliderSwipePanel: Registering mouse events ");
+
                 this.Element.AddEventListener("mousedown", this.HandleElementMouseDown, true);
                 this.Element.AddEventListener("mousemove", this.HandleElementMouseMove, true);
                 this.Element.AddEventListener("mouseup", this.HandleElementMouseUp, true);
                 this.Element.AddEventListener("dragstart", this.HandleDragStartEvent, true);
             }
-
+            
             this.UpdateLinkBin();
 
             this.UpdateSizings(null);
@@ -341,62 +418,117 @@ namespace BL.UI.App
             this.UpdateSizings(null);
         }
 
+        private bool IsDefaultInputElement(ElementEvent e)
+        {
+            String targetTagName = e.Target.TagName.ToLowerCase();
+
+            object contentEditable = e.Target.GetAttribute("contenteditable");
+
+            if (targetTagName == "input" || targetTagName == "select" || targetTagName == "textarea" || contentEditable == "true")
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         private void HandleElementMouseDown(ElementEvent e)
         {
-            if (this.allowSwiping)
+            if (IsDefaultInputElement(e))
             {
-                String targetTagName = e.Target.TagName.ToLowerCase();
+                return;
+            }
 
-                object contentEditable = e.Target.GetAttribute("contenteditable");
+            e.PreventDefault();  
 
-                if (targetTagName == "input" || targetTagName == "select" || targetTagName == "textarea" || contentEditable == "true")
-                {
-                    return;
-                }
-
+            if (this.allowSwiping && !this.isDragging)
+            {        
                 this.isMouseDown = true;
-
-                Window.SetTimeout(this.ConsiderStartDragging, 200);
 
                 this.downEvent = e;
                 this.initialScrollX = this.itemsBin.ScrollLeft;
+
+                if (Context.Current.IsTouchOnly)
+                {
+                    this.ConsiderStartDragging();
+                }
+                else
+                {
+                    Window.SetTimeout(this.ConsiderStartDragging, 200);
+                }
             }
         }
 
         private void HandleElementMouseMove(ElementEvent e)
         {
+            if (IsDefaultInputElement(e))
+            {
+                return;
+            }
+
+            e.PreventDefault();
+
             if (this.isDragging)
             {
-                this.itemsBin.ScrollLeft = (int)Math.Floor(this.initialScrollX + (ControlUtilities.GetPageX(this.downEvent) -  ControlUtilities.GetPageX(e)));
+                int newLeft = (int)Math.Floor(this.initialScrollX + (ControlUtilities.GetPageX(this.downEvent) - ControlUtilities.GetPageX(e)));
+                Debug.WriteLine("SliderSwipePanel: Mouse Move drag: " + newLeft);
+                this.itemsBin.ScrollLeft = newLeft;
 
-                e.PreventDefault();
                 e.CancelBubble = true;
+
+                if (this.VerticalScrollChanged != null)
+                {
+                    int newTop = (int)Math.Floor(this.initialScrollX+ (ControlUtilities.GetPageX(this.downEvent) - ControlUtilities.GetPageX(e)));
+
+                    IntegerEventArgs iea = new IntegerEventArgs(newTop);
+
+                    this.VerticalScrollChanged(this, iea);
+                }
+            }
+            else
+            {
+                Debug.WriteLine("SliderSwipePanel: Mouse Move NO DRAG");
             }
         }
 
         private void ConsiderStartDragging()
         {
-            if (!this.isMouseDown)
+            if (!this.isMouseDown || this.isDragging)
             {
                 return;
             }
 
+            this.isDragging = true;
+            
+            Debug.WriteLine("SliderSwipePanel: Mouse CSD");
+
             if (Context.Current.IsTouchOnly)
             {
-                Document.Body.AddEventListener("touchmove", this.draggingElementMouseMoveHandler, true);
-                Document.Body.AddEventListener("touchend", this.draggingElementMouseUpHandler, true);
+                Document.Body.AddEventListener(ControlUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
+                Document.Body.AddEventListener(ControlUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
+
+                if (ControlUtilities.GetTouchCancelEventName() != null)
+                {
+                    Document.Body.AddEventListener(ControlUtilities.GetTouchCancelEventName(), this.draggingElementMouseUpHandler, true);
+                }
             }
 
-            this.isDragging = true;
         }
 
         private void HandleDragMouseOut(ElementEvent e)
         {
-            // has the mouse left the window?
-            if (e.ToElement == null || e.ToElement.NodeName == "HTML")
+            e.PreventDefault();
+
+            if (!this.AllowSwiping)
             {
-                this.HandleElementMouseUp(null);
+                return;
+            }
+
+            Debug.WriteLine("SliderSwipePanel: MouseOut");
+            // has the mouse left the window?
+            if ((e.ToElement == null && !Context.Current.IsTouchOnly) || (e.ToElement != null && e.ToElement.NodeName == "HTML"))
+            {
+                this.HandleElementMouseUp(e);
             }
 
             e.CancelBubble = true;
@@ -404,17 +536,20 @@ namespace BL.UI.App
 
         private void HandleElementMouseUp(ElementEvent e)
         {
+            e.PreventDefault();
+
             this.isMouseDown = false;
+            Debug.WriteLine("SliderSwipePanel: MouseUp");
 
             if (this.isDragging)
             {
-
+                Debug.WriteLine("SliderSwipePanel: MouseUp is dragging");
                 if (Context.Current.IsTouchOnly)
                 {
-                    Document.Body.RemoveEventListener("touchmove", this.draggingElementMouseMoveHandler, true);
-                    Document.Body.RemoveEventListener("touchend", this.draggingElementMouseUpHandler, true);
+                   Document.Body.RemoveEventListener(ControlUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
+                   Document.Body.RemoveEventListener(ControlUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
                 }
-
+                Debug.WriteLine("MouseUp");
                 this.isDragging = false;
 
                 int newIndex = Math.Floor((this.itemsBin.ScrollLeft + panelWidth / 2) / panelWidth);
@@ -469,12 +604,17 @@ namespace BL.UI.App
             }
 
             ClientRect cr = ControlUtilities.GetBoundingRect(this.Element);
-
-            double height = cr.Bottom - cr.Top;
-
+            double height = 0;
+            
             if (this.Height != null)
             {
                 height = (double)this.Height;
+            }
+            else
+            {
+                ClientRect topAreaRect = ControlUtilities.GetBoundingRect(this.topAreaOuter);
+
+                height = (cr.Bottom - cr.Top) -  (topAreaRect.Bottom - topAreaRect.Top);
             }
 
             this.panelWidth = Window.InnerWidth;

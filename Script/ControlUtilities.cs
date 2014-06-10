@@ -10,6 +10,34 @@ namespace BL.UI
 {
     public static class ControlUtilities
     {
+        public static String GetTouchStartEventName()
+        {
+            Script.Literal("if (window.navigator.msPointerEnabled) { return \"MSPointerDown\"; }");
+
+            return "touchstart";
+        }
+
+        public static String GetTouchMoveEventName()
+        {
+            Script.Literal("if (window.navigator.msPointerEnabled) { return \"MSPointerMove\"; }");
+
+            return "touchmove";
+        }
+
+        public static String GetTouchEndEventName()
+        {
+            Script.Literal("if (window.navigator.msPointerEnabled) { return \"MSPointerUp\"; }");
+
+            return "touchend";
+        }
+
+        public static String GetTouchCancelEventName()
+        {
+            Script.Literal("if (window.navigator.msPointerEnabled) { return null; }");
+
+            return "touchcancel";
+        }
+
         public static int? GetDimension(String dimension)
         {
             if (String.IsNullOrEmpty(dimension))

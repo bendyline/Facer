@@ -61,6 +61,9 @@
     <None Include="packages.config" />
     <None Include="Properties\FxCop.ruleset" />
     <None Include="Properties\Script.template" />
+    <Compile Include="QRCode.cs" />
+    <Compile Include="Kendo\DataViz\UI\QRCodeOptions.cs" />
+    <Compile Include="Kendo\DataViz\UI\QRCode.cs" />
     <Compile Include="TextImageValue.cs" />
     <Compile Include="TextValue.cs" />
     <Compile Include="Chart.cs" />
