@@ -1,31 +1,27 @@
-.bl-ui-debugpanel-panel{
-          background-color: #C0C0C0;
+.bl-ui-debugpanel-panel{background-color: #C0C0C0;
           width: 100%;  
-          height:100%;
-        }.bl-ui-debugpanel-log{
-            font-size: 8pt;
+          height:100%;}.bl-ui-debugpanel-log{font-size: 8pt;
             font-family:Arial;
             height:100%;
-            display:block;
-        }.bl-ui-debugpanel-logList{
-            height:100%;
-        }.bl-ui-debugpanel-collapse{
-            position:absolute;
+            display:block;}.bl-ui-debugpanel-logList{height:100%;}.bl-ui-debugpanel-collapse{position:absolute;
             top:0px;
             left:10px;
             font-size:20pt;
             color: white;
             z-index: 30;
             background:#C0C0C0;
-            display:block;
-        }.bl-ui-list{
-            height: 100%;
+            display:block;}.bl-ui-dialog{background: rgba(204,204,204,0.4);
+          width: 100%;  
+          height:100%;}.bl-ui-dialog-closeButton{font-size:large;
+            text-align: right;
+            margin:3px;}.bl-ui-dialog-panel{vertical-align:middle;
+            align-content:center;
+            background:white;
+            border: solid 1px #D0D0D0;
+            border-radius: 4px;}.bl-ui-list{height: 100%;
             overflow-y: auto;
-            display: block;
-        }.bl-ui-list-items{
-            width: 100%;
-            height: 100%;
-        }.bl-bs-jumbotron-image{ border: solid 1px black; }.bl-bs-jumbotron-imageOuter{ border: solid 3px white; }.bl-site-rightimage{
+            display: block;}.bl-ui-list-items{width: 100%;
+            height: 100%;}.bl-bs-jumbotron-image{ border: solid 1px black; }.bl-bs-jumbotron-imageOuter{ border: solid 3px white; }.bl-site-rightimage{
                 margin-bottom: 30px;
             }.bl-site-rightimage-imageBin{
                 padding-top: 20px;
