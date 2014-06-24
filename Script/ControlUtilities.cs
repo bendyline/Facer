@@ -5,11 +5,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Html;
+using System.Diagnostics;
 
 namespace BL.UI
 {
     public static class ControlUtilities
     {
+
+        public static bool GetIsChecked(InputElement ie)
+        {
+            bool isChecked = false;
+
+            Script.Literal("{0}={1}.checked", isChecked, ie);
+
+            return isChecked;
+        }
+
+        public static void SetIsChecked(InputElement ie, bool isChecked)
+        {
+            Script.Literal("{0}.checked={1}", ie, isChecked);
+        }
+
         public static String GetTouchStartEventName()
         {
             Script.Literal("if (window.navigator.msPointerEnabled) { return \"MSPointerDown\"; }");
@@ -97,6 +113,9 @@ namespace BL.UI
 
         public static void CancelEvent(ElementEvent eventDetails)
         {
+
+            Debug.WriteLine("ControlUtilities: Cancelling default pointer event action.");
+
             eventDetails.PreventDefault();
         }
     }

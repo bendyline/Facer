@@ -36,11 +36,14 @@
   <ItemGroup>
     <Compile Include="Browser.cs" />
     <Compile Include="ExpanderPanel.cs" />
+    <Compile Include="PaneSettingsCollection.cs" />
+    <Compile Include="HorizontalBin.cs" />
     <Compile Include="SliderSwipePanel.cs" />
     <Compile Include="TemplateImageArea.cs" />
     <Compile Include="SwipePanel.cs" />
     <Compile Include="ToolBar.cs" />
     <Compile Include="TemplateImageButton.cs" />
+    <Compile Include="PaneSettings.cs" />
     <Compile Include="ToolBarPopoutButton.cs" />
     <Compile Include="ToolBarLabel.cs" />
     <Compile Include="ToolBarButton.cs" />
@@ -59,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Browser.htm" />
+    <Content Include="HorizontalBin.htm" />
     <Content Include="SliderSwipePanel.htm" />
     <Content Include="SwipePanel.htm" />
     <Content Include="ToolBar.htm" />

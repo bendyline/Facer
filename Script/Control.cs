@@ -57,7 +57,7 @@ namespace BL.UI
         private bool interactionEventsRegistered = false;
         private bool fireUpdateOnTemplateComplete = false;
         private ElementEffects effects;
-
+        private long touchStartTime = 0;
 
         private Action applyVisibleOnFrameAction;
 
@@ -65,6 +65,8 @@ namespace BL.UI
         private ElementEventListener mouseOutHandler;
         private ElementEventListener mouseMoveHandler;
         private ElementEventListener mouseDownHandler;
+        private ElementEventListener touchStartHandler;
+        private ElementEventListener touchEndHandler;
         private ElementEventListener clickHandler;
 
         protected bool DelayApplyTemplate
@@ -503,6 +505,21 @@ namespace BL.UI
         {
 
         }
+        private void HandleTouchStart(ElementEvent e)
+        {
+            this.touchStartTime = Date.Now.GetTime();
+
+        }
+
+        private void HandleTouchEnd(ElementEvent e)
+        {
+            Date now = Date.Now;
+
+            if (now.GetTime() - this.touchStartTime < 200)
+            {
+                this.OnClick(e);
+            }
+        }
 
         private void HandleClick(ElementEvent e)
         {
@@ -551,7 +568,8 @@ namespace BL.UI
                 if (this.interactionEventsRegistered)
                 {
                     this.element.RemoveEventListener("click", this.clickHandler, true);
-                    this.element.RemoveEventListener("touchstart", this.clickHandler, true);
+                    this.element.RemoveEventListener("touchstart", this.touchStartHandler, true);
+                    this.element.RemoveEventListener("touchend", this.touchEndHandler, true);
                     this.element.RemoveEventListener("mouseover", this.mouseOverHandler, true);                    
                     this.element.RemoveEventListener("mouseout", this.mouseOutHandler, true);
                     this.element.RemoveEventListener("mousemove", this.mouseMoveHandler, true);
@@ -570,11 +588,15 @@ namespace BL.UI
                     this.mouseOutHandler = this.HandleMouseOut;
                     this.mouseMoveHandler = this.HandleMouseMove;
 
+                    this.touchStartHandler = this.HandleTouchStart;
+                    this.touchEndHandler = this.HandleTouchEnd;
+
                     this.clickHandler = this.HandleClick;
                 }
 
                 this.element.AddEventListener("click", this.clickHandler , true);
-                this.element.AddEventListener("touchstart", this.clickHandler, true);
+                this.element.AddEventListener("touchstart", this.touchStartHandler, true);
+                this.element.AddEventListener("touchend", this.touchEndHandler, true);
                 this.element.AddEventListener("mouseover", this.mouseOverHandler, true);
                 this.element.AddEventListener("mouseout", this.mouseOutHandler, true);
                 this.element.AddEventListener("mousemove", this.mouseMoveHandler, true);

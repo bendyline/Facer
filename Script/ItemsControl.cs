@@ -38,7 +38,7 @@ namespace BL.UI
 
                 this.itemsContainerElement = value;
 
-                if (this.itemsContainerElement != null)
+                if (this.itemsContainerElement != null && this.ItemControls != null)
                 {
                     foreach (Control c in this.ItemControls)
                     {
@@ -139,7 +139,7 @@ namespace BL.UI
 
         private void ClearItemContainerElement()
         {
-            if (this.itemsContainerElement != null)
+            if (this.itemsContainerElement != null && this.ItemControls != null)
             {
                 foreach (Control c in this.ItemControls)
                 {

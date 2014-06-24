@@ -57,6 +57,10 @@ namespace BL.UI.KendoControls
 
             set
             {
+                if (this.editor ==  null)
+                {
+                    return;
+                }
                 this.editor.Value(value);
             }
         }

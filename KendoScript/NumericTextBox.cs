@@ -62,6 +62,7 @@ namespace BL.UI.KendoControls
                 this.options.Decimals = value;
             }
         }
+
         [ScriptName("d_value")]
         public double Value
         {

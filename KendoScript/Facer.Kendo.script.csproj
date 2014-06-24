@@ -61,6 +61,10 @@
     <None Include="packages.config" />
     <None Include="Properties\FxCop.ruleset" />
     <None Include="Properties\Script.template" />
+    <Compile Include="Kendo\Mobile\Application.cs" />
+    <Compile Include="Kendo\Mobile\MobileSwitch.cs" />
+    <Compile Include="Kendo\Mobile\MobileSwitchOptions.cs" />
+    <Compile Include="MobileSwitch.cs" />
     <Compile Include="QRCode.cs" />
     <Compile Include="Kendo\DataViz\UI\QRCodeOptions.cs" />
     <Compile Include="Kendo\DataViz\UI\QRCode.cs" />

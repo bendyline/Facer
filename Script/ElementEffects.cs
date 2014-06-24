@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Html;
 using System.Linq;
 
@@ -357,6 +358,7 @@ namespace BL.UI
         {
             e.CancelBubble = true;
 
+            Debug.WriteLine("ElementEffects: Cancelling default pointer event action.");
             e.PreventDefault();
             e.StopPropagation();
         }
@@ -380,6 +382,7 @@ namespace BL.UI
                 this.DragMoved(this, ee);
             }
 
+            Debug.WriteLine("ElementEffects: Cancelling default pointer event action.");
             e.PreventDefault();
             e.CancelBubble = true;
         }
