@@ -96,7 +96,7 @@ namespace BL.UI
 
             elementStyle.Position = "absolute";
             elementStyle.ZIndex = 254;
-            elementStyle.Top = "0px";
+            elementStyle.Top = Window.PageYOffset+ "px";
             elementStyle.Left = "0px";
 
             elementStyle.Width = Window.InnerWidth + "px";

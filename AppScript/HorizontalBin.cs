@@ -14,6 +14,12 @@ namespace BL.UI.App
         [ScriptName("e_itemsBin")]
         private Element itemsBin;
 
+        [ScriptName("e_leftPaddle")]
+        private Element leftPaddle;
+
+        [ScriptName("e_rightPaddle")]
+        private Element rightPaddle;
+
         private List<bool> visibilities;
 
         public event ControlIntegerEventHandler ActiveControlChanged;
@@ -22,10 +28,11 @@ namespace BL.UI.App
         private bool isDragging;
         private bool isAnimatingToSlot;
 
+        private bool displayPaddles = true;
+
         private double panelWidth;
         private Date animationStart;
 
-        private ElementEvent downEvent;
         private int scrollAnimationTime = 200;
         private int gapBetweenSections = 10;
 
@@ -33,26 +40,39 @@ namespace BL.UI.App
         private double initialScrollY;
         private ElementEventListener windowSizeChanged;
 
+        private int visibleItemCount = 1;
         private double fromX;
         private double toX;
         private bool isAnimating = false;
-        private int activeIndex;
+        private int startIndex;
         private bool allowSwiping = true;
+        private int lastDragEventTime;
 
         private ElementEventListener draggingElementMouseMoveHandler = null;
         private ElementEventListener draggingElementMouseUpHandler = null;
         private ElementEventListener draggingElementMouseOutHandler = null;
 
-        public int ActiveIndex
+        public bool DisplayPaddles
         {
             get
             {
-                return this.activeIndex;
+                return this.displayPaddles;
+            }
+        }
+
+        public int StartIndex
+        {
+            get
+            {
+                return this.startIndex;
             }
 
             set
             {
-                this.activeIndex = value;
+                this.startIndex = value;
+
+                this.SetToX();
+                this.AnimateToIndexPosition();
             }
         }
 
@@ -69,16 +89,11 @@ namespace BL.UI.App
             }
         }
 
-        public double InitialScrollY
+        public double InitialScrollX
         {
             get
             {
-                return this.initialScrollY;
-            }
-            
-            set
-            {
-                this.initialScrollY = value;
+                return this.initialScrollX;
             }
         }
 
@@ -88,11 +103,11 @@ namespace BL.UI.App
             this.windowSizeChanged = this.UpdateSizings;
 
             this.visibilities = new List<bool>();
-            /*
+            
             if (!Context.Current.IsTouchOnly)
             {
                 Document.Body.AddEventListener("mouseout", this.HandleDragMouseOut, true);
-            }*/
+            }
 
             this.draggingElementMouseMoveHandler = this.HandleElementMouseMove;
             this.draggingElementMouseUpHandler = this.HandleElementMouseUp;
@@ -108,6 +123,27 @@ namespace BL.UI.App
             this.visibilities[index] = isVisible;
 
             this.ApplyVisibility();
+        }
+
+        private void ApplyPaddleVisibility()
+        {
+            if (this.displayPaddles && this.ItemControls != null  && this.StartIndex > 0 && this.visibleItemCount < this.ItemControls.Count)
+            {
+                this.leftPaddle.Style.Display = String.Empty;
+            }
+            else
+            {
+                this.leftPaddle.Style.Display = "none";
+            }
+
+            if (this.displayPaddles && this.ItemControls != null && this.StartIndex < this.ItemControls.Count - visibleItemCount && this.visibleItemCount < this.ItemControls.Count)
+            {
+                this.rightPaddle.Style.Display = String.Empty;
+            }
+            else
+            {
+                this.rightPaddle.Style.Display = "none";
+            }
         }
 
         private void ApplyVisibility()
@@ -127,17 +163,20 @@ namespace BL.UI.App
 
         private void SetToX()
         {
-            if (this.ActiveIndex == 0)
+            if (this.StartIndex == 0)
             {
                 this.toX = 0;
             }
             else
             {
-                double baseLeft = ControlUtilities.GetBoundingRect(this.Element).Left;
+                this.toX = 0;
 
-                double elementLeft = ControlUtilities.GetBoundingRect(this.ItemControls[this.ActiveIndex].Element).Left;
-                
-                this.toX = ((elementLeft + this.itemsBin.ScrollLeft) - baseLeft) - 4;
+                for (int i = 0; i < this.ItemControls.Count && i <= this.StartIndex; i++)
+                {
+                    ClientRect cr = ControlUtilities.GetBoundingRect(this.ItemControls[i].Element);
+
+                    this.toX += (cr.Right - cr.Left);
+                }
             }
         }
 
@@ -193,27 +232,44 @@ namespace BL.UI.App
             {
                 this.gapBetweenSections = 6;
             }
-
-            /*
+            
             if (Context.Current.IsTouchOnly)
             {
                 Debug.WriteLine("HorziontalBin: Registering touch events " + ControlUtilities.GetTouchStartEventName());
-                this.Element.AddEventListener(ControlUtilities.GetTouchStartEventName(), this.HandleElementMouseDown, true);
+
+                this.itemsBin.AddEventListener(ControlUtilities.GetTouchStartEventName(), this.HandleElementMouseDown, true);
             }
             else
             {
                 Debug.WriteLine("HorizontalBin: Registering mouse events ");
 
-                this.Element.AddEventListener("mousedown", this.HandleElementMouseDown, true);
-                this.Element.AddEventListener("mousemove", this.HandleElementMouseMove, true);
-                this.Element.AddEventListener("mouseup", this.HandleElementMouseUp, true);
-                this.Element.AddEventListener("dragstart", this.HandleDragStartEvent, true);
+                this.itemsBin.AddEventListener("mousedown", this.HandleElementMouseDown, true);
+                this.itemsBin.AddEventListener("mousemove", this.HandleElementMouseMove, true);
+                this.itemsBin.AddEventListener("mouseup", this.HandleElementMouseUp, true);
+                this.itemsBin.AddEventListener("dragstart", this.HandleDragStartEvent, true);
             }
-            */
+
+            this.rightPaddle.AddEventListener("mouseup", this.HandleRightPaddle, true);
+
+            this.leftPaddle.AddEventListener("mouseup", this.HandleLeftPaddle, true);
 
             this.UpdateSizings(null);
 
             Window.SetTimeout(new Action(this.UpdateSizingsAction), 1);
+        }
+
+        private void HandleLeftPaddle(ElementEvent e)
+        {
+            this.StartIndex -= visibleItemCount;
+
+            this.ApplyPaddleVisibility();
+        }
+
+        private void HandleRightPaddle(ElementEvent e)
+        {
+            this.StartIndex += visibleItemCount;
+
+            this.ApplyPaddleVisibility();
         }
 
         protected override void OnVisibilityChanged()
@@ -259,6 +315,7 @@ namespace BL.UI.App
             {
                 return;
             }
+            Debug.WriteLine("HorizontalBin: Mouse Down");
 
             e.PreventDefault();  
 
@@ -266,8 +323,7 @@ namespace BL.UI.App
             {        
                 this.isMouseDown = true;
 
-                this.downEvent = e;
-                this.initialScrollX = this.itemsBin.ScrollLeft;
+                this.initialScrollX = this.itemsBin.ScrollLeft + ControlUtilities.GetPageX(e);
 
                 if (Context.Current.IsTouchOnly)
                 {
@@ -277,6 +333,16 @@ namespace BL.UI.App
                 {
                     Window.SetTimeout(this.ConsiderStartDragging, 200);
                 }
+            }
+        }
+
+        private void HandleDragMoveDeadTimeout()
+        {
+            int now = Date.Now.GetTime();
+
+            if (now - this.lastDragEventTime > 100 && this.isDragging)
+            {
+                this.HandleElementMouseUp(null);
             }
         }
 
@@ -291,11 +357,15 @@ namespace BL.UI.App
 
             if (this.isDragging)
             {
-                int newLeft = (int)Math.Floor(this.initialScrollX + (ControlUtilities.GetPageX(this.downEvent) - ControlUtilities.GetPageX(e)));
+                this.lastDragEventTime = Date.Now.GetTime();
+                Window.SetTimeout(this.HandleDragMoveDeadTimeout, 100);
+
+                int newLeft = (int)Math.Floor(this.initialScrollX - ControlUtilities.GetPageX(e));
                 Debug.WriteLine("HorizontalBin: Mouse Move drag: " + newLeft);
 
                 this.itemsBin.ScrollLeft = newLeft;
 
+                this.ApplyPaddleVisibility();
                 e.CancelBubble = true;
             }
             else
@@ -325,7 +395,6 @@ namespace BL.UI.App
                     Document.Body.AddEventListener(ControlUtilities.GetTouchCancelEventName(), this.draggingElementMouseUpHandler, true);
                 }
             }
-
         }
 
         private void HandleDragMouseOut(ElementEvent e)
@@ -350,7 +419,10 @@ namespace BL.UI.App
 
         private void HandleElementMouseUp(ElementEvent e)
         {
-            e.PreventDefault();
+            if (e != null)
+            {
+                e.PreventDefault();
+            }
 
             this.isMouseDown = false;
             Debug.WriteLine("HorizontalBin: MouseUp");
@@ -364,29 +436,34 @@ namespace BL.UI.App
                    Document.Body.RemoveEventListener(ControlUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
                 }
                 Debug.WriteLine("MouseUp");
+
                 this.isDragging = false;
 
-                int newIndex = Math.Floor((this.itemsBin.ScrollLeft + panelWidth / 2) / panelWidth);
+                int left = 0;
+                int newIndex =  0;
+                for (int i=0; i<this.ItemControls.Count; i++)
+                {
+                    ClientRect cr = ControlUtilities.GetBoundingRect(this.ItemControls[i].Element);
 
-                if (newIndex != this.ActiveIndex)
-                {
-                    this.ActiveIndex = newIndex;
-                }
-                else
-                {
-                    if (this.itemsBin.ScrollLeft > (initialScrollX + (panelWidth / 4)) && this.ActiveIndex < this.ItemControls.Count - 1)
+                    if (cr.Left < this.itemsBin.ScrollLeft)
                     {
-                        this.ActiveIndex++;
-                    }
-                    else if (this.itemsBin.ScrollLeft < (initialScrollX - (panelWidth / 4)) && this.ActiveIndex > 0)
-                    {
-                        this.ActiveIndex--;
-                    }
-                    else
-                    {
-                        this.AnimateToIndexPosition();
+                        if (this.itemsBin.ScrollLeft > cr.Left + ((cr.Right - cr.Left) / 2))
+                        {
+                            newIndex = i + 1;
+                        }
+                        else
+                        {
+                            newIndex = i;
+                        }
                     }
                 }
+
+                if (newIndex != this.StartIndex)
+                {
+                    this.StartIndex = newIndex;
+                }
+
+                this.ApplyPaddleVisibility();
             }
         }
 
@@ -416,7 +493,7 @@ namespace BL.UI.App
             {
                 return;
             }
-
+         
             double height = 0;
             
             if (this.Height != null)
@@ -424,12 +501,20 @@ namespace BL.UI.App
                 height = (double)this.Height;
             }
 
-            if (this.Element.ParentNode != null)
+            int width = 0; 
+
+            if (this.Width != null)
+            {
+                width = ((int)this.Width - 48);
+            }
+            else if (this.Element.ParentNode != null)
             {
                 ClientRect cr = ControlUtilities.GetBoundingRect(this.Element.ParentNode);
 
-                this.itemsBin.Style.Width = ((cr.Right - cr.Left) - 8) + "px";
+                width = (int)((cr.Right - cr.Left) - 48);
             }
+
+            int itemWidth= 0;
 
             foreach (Control c in this.ItemControls)
             {
@@ -439,11 +524,24 @@ namespace BL.UI.App
 
                     style.MarginRight = this.gapBetweenSections + "px";
                     style.Height = (height-8).ToString() + "px";
+
+                    ClientRect cr = ControlUtilities.GetBoundingRect(c.Element);
+
+                    itemWidth = (int)(cr.Right - cr.Left);
+
                     c.Element.ParentNode.Style.Height = "100%";
                 }
             }
 
+            if (width > 0)
+            {
+                this.itemsBin.Style.MaxWidth = width + "px";
+
+                this.visibleItemCount = Math.Max(1, Math.Floor(width / itemWidth));
+            }
+
             this.SetFinalPosition();
+            this.ApplyPaddleVisibility();
         }
     }
 }

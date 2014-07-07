@@ -165,7 +165,21 @@ namespace BL.UI
 
             set
             {
+                if (this.width == value)
+                {
+                    return;
+                }
+
                 this.width = value;
+
+                Element thisElement = this.Element;
+
+                if (thisElement != null && this.width != null)
+                {
+                    thisElement.Style.Width = ((int)this.width).ToString() + "px";
+                }
+
+                this.OnDimensionChanged();
             }
         }
 
@@ -187,6 +201,11 @@ namespace BL.UI
 
             set
             {
+                if (this.height == value)
+                {
+                    return;
+                }
+
                 this.height = value;
 
                 Element thisElement = this.Element;

@@ -84,6 +84,7 @@
     <Compile Include="TemplateParserResult.cs" />
     <Compile Include="IControlFactory.cs" />
     <Compile Include="TemplateParser.cs" />
+    <Compile Include="UserControl.cs" />
     <None Include="packages.config" />
     <None Include="Properties\FxCop.ruleset" />
     <None Include="Properties\Script.template" />

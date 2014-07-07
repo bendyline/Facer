@@ -8,17 +8,15 @@
                 -webkit-user-select: none;
                 -ms-user-select: none;
                 user-select:none;
-                width:100%;
                 height:100%;
             }
 
             #itemsBin
             {
-                width:100%;
                 height:100%;
+                display:table-cell;
+                width:100%;
                 overflow-x:hidden;
-                overflow-y:hidden;
-                display:block;
             }
 
             
@@ -28,11 +26,40 @@
                 height:100%;
             }
 
-            #itemsRow
+            #items
             {
                 display:table-row;
                 height:100%;
+            }
 
+            #outer
+            {
+                width:100%;
+                display:table;
+            }
+
+            #outerrow{
+                display:table-row;
+            }
+
+            #leftPaddle
+            {
+                display:table-cell;
+                vertical-align:middle;
+                padding:4px;
+                color:#6AC5E8;
+                font-size:22pt;
+                cursor:default;
+            }
+
+            #rightPaddle
+            {
+                display:table-cell;
+                vertical-align:middle;
+                padding:4px;                
+                color:#6AC5E8;
+                font-size:22pt;
+                cursor:default;
             }
 
             #itemWrapper{
@@ -45,11 +72,15 @@
     </style>
 	</head>
 	<body>
-        <div id="itemsBin">
-            <div id="itemsTable">
-                <div id="itemsRow">
-                    <ItemsContainer id='items'/>
+        <div id="outer">
+            <div id="outerrow">
+                <div id="leftPaddle"><span class="glyphicon glyphicon-chevron-left" id="backIcon"></span></div>
+                 <div id="itemsBin">
+                    <div id="itemsTable">
+                            <ItemsContainer id='items'/>
+                    </div>
                 </div>
+                <div id="rightPaddle"><span class="glyphicon glyphicon-chevron-right" id="backIcon"></span></div>
             </div>
         </div>
 	</body>

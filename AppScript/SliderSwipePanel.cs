@@ -264,8 +264,7 @@ namespace BL.UI.App
         {
             if (this.ActiveIndex == 0)
             {
-                // offset 3 pixels so there is a little bounce if you slide all the way to the right (it snaps back from 0px to 3px)
-                this.toX = 3;
+                this.toX = 0;
             }
             else
             {
@@ -282,7 +281,7 @@ namespace BL.UI.App
                         Element previousElement = this.ItemControls[i].Element;
                         ClientRect previousRect = ControlUtilities.GetBoundingRect(previousElement);
 
-                        left += ((previousRect.Right - previousRect.Left) + (this.gapBetweenSections));
+                        left += ((previousRect.Right - previousRect.Left) + (this.gapBetweenSections) + 1);
                     }
 
                     this.toX = left;// ((elementLeft + this.itemsBin.ScrollLeft) - baseLeft);
@@ -581,7 +580,7 @@ namespace BL.UI.App
         {
             int now = Date.Now.GetTime();
 
-            if (now - this.lastDragEventTime > 100)
+            if (now - this.lastDragEventTime > 100 && this.isDragging)
             {
                 this.HandleElementMouseUp(null);
             }
@@ -785,7 +784,8 @@ namespace BL.UI.App
                 {
                     Style style = c.Element.Style;
 
-                    style.Width = ((cr.Right - cr.Left) - (this.gapBetweenSections)).ToString() + "px";
+                    style.MinWidth = ((cr.Right - cr.Left) - this.gapBetweenSections).ToString() + "px";
+                    style.Width = ((cr.Right - cr.Left) - this.gapBetweenSections).ToString() + "px";
                     style.MarginRight = this.gapBetweenSections + "px";
 
                     if (ps.FitToHeight == false)

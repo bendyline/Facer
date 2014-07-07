@@ -20,6 +20,10 @@ namespace BL.UI
 
             return isChecked;
         }
+        public static void SetIsCheckedFromObject(InputElement ie, object isChecked)
+        {
+            Script.Literal("{0}.checked={1}", ie, isChecked.ToString());
+        }
 
         public static void SetIsChecked(InputElement ie, bool isChecked)
         {
