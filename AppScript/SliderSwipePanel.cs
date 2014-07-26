@@ -1,6 +1,7 @@
 /* Copyright (c) Bendyline LLC. All rights reserved. Licensed under the Apache License, Version 2.0.
     You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. */
 
+using BL.Extern;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -59,7 +60,7 @@ namespace BL.UI.App
 
         private ElementEvent lastMoveEvent;
 
-        private int scrollAnimationTime = 200;
+        private int scrollAnimationTime = 500;
         private int gapBetweenSections = 0;
 
         private double initialScrollX;
@@ -72,6 +73,7 @@ namespace BL.UI.App
         private bool isAnimating = false;
 
         private bool allowSwiping = true;
+        private String interiorItemHeight;
 
         private ElementEventListener draggingElementMouseMoveHandler = null;
         private ElementEventListener draggingElementMouseUpHandler = null;
@@ -104,6 +106,11 @@ namespace BL.UI.App
 
             set
             {
+                if (this.mode == value)
+                {
+                    return;
+                }
+
                 this.mode = value;
 
                 this.ApplyVisibility();
@@ -140,6 +147,14 @@ namespace BL.UI.App
             set
             {
                 this.allowSwiping = value;
+            }
+        }
+
+        public bool IsAnimating
+        {
+            get
+            {
+                return this.isAnimating;
             }
         }
 
@@ -194,10 +209,25 @@ namespace BL.UI.App
             }
         }
 
+        public String InteriorItemHeight
+        {
+            get
+            {
+                return this.interiorItemHeight;
+            }
+
+            set
+            {
+                this.interiorItemHeight = value;
+
+                this.UpdateSizings();
+            }
+        }
+
         public SliderSwipePanel()
         {
             this.WrapItems = true;
-            this.windowSizeChanged = this.UpdateSizings;
+            this.windowSizeChanged = this.UpdateSizingsEvent;
 
             this.paneSettingsCollection = new PaneSettingsCollection();
 
@@ -326,31 +356,33 @@ namespace BL.UI.App
             }
             
             this.isAnimating = true;
-            this.animationStart = Date.Now;
-
-          //  Window.SetTimeout(this.AnimateTick, 15);
 
             this.fromX = this.itemsBin.ScrollLeft;
 
-            Script.Literal("if (window.requestAnimationFrame) {{window.requestAnimationFrame({0});}}else{{window.setTimeout({0}, 15);}}", this.animationTickHandler);
+            this.animationStart = Date.Empty;
 
+            ControlUtilities.AnimateOnNextFrame(this.animationTickHandler);
         }
 
         private void AnimateTick()
         {
             Date now = Date.Now;
 
-            int ms = now.GetTime() - this.animationStart.GetTime();
-
-            double proportion = ms / this.scrollAnimationTime;
-
-            if (proportion < 1)
+            if (this.animationStart == Date.Empty)
             {
-                Window.SetTimeout(this.AnimateTick, 15);
+                this.animationStart = now;
+            }
 
+            int ms = now.GetTime() - this.animationStart.GetTime();
+            double proportion = Easing.EaseInOutQuart(ms, 0, 1, this.scrollAnimationTime );
+            
+            Debug.WriteLine("SliderSwipePanel Animation Frame @ " + ms + " pos: " + proportion);
+            
+            if (proportion < 1 && proportion > -1 && ms <= this.scrollAnimationTime)
+            {
                 this.SetPanelLeft(this.fromX + ((this.toX - this.fromX) * proportion));
 
-                Script.Literal("if (window.requestAnimationFrame) {{window.requestAnimationFrame({0});}}else{{window.setTimeout({0}, 15);}}", this.animationTickHandler);
+                ControlUtilities.AnimateOnNextFrame(this.animationTickHandler);
             }
             else
             {
@@ -431,7 +463,7 @@ namespace BL.UI.App
                 linkTitleElement = this.CreateElement(cssBase);
 
                 linkTitleElement.TabIndex = 1;
-                linkTitleElement.InnerText = linkTitle;
+                ControlUtilities.SetText(linkTitleElement, linkTitle);
 
                 linkTitleElement.SetAttribute("linkIndex", i);
                 linkTitleElement.AddEventListener("click", this.HandleLinkClick, true);
@@ -440,6 +472,8 @@ namespace BL.UI.App
 
                 i++;
             }
+
+            this.ApplyVisibility();
         }
 
         private void UpdateLinkHighlights()
@@ -508,9 +542,9 @@ namespace BL.UI.App
             
             this.UpdateLinkBin();
 
-            this.UpdateSizings(null);
+            this.UpdateSizings();
 
-            Window.SetTimeout(new Action(this.UpdateSizingsAction), 1);
+            Window.SetTimeout(new Action(this.UpdateSizings), 1);
         }
 
         protected override void OnVisibilityChanged()
@@ -533,7 +567,7 @@ namespace BL.UI.App
 
             c.Visible = true;
 
-            this.UpdateSizings(null);
+            this.UpdateSizings();
         }
 
         private bool IsDefaultInputElement(ElementEvent e)
@@ -745,15 +779,17 @@ namespace BL.UI.App
         {
             base.OnDimensionChanged();
 
-            this.UpdateSizings(null);
+            this.UpdateSizings();
         }
 
-        public void UpdateSizingsAction()
+        public void UpdateSizingsEvent(ElementEvent e)
         {
-            this.UpdateSizings(null);
+            this.UpdateSizings();
+
+            Window.SetTimeout(new Action(this.UpdateSizings), 1);
         }
 
-        public void UpdateSizings(ElementEvent e)
+        public void UpdateSizings()
         {
             if (this.Element == null)
             {
@@ -788,13 +824,20 @@ namespace BL.UI.App
                     style.Width = ((cr.Right - cr.Left) - this.gapBetweenSections).ToString() + "px";
                     style.MarginRight = this.gapBetweenSections + "px";
 
-                    if (ps.FitToHeight == false)
+
+                    if (this.InteriorItemHeight != null)
+                    {
+                        style.MaxHeight = this.InteriorItemHeight;
+                        style.MinHeight = this.InteriorItemHeight;
+                        style.Height = this.InteriorItemHeight;
+                    }
+                    else if (ps.FitToHeight == false)
                     {
                         style.Height = null;
                     }
                     else
                     {
-                        style.Height = (height - 8).ToString() + "px";
+                        style.Height = (height - 4).ToString() + "px";
                     }
 
                     c.Element.ParentNode.Style.Height = "100%";
@@ -803,7 +846,10 @@ namespace BL.UI.App
                 index++;
             }
 
-            this.SetFinalPosition();
+            if (!this.isAnimating)
+            {
+                this.SetFinalPosition();
+            }
         }
     }
 }

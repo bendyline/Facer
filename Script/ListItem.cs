@@ -63,12 +63,12 @@ namespace BL.UI
 
             if (titleElement != null)
             {
-                titleElement.InnerText = this.item.Title;
+                ControlUtilities.SetText(titleElement, this.item.Title);
             }
 
             if (contentElement != null)
             {
-                contentElement.InnerText = this.item.Content;
+                ControlUtilities.SetText(contentElement, this.item.Content);
             }
 
             if (image != null)

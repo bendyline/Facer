@@ -100,6 +100,40 @@ namespace BL.UI
             return cr;
         }
 
+        public static void SetText(Element element, String text)
+        {
+            while (element.FirstChild != null)
+            {
+                element.RemoveChild(element.FirstChild);
+            }
+
+            element.AppendChild(Document.CreateTextNode(text));
+        }
+
+
+        public static void AnimateOnNextFrame(Action callback)
+        {
+            Script.Literal("if (window.requestAnimationFrame) {{window.requestAnimationFrame({0});}}else{{window.setTimeout({0}, 15);}}", callback);
+        }
+        public static Element GetEventTarget(ElementEvent e)
+        {
+            return e.Target;
+        }
+
+        public static bool ElementIsDescendentOf(Element element, Element ancestorToLookFor)
+        {
+            if (element == ancestorToLookFor)
+            {
+                return true;
+            }
+
+            if (element.ParentNode != null)
+            {
+                return ElementIsDescendentOf(element.ParentNode, ancestorToLookFor);
+            }
+
+            return false;
+        }
 
         public static double GetBoundingHeight(Element e)
         {

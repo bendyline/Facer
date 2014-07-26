@@ -1,6 +1,7 @@
 /* Copyright (c) Bendyline LLC. All rights reserved. Licensed under the Apache License, Version 2.0.
     You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. */
 
+using BL.Extern;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,6 +19,9 @@ namespace BL.UI
         private Date start;
         private double length;
 
+        private Operation scrollingOperation;
+        public event EventHandler ScrollingComplete;
+
         public double? FromY
         {
             get
@@ -30,6 +34,7 @@ namespace BL.UI
                 this.fromY = value;
             }
         }
+
 
         public double? ToY
         {
@@ -70,21 +75,33 @@ namespace BL.UI
             }
         }
 
-        public void Start(double length)
+        public void Start(double length, AsyncCallback callback, object state)
         {
             this.length = length;
-            this.start = Date.Now;
+            this.start = Date.Empty;
 
-            Window.SetTimeout(this.AnimateTick, 10);
+            this.scrollingOperation = new Operation();
+
+            if (callback != null)
+            {
+                this.scrollingOperation.AddCallback(callback, state);
+            }
+
+            ControlUtilities.AnimateOnNextFrame(this.AnimateTick);
         }
 
         private void AnimateTick()
         {
             Date now = Date.Now;
 
+            if (this.start == Date.Empty)
+            {
+                this.start = now;
+            }
+
             int ms = now.GetTime() - this.start.GetTime();
 
-            double proportion = ms / length;
+            double proportion = Easing.EaseInQuad(ms, 0, 1, length);
 
             if (proportion < 1)
             {
@@ -93,13 +110,21 @@ namespace BL.UI
                     Window.Scroll(Window.PageXOffset, (int)(this.fromY + ((this.toY - this.fromY) * proportion)));
                 }
 
-                Window.SetTimeout(this.AnimateTick, 10);
+                ControlUtilities.AnimateOnNextFrame(this.AnimateTick);
             }
             else
             {
                 if (this.toY != null)
                 {
                     Window.Scroll(Window.PageXOffset, (int)this.toY);
+                }
+
+                this.scrollingOperation.CompleteAsAsyncDone(this);
+                this.scrollingOperation = null;
+
+                if (this.ScrollingComplete != null)
+                {
+                    this.ScrollingComplete(this, EventArgs.Empty);
                 }
             }
         }

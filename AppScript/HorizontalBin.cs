@@ -39,7 +39,7 @@ namespace BL.UI.App
         private double initialScrollX;
         private double initialScrollY;
         private ElementEventListener windowSizeChanged;
-
+        private Date lastScrollTime;
         private int visibleItemCount = 1;
         private double fromX;
         private double toX;
@@ -51,6 +51,14 @@ namespace BL.UI.App
         private ElementEventListener draggingElementMouseMoveHandler = null;
         private ElementEventListener draggingElementMouseUpHandler = null;
         private ElementEventListener draggingElementMouseOutHandler = null;
+
+        public Date LastScrollTime
+        {
+            get
+            {
+                return this.lastScrollTime;
+            }
+        }
 
         public bool DisplayPaddles
         {
@@ -127,7 +135,7 @@ namespace BL.UI.App
 
         private void ApplyPaddleVisibility()
         {
-            if (this.displayPaddles && this.ItemControls != null  && this.StartIndex > 0 && this.visibleItemCount < this.ItemControls.Count)
+            if (this.displayPaddles && this.ItemControls != null  && this.StartIndex > 0 && this.visibleItemCount < this.ItemControls.Count && !Context.Current.IsTouchOnly)
             {
                 this.leftPaddle.Style.Display = String.Empty;
             }
@@ -136,7 +144,7 @@ namespace BL.UI.App
                 this.leftPaddle.Style.Display = "none";
             }
 
-            if (this.displayPaddles && this.ItemControls != null && this.StartIndex < this.ItemControls.Count - visibleItemCount && this.visibleItemCount < this.ItemControls.Count)
+            if (this.displayPaddles && this.ItemControls != null && this.StartIndex < this.ItemControls.Count - visibleItemCount && this.visibleItemCount < this.ItemControls.Count && !Context.Current.IsTouchOnly)
             {
                 this.rightPaddle.Style.Display = String.Empty;
             }
@@ -209,6 +217,8 @@ namespace BL.UI.App
             {
                 this.itemsBin.ScrollLeft = (int)(this.fromX + ((this.toX - this.fromX) * proportion));
 
+                this.lastScrollTime = Date.Now;
+
                 Window.SetTimeout(this.AnimateTick, 10);
             }
             else
@@ -222,6 +232,7 @@ namespace BL.UI.App
         {
             this.SetToX();
             this.itemsBin.ScrollLeft = (int)this.toX;
+            this.lastScrollTime = Date.Now;
         }
 
         protected override void OnApplyTemplate()
@@ -364,6 +375,7 @@ namespace BL.UI.App
                 Debug.WriteLine("HorizontalBin: Mouse Move drag: " + newLeft);
 
                 this.itemsBin.ScrollLeft = newLeft;
+                this.lastScrollTime = Date.Now;
 
                 this.ApplyPaddleVisibility();
                 e.CancelBubble = true;

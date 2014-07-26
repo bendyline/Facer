@@ -34,6 +34,7 @@ namespace BL.UI
         private List<Control> templateControls;
         private List<Control> templateDescendentControls;
         private List<Element> templateElements;
+        private Dictionary<String, Element> templateStandaloneElements;
         private String templateId;
         private String template;
         private bool initted = false;
@@ -63,6 +64,8 @@ namespace BL.UI
 
         private ElementEventListener mouseOverHandler;
         private ElementEventListener mouseOutHandler;
+        private ElementEventListener mouseEnterHandler;
+        private ElementEventListener mouseLeaveHandler;
         private ElementEventListener mouseMoveHandler;
         private ElementEventListener mouseDownHandler;
         private ElementEventListener touchStartHandler;
@@ -114,13 +117,7 @@ namespace BL.UI
 
                 this.templateId = value;
 
-                if (this.templateWasApplied)
-                {
-                    this.template = null;
-                    this.templateWasApplied = false;
-                    this.fireUpdateOnTemplateComplete = true;
-                    this.ApplyTemplate();
-                }
+                this.ClearTemplate();
 
                 this.ApplyClass();
             }
@@ -468,7 +465,12 @@ namespace BL.UI
 
                 this.element = value;
 
-                if (this.effects != null)
+                if (this.element == null)
+                {
+                    this.elementsEnsured = false;
+                }
+
+                if (this.effects != null && this.element != null)
                 {
                     this.effects.Element = this.element;
                 }
@@ -512,6 +514,23 @@ namespace BL.UI
             this.applyVisibleOnFrameAction = new Action(this.ApplyVisibleOnAnimationFrame);
         }
 
+
+        internal virtual void ClearTemplate()
+        {
+            if (this.templateWasApplied)
+            {
+                foreach (Control c in this.TemplateControls)
+                {
+                    c.ClearTemplate();
+                    c.Element = null;
+                }
+                this.template = null;
+                this.templateWasApplied = false;
+                this.fireUpdateOnTemplateComplete = true;
+                this.ApplyTemplate();
+            }
+        }
+
         public void EnsurePrepared()
         {
             if (!this.ElementsEnsured && this.ensureElementsRequested)
@@ -546,6 +565,26 @@ namespace BL.UI
         }
 
         protected virtual void OnClick(ElementEvent e)
+        {
+
+        }
+
+        private void HandleMouseEnter(ElementEvent e)
+        {
+            this.OnMouseEnter(e);
+        }
+
+        protected virtual void OnMouseEnter(ElementEvent e)
+        {
+
+        }
+
+        private void HandleMouseLeave(ElementEvent e)
+        {
+            this.OnMouseLeave(e);
+        }
+
+        protected virtual void OnMouseLeave(ElementEvent e)
         {
 
         }
@@ -591,6 +630,8 @@ namespace BL.UI
                     this.element.RemoveEventListener("touchend", this.touchEndHandler, true);
                     this.element.RemoveEventListener("mouseover", this.mouseOverHandler, true);                    
                     this.element.RemoveEventListener("mouseout", this.mouseOutHandler, true);
+                    this.element.RemoveEventListener("mouseenter", this.mouseEnterHandler, true);
+                    this.element.RemoveEventListener("mouseleave", this.mouseLeaveHandler, true);
                     this.element.RemoveEventListener("mousemove", this.mouseMoveHandler, true);
 
                     this.interactionEventsRegistered = false;
@@ -605,6 +646,8 @@ namespace BL.UI
                 {
                     this.mouseOverHandler = this.HandleMouseOver;
                     this.mouseOutHandler = this.HandleMouseOut;
+                    this.mouseEnterHandler = this.HandleMouseEnter;
+                    this.mouseLeaveHandler = this.HandleMouseLeave;
                     this.mouseMoveHandler = this.HandleMouseMove;
 
                     this.touchStartHandler = this.HandleTouchStart;
@@ -618,6 +661,8 @@ namespace BL.UI
                 this.element.AddEventListener("touchend", this.touchEndHandler, true);
                 this.element.AddEventListener("mouseover", this.mouseOverHandler, true);
                 this.element.AddEventListener("mouseout", this.mouseOutHandler, true);
+                this.element.AddEventListener("mouseenter", this.mouseEnterHandler, true);
+                this.element.AddEventListener("mouseleave", this.mouseLeaveHandler, true);
                 this.element.AddEventListener("mousemove", this.mouseMoveHandler, true);
 
                 this.interactionEventsRegistered = true;
@@ -818,6 +863,7 @@ namespace BL.UI
             this.templateControls = new List<Control>();
             this.templateDescendentControls = new List<Control>();
             this.templateElements = new List<Element>();
+            this.templateStandaloneElements = new Dictionary<String, Element>();
 
             if (template != null)
             {
@@ -881,6 +927,7 @@ namespace BL.UI
                  
                     if (elementId != null)
                     {
+                        this.templateStandaloneElements[elementId] = element;
                         Script.Literal("{0}['e_' + {1}]={2}", this, elementId, element);
                     }
                 }
@@ -1027,6 +1074,15 @@ namespace BL.UI
             return id;
         }
 
+        public Element GetTemplateElementById(String id)
+        {
+            if (this.templateStandaloneElements.ContainsKey(id))
+            {
+                return this.templateStandaloneElements[id];
+            }
+
+            return null;
+        }
         public Control GetTemplateControlById(String id)
         {
             foreach (Control c in this.templateControls)

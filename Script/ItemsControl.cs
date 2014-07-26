@@ -90,6 +90,20 @@ namespace BL.UI
             return this.itemControlsById[id];
         }
 
+
+        internal override void ClearTemplate()
+        {
+            base.ClearTemplate();
+
+            if (this.itemControls != null)
+            {
+                foreach (Control c in this.ItemControls)
+                {
+                    c.ClearTemplate();
+                }
+            }
+        }
+
         public void InsertItemControl(int index, Control c)
         {
             if (this.itemControls == null)

@@ -57,6 +57,16 @@ namespace BL.UI
         {
         }
 
+        internal override void ClearTemplate()
+        {
+            base.ClearTemplate();
+
+            if (this.content != null)
+            {
+                this.content.ClearTemplate();
+            }
+        }
+
         private void SetControl(Control c)
         {
             this.InsertControl(-1, c);

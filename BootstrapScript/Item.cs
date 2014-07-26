@@ -130,7 +130,7 @@ namespace BL.BS
 
             if (this.linkElement != null)
             {
-                this.linkElement.InnerText = this.Text;
+                ControlUtilities.SetText(this.linkElement, this.Text);
             }
         }
     }

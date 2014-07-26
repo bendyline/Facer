@@ -56,6 +56,8 @@ namespace BL.UI
 
                 this.userReference = value;
 
+                this.OnUserReferenceUpdated();
+
                 this.Update();
             }
         }
@@ -83,7 +85,7 @@ namespace BL.UI
             {
                 if (this.user != null)
                 {
-                    return this.user.NickName;
+                    return this.user.Summary;
                 }
 
                 if (this.userReference != null)
@@ -96,6 +98,29 @@ namespace BL.UI
         }
 
         public UserControl()
+        {
+
+        }
+
+        protected void OnUserReferenceUpdated()
+        {
+            if (this.userReference != null && this.userReference.Id != null)
+            {
+                User user = UserManager.Current.EnsureUser(this.userReference.Id);
+
+                user.LoadUser(this.UserLoaded, null);
+            }
+        }
+
+        private void UserLoaded(IAsyncResult result)
+        {
+            if (result.IsCompleted)
+            {
+                this.User = (User)result.Data;
+            }
+        }
+
+        protected void OnUserUpdated()
         {
 
         }

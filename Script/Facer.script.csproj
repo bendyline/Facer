@@ -58,9 +58,11 @@
     <CodeAnalysisRuleSet>Properties\FxCop.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="IDialogManager.cs" />
     <Compile Include="Dialog.cs" />
     <Compile Include="ControlIntegerEvent.cs" />
     <Compile Include="PointAndStartElementEvent.cs" />
+    <Compile Include="OpacityAnimator.cs" />
     <Compile Include="ScrollAnimator.cs" />
     <Compile Include="PointElementEvent.cs" />
     <Compile Include="ElementEffects.cs" />

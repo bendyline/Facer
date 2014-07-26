@@ -80,6 +80,11 @@ namespace BL.UI
             if (this.Content != null)
             {
                 this.Content.EnsureElements();
+
+                if (this.Content is IDialogManager)
+                {
+                    ((IDialogManager)this.Content).ParentDialog = this;
+                }
             }
 
             this.isShowing = true;
@@ -113,11 +118,21 @@ namespace BL.UI
             if (this.maxWidth != null)
             {
                 width = (int)this.maxWidth;
+
+                if (width > Window.InnerWidth)
+                {
+                    width = Window.InnerWidth - 20;
+                }
             }
 
             if (this.maxHeight != null)
             {
                 height = (int)this.maxHeight;
+
+                if (height > Window.InnerHeight)
+                {
+                    height = Window.InnerHeight - 20;
+                }
             }
 
             panelStyle.Left = ((Window.InnerWidth - width) / 2) + "px";
