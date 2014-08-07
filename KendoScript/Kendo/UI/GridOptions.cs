@@ -14,8 +14,8 @@ namespace Kendo.UI
         public String AltRowTemplate;
         public bool AutoBind;
         public double ColumnResizeHandleWidth;
-        public GridColumnOptions Columns;
-        public GridEditableOptions Editable;
+        public List<GridColumn> Columns;
+        public object Editable;
         public GridColumnMenuOptions ColumnMenu;
         public object DataSource;
         public object DetailTemplate;

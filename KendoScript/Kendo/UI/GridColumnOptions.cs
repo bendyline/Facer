@@ -10,7 +10,7 @@ namespace Kendo.UI
     [ScriptName("Object")]
     public class GridColumnOptions
     {
-        public List<GridColumn> Columns;
+     //   public List<GridColumn> Columns;
         public List<String> Aggregates;
         public String GroupFooterTemplate;
         public Dictionary<String, String> Attributes;

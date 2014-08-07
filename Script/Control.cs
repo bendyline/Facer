@@ -27,7 +27,7 @@ namespace BL.UI
     ///     EnsureElements - Creates DHTML elements and binds them to child controls as necessary.
     ///     Update -- Updates the state of DHTML elements based on changes to a control.
     /// </summary>
-    public abstract class Control : SerializableObject, IDisposable
+    public abstract class Control : SerializableObject, IDisposable, IControl
     {
         private Element element;
         private Element contentElement;

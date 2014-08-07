@@ -161,7 +161,7 @@ namespace BL.UI
                         {
                             tagName = markup.Substring(nextLeftSign + 1, nextSpace);
                             attributes = markup.Substring(nextSpace + 1, nextRightSign);
-                            attributeColl = GetAttributes(attributes);
+                            attributeColl = this.GetAttributes(attributes);
 
                             if (attributeColl.ContainsKey("id"))
                             {
@@ -197,12 +197,10 @@ namespace BL.UI
                                 controlStack.Add(c);
                                 controlLevel.Add(curDepth);
 
-
                                 if (id != null)
                                 {
                                     c.Id = parentId + "-" + id;
                                 }
-
 
                                 // if we're within a <Content> or <Items> section, save the control
                                 if (controlParsingMode > 0)
@@ -285,6 +283,7 @@ namespace BL.UI
                         if (attributeColl != null && ignoreAppendMarkup <= 0)
                         {
                             String className = attributeColl["class"];
+                            String controlClassName = attributeColl["data-ctl-class"];
 
                             if (className == null)
                             {
@@ -301,6 +300,21 @@ namespace BL.UI
                                 className += controlCssPrefix + "-" + id;
                             }
 
+                            if (controlClassName != null)
+                            {
+                                String[] controlClassSplits = controlClassName.Split(' ');
+
+                                foreach (String controlClassSubName in controlClassSplits)
+                                {
+                                    if (className.Length > 0)
+                                    {
+                                        className += " ";
+                                    }
+
+                                    className += controlCssPrefix + "-" + controlClassSubName;
+                                }
+                            }
+
                             if (className.Length > 0)
                             {
                                 resultingMarkup.Append(" class=\"" + className + "\"");
@@ -308,7 +322,7 @@ namespace BL.UI
                             
                             foreach (KeyValuePair<String, String> kvp in attributeColl)
                             {
-                                if (kvp.Key != "id" && kvp.Key != "class")
+                                if (kvp.Key != "id" && kvp.Key != "class" && kvp.Key != "data-ctl-class")
                                 {
                                     if (kvp.Key == "src")
                                     {
@@ -382,7 +396,6 @@ namespace BL.UI
                 {
                     String attributeName = attributes.Substring(lastEnd, nextEqualSign).Trim();
                     String attributeValue = attributes.Substring(nextEqualSign + 2, nextSeparator);
-
 
                     attributeColl[attributeName] = attributeValue;
 

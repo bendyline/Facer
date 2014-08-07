@@ -443,24 +443,8 @@ namespace BL.UI.App
             {
                 Element linkTitleElement = null;
 
-                String cssBase = "swipeLink";
 
-                if (i == this.activeIndex)
-                {
-                    cssBase += " selected";
-                }
-
-                if (i == this.LinkTitles.Count - 1)
-                {
-                    cssBase += " lastLink";
-                }
-
-                if (i == 0)
-                {
-                    cssBase += " firstLink";
-                }
-
-                linkTitleElement = this.CreateElement(cssBase);
+                linkTitleElement = this.CreateElement(this.GetClassNameForElement(i));
 
                 linkTitleElement.TabIndex = 1;
                 ControlUtilities.SetText(linkTitleElement, linkTitle);
@@ -476,6 +460,47 @@ namespace BL.UI.App
             this.ApplyVisibility();
         }
 
+        private String GetClassNameForElement(int index)
+        {
+
+            String cssBase = "swipeLink";
+
+            if (index == this.activeIndex)
+            {
+                cssBase += " selected";
+            }
+
+            if (index == this.LinkTitles.Count - 1)
+            {
+                cssBase += " lastLink";
+
+                if (index == this.activeIndex)
+                {
+                    cssBase += " lastLinkSelected";
+                }
+            }
+            else if (index == 0)
+            {
+                cssBase += " firstLink";
+
+                if (index == this.activeIndex)
+                {
+                    cssBase += " firstLinkSelected";
+                }
+            }
+            else
+            {
+                cssBase += " innerLink";
+
+                if (index == this.activeIndex)
+                {
+                    cssBase += " innerLinkSelected";
+                }
+            }
+
+            return cssBase;
+        }
+
         private void UpdateLinkHighlights()
         {
             if (previousIndex >= 0)
@@ -484,7 +509,7 @@ namespace BL.UI.App
 
                 if (secondaryTab != null)
                 {
-                    secondaryTab.ClassName = this.GetElementClass("swipeLink");
+                    secondaryTab.ClassName = this.GetElementClass(this.GetClassNameForElement(previousIndex));
                 }
             }
 
@@ -492,7 +517,7 @@ namespace BL.UI.App
 
             if (primaryTab != null)
             {
-                primaryTab.ClassName = this.GetElementClass("swipeLink selected");
+                primaryTab.ClassName = this.GetElementClass(this.GetClassNameForElement(this.activeIndex));
             }
 
         }
@@ -704,7 +729,7 @@ namespace BL.UI.App
                 e.PreventDefault();
             }
 
-            if (!this.AllowSwiping)
+            if (!this.AllowSwiping || !this.isDragging)
             {
                 return;
             }

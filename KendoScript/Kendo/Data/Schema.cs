@@ -6,17 +6,11 @@ using System.Runtime.CompilerServices;
 namespace kendo.data
 {
     [Imported]
-    public class DataSource
+    [IgnoreNamespace]
+    [ScriptName("Object")]
+
+    public class Schema
     {
-
-        public DataSource(DataSourceOptions options)
-        {
-
-        }
-
-        public void Read()
-        {
-
-        }
+        public ModelOptions Model;
     }
 }

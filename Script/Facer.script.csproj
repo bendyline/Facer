@@ -58,6 +58,7 @@
     <CodeAnalysisRuleSet>Properties\FxCop.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="IControl.cs" />
     <Compile Include="IDialogManager.cs" />
     <Compile Include="Dialog.cs" />
     <Compile Include="ControlIntegerEvent.cs" />

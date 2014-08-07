@@ -16,6 +16,22 @@ namespace BL.UI.KendoControls
         private Kendo.UI.Grid grid;
         private Kendo.UI.GridOptions gridOptions;
 
+        public event ObjectEventHandler Save;
+
+        public GridOptions Options
+        {
+            get
+            {
+                return this.gridOptions;
+            }
+
+            set
+            {
+                this.gridOptions = value;
+
+                this.UpdateGrid();
+            }
+        }
 
         public object Data
         {
@@ -57,12 +73,34 @@ namespace BL.UI.KendoControls
 
         public Grid()
         {
-            this.gridOptions = new GridOptions();
+
         }
 
         protected override void OnEnsureElements()
         { 
-            Script.Literal("var j = {0}; j.kendoGrid({2}); {1} = j.data('kendoGrid')", this.J, this.grid,this.gridOptions);
+            if (this.gridOptions != null)
+            {
+                this.UpdateGrid();
+            }
+        }
+
+        private void UpdateGrid()
+        {
+            Script.Literal("var j = {0}; j.kendoGrid({2}); {1} = j.data('kendoGrid')", this.J, this.grid, this.gridOptions);
+
+            this.grid.Bind("save", this.HandleSave);
+        }
+
+        private void HandleSave(object e)
+        {
+            object model = null;
+
+            Script.Literal("{0}=e.model", model);
+
+            if (this.Save != null)
+            {
+                this.Save(this, new ObjectEventArgs(model));
+            }
         }
 
         public override void Dispose()

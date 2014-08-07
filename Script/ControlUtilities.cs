@@ -11,6 +11,13 @@ namespace BL.UI
 {
     public static class ControlUtilities
     {
+        public static void ClearChildElements(Element e)
+        {
+            while (e.ChildNodes.Length > 0)
+            {
+                e.RemoveChild(e.ChildNodes[0]);
+            }
+        }
 
         public static bool GetIsChecked(InputElement ie)
         {

@@ -1,6 +1,7 @@
 /* Copyright (c) Bendyline LLC. All rights reserved. Licensed under the Apache License, Version 2.0.
     You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. */
 
+using BL.Extern;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -52,6 +53,7 @@ namespace BL.UI.App
         private ElementEventListener draggingElementMouseUpHandler = null;
         private ElementEventListener draggingElementMouseOutHandler = null;
 
+        public event EventHandler Scrolling;
         public Date LastScrollTime
         {
             get
@@ -211,7 +213,7 @@ namespace BL.UI.App
 
             int ms = now.GetTime() - this.animationStart.GetTime();
 
-            double proportion = ms / this.scrollAnimationTime;
+            double proportion = Easing.EaseInQuad(ms, 0, 1, this.scrollAnimationTime);
 
             if (proportion < 1)
             {
@@ -231,6 +233,12 @@ namespace BL.UI.App
         private void SetFinalPosition()
         {
             this.SetToX();
+
+            if (this.Scrolling != null)
+            {
+                this.Scrolling(this, EventArgs.Empty);
+            }
+
             this.itemsBin.ScrollLeft = (int)this.toX;
             this.lastScrollTime = Date.Now;
         }
@@ -377,6 +385,11 @@ namespace BL.UI.App
                 this.itemsBin.ScrollLeft = newLeft;
                 this.lastScrollTime = Date.Now;
 
+                if (this.Scrolling != null)
+                {
+                    this.Scrolling(this, EventArgs.Empty);
+                }
+
                 this.ApplyPaddleVisibility();
                 e.CancelBubble = true;
             }
@@ -413,7 +426,7 @@ namespace BL.UI.App
         {
             e.PreventDefault();
 
-            if (!this.AllowSwiping)
+            if (!this.AllowSwiping || !this.isDragging)
             {
                 return;
             }
@@ -442,24 +455,28 @@ namespace BL.UI.App
             if (this.isDragging)
             {
                 Debug.WriteLine("HorizontalBin: MouseUp is dragging");
+
                 if (Context.Current.IsTouchOnly)
                 {
                    Document.Body.RemoveEventListener(ControlUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
                    Document.Body.RemoveEventListener(ControlUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
                 }
+
                 Debug.WriteLine("MouseUp");
 
                 this.isDragging = false;
 
                 int left = 0;
                 int newIndex =  0;
+                bool isGoingRight = this.itemsBin.ScrollLeft > this.initialScrollX;
+
                 for (int i=0; i<this.ItemControls.Count; i++)
                 {
                     ClientRect cr = ControlUtilities.GetBoundingRect(this.ItemControls[i].Element);
 
                     if (cr.Left < this.itemsBin.ScrollLeft)
                     {
-                        if (this.itemsBin.ScrollLeft > cr.Left + ((cr.Right - cr.Left) / 2))
+                        if (this.itemsBin.ScrollLeft > cr.Left + ((cr.Right - cr.Left) / 2) && isGoingRight)
                         {
                             newIndex = i + 1;
                         }

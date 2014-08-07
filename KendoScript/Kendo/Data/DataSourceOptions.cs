@@ -19,5 +19,6 @@ namespace kendo.data
         public object Data;
         public object Filter;
 
+        public Schema Schema;
     }
 }

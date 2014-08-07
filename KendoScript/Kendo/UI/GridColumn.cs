@@ -24,6 +24,7 @@ namespace Kendo.UI
         public object HeaderAttributes;
         public object HeaderTemplate;
         public object Hidden;
+        public object Command;
         public bool Sortable;
         public String Template;
         public double Width;
