@@ -1157,7 +1157,23 @@ namespace BL.UI
 
         public virtual void Dispose()
         {
+            foreach (Control c in this.templateControls)
+            {
+                if (c is IDisposable)
+                {
+                    ((IDisposable)c).Dispose();
+                }
+            }
 
+            foreach (Control c in this.templateDescendentControls)
+            {
+                if (c is IDisposable)
+                {
+                    ((IDisposable)c).Dispose();
+                }
+            }
+
+            Debug.WriteLine("(Control::Dispose) - Disposed " + this.TypeId + " " + this.Id);
         }
 
         /// <summary>

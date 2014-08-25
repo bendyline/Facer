@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+        <title></title>
+    <style>
+
+        body {
+            height: 100%;
+            width:100%;
+            display: table;
+        }
+        
+        #row
+        {
+            display:table-row;
+        }
+
+        #first
+        {
+            display:table-cell;
+            width:33%;
+            vertical-align:top;
+        }
+
+        #second
+        {
+            display:table-cell;
+            width:33%;
+            vertical-align:top;
+        }
+
+        #third
+        {
+            display:table-cell;
+            width:33%;            
+            vertical-align:top;
+        }
+
+        #item0
+        {
+            width:100%;
+            padding-right:8px;
+            height:100%;
+        }
+        
+        #item1
+        {
+            padding-bottom:4px;
+            display:block;
+            width:100%;
+            height:100%;
+        }
+
+        #item2
+        {
+            padding-top:4px;
+            display:block;
+            width:100%;
+            height:100%;
+        }
+
+        #item3
+        {
+            width:100%;
+            height:100%;
+        }
+
+        #innerTable
+        {
+            display:table;
+            width:100%;
+            height:100%;
+        }
+
+        #innerRowA
+        {
+            display:table-row;
+            height:50%;
+        }
+
+        #innerRowB
+        {
+            display:table-row;
+            height:50%;
+        }
+
+        #innerCell
+        {
+            display:table-cell;
+        }
+    </style>
+	</head>
+	<body>
+    	<div id="row">               
+            <div id="first">
+                <div id="item0"></div>
+            </div>
+            <div id="second">
+                <div id="innerTable">
+                    <div id="innerRowA">
+                        <div data-ctl-class="innerCell">
+                            <div id="item1"></div>
+                        </div>
+                    </div>
+                    <div id="innerRowB">
+                        <div data-ctl-class="innerCell">
+                            <div id="item2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="third">
+                <div id="item3"></div>
+            </div>
+        </div>
+	</body>
+</html>

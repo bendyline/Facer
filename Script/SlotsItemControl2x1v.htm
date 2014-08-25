@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+        <title></title>
+    <style>
+
+        body {
+            height: 100%;
+            width:100%;
+            display: table;
+        }
+        
+        #top
+        {
+            display:table-row;
+        }
+
+        #topInner
+        {
+            display:table-cell;
+            vertical-align:top;
+        }
+        
+        #bottom
+        {
+            display:table-row;
+        }
+
+        #bottomInner
+        {
+            display:table-cell;
+            vertical-align:top;
+        }
+
+        #item0
+        {
+            display:inline-block;
+            float:left;
+            width:50%;
+            padding-right:8px;
+            padding-bottom:8px;
+        }
+        #item1
+        {
+            display:inline-block;
+            float:right;
+            width:50%;
+            padding-bottom:8px;
+        }
+
+        #item2
+        {
+            width:100%;
+        }
+    </style>
+	</head>
+	<body>
+    	<div id="top">               
+            <div id="topInner">
+                <div id="item0"></div>
+                <div id="item1"></div>
+            </div>
+        </div>
+        <div id="bottom">
+            <div id="bottomInner">
+                <div id="item2"></div>
+            </div>
+       </div>
+	</body>
+</html>

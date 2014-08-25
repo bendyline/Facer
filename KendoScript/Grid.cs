@@ -16,7 +16,19 @@ namespace BL.UI.KendoControls
         private Kendo.UI.Grid grid;
         private Kendo.UI.GridOptions gridOptions;
 
-        public event ObjectEventHandler Save;
+        public event ModelEventHandler Save;
+        public event ModelEventHandler Edit;
+        public event ModelEventHandler Remove;
+
+        
+        public ObservableObject DataItem
+        {
+            get
+            {
+                return this.grid.DataItem();
+            }
+        }
+
 
         public GridOptions Options
         {
@@ -76,6 +88,14 @@ namespace BL.UI.KendoControls
 
         }
 
+        public void AddRow()
+        {
+            this.grid.AddRow();
+            
+        }
+
+        
+
         protected override void OnEnsureElements()
         { 
             if (this.gridOptions != null)
@@ -89,17 +109,52 @@ namespace BL.UI.KendoControls
             Script.Literal("var j = {0}; j.kendoGrid({2}); {1} = j.data('kendoGrid')", this.J, this.grid, this.gridOptions);
 
             this.grid.Bind("save", this.HandleSave);
+            this.grid.Bind("edit", this.HandleEdit);
+            this.grid.Bind("remove", this.HandleRemove);
+        }
+
+        private void HandleEdit(object e)
+        {
+            Model model = null;
+
+            Script.Literal("{0}=e.model", model);
+
+            if (this.Edit != null)
+            {
+                ModelEventArgs mea = new ModelEventArgs();
+                mea.Model = model;
+
+                this.Edit(mea);
+            }
+        }
+
+        private void HandleRemove(object e)
+        {
+            Model model = null;
+
+            Script.Literal("{0}=e.model", model);
+
+            if (this.Remove != null)
+            {
+                ModelEventArgs mea = new ModelEventArgs();
+                mea.Model = model;
+
+                this.Remove(mea);
+            }
         }
 
         private void HandleSave(object e)
         {
-            object model = null;
+            Model model = null;
 
             Script.Literal("{0}=e.model", model);
 
             if (this.Save != null)
             {
-                this.Save(this, new ObjectEventArgs(model));
+                ModelEventArgs mea = new ModelEventArgs();
+                mea.Model = model;
+
+                this.Save(mea);
             }
         }
 

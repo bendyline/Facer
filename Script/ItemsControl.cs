@@ -15,7 +15,7 @@ namespace BL.UI
         private Dictionary<String, Control> itemControlsById;
         private bool wrapItems = false;
 
-        public Element ItemsContainerElement
+        public virtual Element ItemsContainerElement
         {
             get
             {
@@ -153,19 +153,34 @@ namespace BL.UI
 
         private void ClearItemContainerElement()
         {
-            if (this.itemsContainerElement != null && this.ItemControls != null)
+            if (this.ItemsContainerElement != null && this.ItemControls != null)
             {
                 foreach (Control c in this.ItemControls)
                 {
-                    this.itemsContainerElement.RemoveChild(c.Element);
+                    if (c.Element != null)
+                    {
+                        this.ItemsContainerElement.RemoveChild(c.Element);
+                    }
                 }
             }
         }
         public void ClearItemControls()
         {
             this.ClearItemContainerElement();
+
             this.itemControls = null;
             this.itemControlsById = null;
+        }
+
+
+        public override void Dispose()
+        {
+            foreach (Control c in this.itemControls)
+            {
+                c.Dispose();
+            }
+
+            base.Dispose();
         }
 
         protected override void OnBaseControlsElementsPostInit()
@@ -188,9 +203,9 @@ namespace BL.UI
 
         private void InsertControl(int index, Control c)
         {
-            Element e = this.ItemsContainerElement;
+            Element itemsContainerElement = this.ItemsContainerElement;
 
-            if (this.itemControls == null || e == null)
+            if (this.itemControls == null || itemsContainerElement == null)
             {
                 return;
             }
@@ -216,42 +231,51 @@ namespace BL.UI
                      eltWrapper = this.CreateElement("itemWrapper");
                      eltWrapper.AppendChild(elt);
                  }
+
                  isNew = true;
             }
             else
             {
                 c.EnsureElements();
+
                 elt = c.Element;
 
                 if (this.wrapItems)
                 {
-                    eltWrapper = elt.ParentNode;
-                }
-            }
-
-
-            if (elt.ParentNode != e)
-            {
-                if (index < 0 || index >= e.Children.Length)
-                {
-                    if (eltWrapper != null)
+                    if (elt.ParentNode != null)
                     {
-                        e.AppendChild(eltWrapper);
+                        eltWrapper = elt.ParentNode;
                     }
                     else
                     {
-                        e.AppendChild(elt);
+                        eltWrapper = this.CreateElement("itemWrapper");
+                        eltWrapper.AppendChild(elt);
+                    }
+                }
+            }
+
+            if ((eltWrapper != null && eltWrapper.ParentNode != itemsContainerElement) || (eltWrapper == null && elt.ParentNode != itemsContainerElement))
+            {
+                if (index < 0 || index >= itemsContainerElement.Children.Length)
+                {
+                    if (eltWrapper != null)
+                    {
+                        itemsContainerElement.AppendChild(eltWrapper);
+                    }
+                    else
+                    {
+                        itemsContainerElement.AppendChild(elt);
                     }
                 }
                 else
                 {
                     if (eltWrapper != null)
                     {
-                        e.InsertBefore(eltWrapper, e.Children[index]);
+                        itemsContainerElement.InsertBefore(eltWrapper, itemsContainerElement.Children[index]);
                     }
                     else
                     {
-                        e.InsertBefore(elt, e.Children[index]);
+                        itemsContainerElement.InsertBefore(elt, itemsContainerElement.Children[index]);
                     }
                 }
             }

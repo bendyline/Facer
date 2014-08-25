@@ -62,6 +62,7 @@
     <Compile Include="IDialogManager.cs" />
     <Compile Include="Dialog.cs" />
     <Compile Include="ControlIntegerEvent.cs" />
+    <Compile Include="SlotItemsControl.cs" />
     <Compile Include="PointAndStartElementEvent.cs" />
     <Compile Include="OpacityAnimator.cs" />
     <Compile Include="ScrollAnimator.cs" />
@@ -117,6 +118,8 @@
   <ItemGroup>
     <Content Include="Dialog.htm" />
     <Content Include="DebugPanel.htm" />
+    <Content Include="SlotsItemControl1x2x1h.htm" />
+    <Content Include="SlotsItemControl2x1v.htm" />
     <Content Include="ListItem.htm" />
     <Content Include="List.htm" />
   </ItemGroup>

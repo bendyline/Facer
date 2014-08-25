@@ -254,13 +254,13 @@ namespace BL.UI.App
             
             if (Context.Current.IsTouchOnly)
             {
-                Debug.WriteLine("HorziontalBin: Registering touch events " + ControlUtilities.GetTouchStartEventName());
+                Debug.WriteLine("(HorziontalBin::OnApplyTemplate) - Registering touch events " + ControlUtilities.GetTouchStartEventName());
 
                 this.itemsBin.AddEventListener(ControlUtilities.GetTouchStartEventName(), this.HandleElementMouseDown, true);
             }
             else
             {
-                Debug.WriteLine("HorizontalBin: Registering mouse events ");
+                Debug.WriteLine("(HorziontalBin::OnApplyTemplate) - Registering mouse events ");
 
                 this.itemsBin.AddEventListener("mousedown", this.HandleElementMouseDown, true);
                 this.itemsBin.AddEventListener("mousemove", this.HandleElementMouseMove, true);
@@ -380,7 +380,7 @@ namespace BL.UI.App
                 Window.SetTimeout(this.HandleDragMoveDeadTimeout, 100);
 
                 int newLeft = (int)Math.Floor(this.initialScrollX - ControlUtilities.GetPageX(e));
-                Debug.WriteLine("HorizontalBin: Mouse Move drag: " + newLeft);
+                Debug.WriteLine("(HorizontalBin::HandleElementMouseMove) - Mouse Move drag: " + newLeft);
 
                 this.itemsBin.ScrollLeft = newLeft;
                 this.lastScrollTime = Date.Now;
@@ -395,7 +395,7 @@ namespace BL.UI.App
             }
             else
             {
-                Debug.WriteLine("HorizontalBin: Mouse Move NO DRAG");
+                Debug.WriteLine("(HorizontalBin::HandleElementMouseMove) - Mouse Move NO DRAG");
             }
         }
 
@@ -407,8 +407,8 @@ namespace BL.UI.App
             }
 
             this.isDragging = true;
-            
-            Debug.WriteLine("HorizontalBin: Mouse CSD");
+
+            Debug.WriteLine("(HorizontalBin::ConsiderStartDragging)");
 
             if (Context.Current.IsTouchOnly)
             {
@@ -431,7 +431,7 @@ namespace BL.UI.App
                 return;
             }
 
-            Debug.WriteLine("HorizontalBin: MouseOut");
+            Debug.WriteLine("(HorizontalBin::HandleDragMouseOut)");
 
             // has the mouse left the window?
             if ((e.ToElement == null && !Context.Current.IsTouchOnly) || (e.ToElement != null && e.ToElement.NodeName == "HTML"))
@@ -450,19 +450,17 @@ namespace BL.UI.App
             }
 
             this.isMouseDown = false;
-            Debug.WriteLine("HorizontalBin: MouseUp");
+            Debug.WriteLine("(HorizontalBin::HandleElementMouseUp)");
 
             if (this.isDragging)
             {
-                Debug.WriteLine("HorizontalBin: MouseUp is dragging");
+                Debug.WriteLine("(HorizontalBin::HandleElementMouseUp) - Is Dragging ");
 
                 if (Context.Current.IsTouchOnly)
                 {
                    Document.Body.RemoveEventListener(ControlUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
                    Document.Body.RemoveEventListener(ControlUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
                 }
-
-                Debug.WriteLine("MouseUp");
 
                 this.isDragging = false;
 
@@ -544,6 +542,7 @@ namespace BL.UI.App
             }
 
             int itemWidth= 0;
+            int itemCount = 0;
 
             foreach (Control c in this.ItemControls)
             {
@@ -556,12 +555,15 @@ namespace BL.UI.App
 
                     ClientRect cr = ControlUtilities.GetBoundingRect(c.Element);
 
-                    itemWidth = (int)(cr.Right - cr.Left);
+                    itemWidth += (int)(cr.Right - cr.Left);
 
                     c.Element.ParentNode.Style.Height = "100%";
+                    itemCount++;
                 }
             }
 
+            itemWidth /= itemCount;
+                
             if (width > 0)
             {
                 this.itemsBin.Style.MaxWidth = width + "px";

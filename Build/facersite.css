@@ -22,7 +22,39 @@
             border-radius: 4px;}.bl-ui-list{height: 100%;
             overflow-y: auto;
             display: block;}.bl-ui-list-items{width: 100%;
-            height: 100%;}.bl-bs-jumbotron-image{ border: solid 1px black; }.bl-bs-jumbotron-imageOuter{ border: solid 3px white; }.bl-site-rightimage{
+            height: 100%;}.bl-ui-slotsitemcontrol1x2x1h{height: 100%;
+            width:100%;
+            display: table;}.bl-ui-slotsitemcontrol1x2x1h-row{display:table-row;}.bl-ui-slotsitemcontrol1x2x1h-first{display:table-cell;
+            width:33%;
+            vertical-align:top;}.bl-ui-slotsitemcontrol1x2x1h-second{display:table-cell;
+            width:33%;
+            vertical-align:top;}.bl-ui-slotsitemcontrol1x2x1h-third{display:table-cell;
+            width:33%;            
+            vertical-align:top;}.bl-ui-slotsitemcontrol1x2x1h-item0{width:100%;
+            padding-right:8px;
+            height:100%;}.bl-ui-slotsitemcontrol1x2x1h-item1{padding-bottom:4px;
+            display:block;
+            width:100%;
+            height:100%;}.bl-ui-slotsitemcontrol1x2x1h-item2{padding-top:4px;
+            display:block;
+            width:100%;
+            height:100%;}.bl-ui-slotsitemcontrol1x2x1h-item3{width:100%;
+            height:100%;}.bl-ui-slotsitemcontrol1x2x1h-innerTable{display:table;
+            width:100%;
+            height:100%;}.bl-ui-slotsitemcontrol1x2x1h-innerRowA{display:table-row;
+            height:50%;}.bl-ui-slotsitemcontrol1x2x1h-innerRowB{display:table-row;
+            height:50%;}.bl-ui-slotsitemcontrol1x2x1h-innerCell{display:table-cell;}.bl-ui-slotsitemcontrol2x1v{height: 100%;
+            width:100%;
+            display: table;}.bl-ui-slotsitemcontrol2x1v-top{display:table-row;}.bl-ui-slotsitemcontrol2x1v-topInner{display:table-cell;
+            vertical-align:top;}.bl-ui-slotsitemcontrol2x1v-bottom{display:table-row;}.bl-ui-slotsitemcontrol2x1v-bottomInner{display:table-cell;
+            vertical-align:top;}.bl-ui-slotsitemcontrol2x1v-item0{display:inline-block;
+            float:left;
+            width:50%;
+            padding-right:8px;
+            padding-bottom:8px;}.bl-ui-slotsitemcontrol2x1v-item1{display:inline-block;
+            float:right;
+            width:50%;
+            padding-bottom:8px;}.bl-ui-slotsitemcontrol2x1v-item2{width:100%;}.bl-bs-jumbotron-image{ border: solid 1px black; }.bl-bs-jumbotron-imageOuter{ border: solid 3px white; }.bl-site-rightimage{
                 margin-bottom: 30px;
             }.bl-site-rightimage-imageBin{
                 padding-top: 20px;

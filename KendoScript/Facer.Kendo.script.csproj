@@ -61,6 +61,8 @@
     <None Include="packages.config" />
     <None Include="Properties\FxCop.ruleset" />
     <None Include="Properties\Script.template" />
+    <Compile Include="ColorPicker.cs" />
+    <Compile Include="Kendo\Data\ModelEventArgs.cs" />
     <Compile Include="Kendo\Data\ModelOptions.cs" />
     <Compile Include="Kendo\Data\Schema.cs" />
     <Compile Include="Kendo\Data\ModelField.cs" />
@@ -68,6 +70,9 @@
     <Compile Include="Kendo\Mobile\Application.cs" />
     <Compile Include="Kendo\Mobile\MobileSwitch.cs" />
     <Compile Include="Kendo\Mobile\MobileSwitchOptions.cs" />
+    <Compile Include="Kendo\UI\TileSize.cs" />
+    <Compile Include="Kendo\UI\ColorPicker.cs" />
+    <Compile Include="Kendo\UI\ColorPickerOptions.cs" />
     <Compile Include="MobileSwitch.cs" />
     <Compile Include="QRCode.cs" />
     <Compile Include="Kendo\DataViz\UI\QRCodeOptions.cs" />

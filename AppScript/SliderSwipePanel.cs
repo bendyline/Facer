@@ -221,6 +221,9 @@ namespace BL.UI.App
                 this.interiorItemHeight = value;
 
                 this.UpdateSizings();
+                Window.SetTimeout(new Action(this.UpdateSizings), 1);
+                Window.SetTimeout(new Action(this.UpdateSizings), 100);
+
             }
         }
 
@@ -519,7 +522,6 @@ namespace BL.UI.App
             {
                 primaryTab.ClassName = this.GetElementClass(this.GetClassNameForElement(this.activeIndex));
             }
-
         }
 
         private void HandleLinkClick(ElementEvent e)
@@ -544,7 +546,7 @@ namespace BL.UI.App
 
             if (Context.Current.IsTouchOnly)
             {
-                Debug.WriteLine("SliderSwipePanel: Registering touch events " + ControlUtilities.GetTouchStartEventName());
+                Debug.WriteLine("(SliderSwipePanel::OnApplyTemplate) - Registering touch events " + ControlUtilities.GetTouchStartEventName());
                 this.Element.AddEventListener(ControlUtilities.GetTouchStartEventName(), this.HandleElementMouseDown, true);
 
                 Document.Body.AddEventListener(ControlUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
@@ -557,7 +559,7 @@ namespace BL.UI.App
             }
             else
             {
-                Debug.WriteLine("SliderSwipePanel: Registering mouse events ");
+                Debug.WriteLine("(SliderSwipePanel::OnApplyTemplate) - Registering mouse events ");
 
                 this.Element.AddEventListener("mousedown", this.HandleElementMouseDown, true);
                 this.Element.AddEventListener("mousemove", this.HandleElementMouseMove, true);
@@ -570,6 +572,8 @@ namespace BL.UI.App
             this.UpdateSizings();
 
             Window.SetTimeout(new Action(this.UpdateSizings), 1);
+            Window.SetTimeout(new Action(this.UpdateSizings), 100);
+
         }
 
         protected override void OnVisibilityChanged()
@@ -593,6 +597,9 @@ namespace BL.UI.App
             c.Visible = true;
 
             this.UpdateSizings();
+
+            Window.SetTimeout(new Action(this.UpdateSizings), 1);
+            Window.SetTimeout(new Action(this.UpdateSizings), 100);
         }
 
         private bool IsDefaultInputElement(ElementEvent e)
@@ -618,7 +625,7 @@ namespace BL.UI.App
 
             if (this.allowSwiping && !this.isDragging && !this.isConsideringDrag)
             {
-                Debug.WriteLine("SliderSwipePanel: Mouse Down Starting drag");
+                Debug.WriteLine("(SliderSwipePanel::HandleElementMouseDown) - Starting drag");
 
            //     e.PreventDefault();
 
@@ -631,7 +638,7 @@ namespace BL.UI.App
             }
             else
             {
-                Debug.WriteLine("SliderSwipePanel: Mouse Down not starting drag");
+                Debug.WriteLine("(SliderSwipePanel::HandleElementMouseDown) - Not starting drag");
             }
         }
 
@@ -663,11 +670,9 @@ namespace BL.UI.App
                 Window.SetTimeout(this.HandleDragMoveDeadTimeout, 100);
 
                 int newLeft = (int)Math.Floor(this.initialScrollX + (this.downEventPageX - ControlUtilities.GetPageX(e)));
-                Debug.WriteLine("SliderSwipePanel: Mouse Move drag: " + newLeft);
+                Debug.WriteLine("(SliderSwipePanel::HandleElementMouseMove) - Mouse Move drag: " + newLeft);
 
                 this.SetPanelLeft(newLeft);
-
-            //    e.CancelBubble = true;
 
                 if (this.VerticalScrollChanged != null)
                 {
@@ -685,16 +690,13 @@ namespace BL.UI.App
                     double diffX = Math.Abs((this.downEventPageX - ControlUtilities.GetPageX(this.lastMoveEvent)));
                     double diffY = Math.Abs((this.downEventPageY - ControlUtilities.GetPageY(this.lastMoveEvent)));
 
-
-       //             e.PreventDefault();
-
                     if (diffX != 0 || diffY != 0)
                     {
                         this.ConsiderStartDragging();
                     }
                 }
 
-                Debug.WriteLine("SliderSwipePanel: Mouse Move NO DRAG");
+                Debug.WriteLine("(SliderSwipePanel::HandleElementMouseMove) - Not dragging");
             }
         }
 
@@ -712,13 +714,13 @@ namespace BL.UI.App
             {
                 this.isDragging = true;
 
-                Debug.WriteLine("SliderSwipePanel: Mouse CSD ");
+                Debug.WriteLine("(SliderSwipePanel::ConsiderStartDragging)");
             }
             else
             {
                 this.isConsideringDrag = false;
 
-                Debug.WriteLine("SliderSwipePanel: Failed CSD check" + diffX + diffY);
+                Debug.WriteLine("(SliderSwipePanel::ConsiderStartDragging) - Failed CSD check" + diffX + diffY);
             }
         }
 
@@ -734,7 +736,7 @@ namespace BL.UI.App
                 return;
             }
 
-            Debug.WriteLine("SliderSwipePanel: MouseOut");
+            Debug.WriteLine("(SliderSwipePanel::HandleDragMouseOut)");
             // has the mouse left the window?
             if ((e.ToElement == null && !Context.Current.IsTouchOnly) || (e.ToElement != null && e.ToElement.NodeName == "HTML"))
             {
@@ -747,7 +749,7 @@ namespace BL.UI.App
         private void HandleElementMouseUp(ElementEvent e)
         {
             this.isConsideringDrag = false;
-            Debug.WriteLine("SliderSwipePanel: MouseUp");
+            Debug.WriteLine("(SliderSwipePanel::MouseUp)");
 
             if (this.isDragging)
             {
@@ -756,7 +758,7 @@ namespace BL.UI.App
                     e.PreventDefault();
                 }
 
-                Debug.WriteLine("SliderSwipePanel: MouseUp is dragging");
+                Debug.WriteLine("(SliderSwipePanel::ConsiderStartDragging) - Dragging");
          /*       if (Context.Current.IsTouchOnly)
                 {
                    Document.Body.RemoveEventListener(ControlUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
@@ -805,6 +807,9 @@ namespace BL.UI.App
             base.OnDimensionChanged();
 
             this.UpdateSizings();
+
+            Window.SetTimeout(new Action(this.UpdateSizings), 1);
+            Window.SetTimeout(new Action(this.UpdateSizings), 100);
         }
 
         public void UpdateSizingsEvent(ElementEvent e)
@@ -812,6 +817,7 @@ namespace BL.UI.App
             this.UpdateSizings();
 
             Window.SetTimeout(new Action(this.UpdateSizings), 1);
+            Window.SetTimeout(new Action(this.UpdateSizings), 100);
         }
 
         public void UpdateSizings()
@@ -841,6 +847,7 @@ namespace BL.UI.App
             foreach (Control c in this.ItemControls)
             {
                 PaneSettings ps = this.Settings[index];
+
                 if (c.Element != null)
                 {
                     Style style = c.Element.Style;

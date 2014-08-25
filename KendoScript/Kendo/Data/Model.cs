@@ -6,10 +6,12 @@ using System.Runtime.CompilerServices;
 namespace kendo.data
 {
     [Imported]
-    public class Model
+    public class Model : ObservableObject
     {
-        public String Id;
-        public Dictionary<String, ModelField> Fields;
+        public bool IsNew()
+        {
+            return false;
+        }
 
         public static Model Define(ModelOptions mo) { return null;  }
     }

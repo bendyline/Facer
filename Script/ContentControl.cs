@@ -57,6 +57,17 @@ namespace BL.UI
         {
         }
 
+
+        public override void Dispose()
+        {
+            if (this.content != null)
+            {
+                this.content.Dispose();
+
+            }
+            base.Dispose();
+        }
+
         internal override void ClearTemplate()
         {
             base.ClearTemplate();

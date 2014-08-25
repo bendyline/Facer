@@ -358,7 +358,7 @@ namespace BL.UI
         {
             e.CancelBubble = true;
 
-            Debug.WriteLine("ElementEffects: Cancelling default pointer event action.");
+            Debug.WriteLine("(ElementEffects::HandleDragStartEvent) - Cancelling default pointer event action.");
             e.PreventDefault();
             e.StopPropagation();
         }
@@ -382,7 +382,7 @@ namespace BL.UI
                 this.DragMoved(this, ee);
             }
 
-            Debug.WriteLine("ElementEffects: Cancelling default pointer event action.");
+            Debug.WriteLine("(ElementEffects::HandleEelementDragging) - Cancelling default pointer event action.");
             e.PreventDefault();
             e.CancelBubble = true;
         }

@@ -21,6 +21,11 @@ namespace Kendo.UI
         public List<GridColumn> Columns;
         public DataSource DataSource;
 
+        public ObservableObject DataItem()
+        {
+            return null;
+        }
+
         public void AddRow()
         {
 

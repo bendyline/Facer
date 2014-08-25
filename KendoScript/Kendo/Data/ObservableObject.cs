@@ -10,6 +10,16 @@ namespace kendo.data
     [ScriptName("Object")]
     public class ObservableObject
     {
-       
+        public String Uid;
+
+        public object Get(String fieldName)
+        {
+            return null;
+        }
+
+        public void Set(String fieldName, object value)
+        {
+            ;
+        }
     }
 }

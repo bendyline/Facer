@@ -343,7 +343,7 @@ namespace Bendyline.UI.TemplateCompiler
 
             filePath = FileUtilities.EnsurePath(di.FullName, name + ".js");
 
-            String content = String.Format("var temparr={0};BL.UI.TemplateManager.get_current().addTemplateFile(\"{1}\", temparr);", json, name.Substring(0, name.Length - 2).ToLowerCase());
+            String content = String.Format("BL.UI.TemplateManager.get_current().addTemplateFile(\"{1}\", {0});", json, name.Substring(0, name.Length - 2).ToLowerCase());
 
             FileUtilities.SetTextToFile(filePath, content);
             return true;
