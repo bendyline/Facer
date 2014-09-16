@@ -199,7 +199,7 @@ namespace BL.UI.App
 
                 linkTitleElement = this.CreateElement(cssBase);
 
-                ControlUtilities.SetText(linkTitleElement, linkTitle);
+                ElementUtilities.SetText(linkTitleElement, linkTitle);
 
                 linkTitleElement.SetAttribute("linkIndex", i);
                 linkTitleElement.AddEventListener("click", this.HandleLinkClick, true);

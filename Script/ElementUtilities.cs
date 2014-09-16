@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace BL.UI
 {
-    public static class ControlUtilities
+    public static class ElementUtilities
     {
         public static void ClearChildElements(Element e)
         {
@@ -27,9 +27,15 @@ namespace BL.UI
 
             return isChecked;
         }
+
         public static void SetIsCheckedFromObject(InputElement ie, object isChecked)
         {
             Script.Literal("{0}.checked={1}", ie, isChecked.ToString());
+        }
+
+        public static void SetBackgroundSize(Element element, String value)
+        {
+            Script.Literal("{0}.style.backgroundSize={1}", element, value);
         }
 
         public static void SetIsChecked(InputElement ie, bool isChecked)
@@ -127,6 +133,19 @@ namespace BL.UI
             return e.Target;
         }
 
+        public static bool ElementIsChildOf(Element element, Element parentToLookFor)
+        {
+            for (int i = 0; i < parentToLookFor.Children.Length; i++)
+            {
+                if (parentToLookFor.Children[i]== element)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static bool ElementIsDescendentOf(Element element, Element ancestorToLookFor)
         {
             if (element == ancestorToLookFor)
@@ -159,7 +178,7 @@ namespace BL.UI
         public static void CancelEvent(ElementEvent eventDetails)
         {
 
-            Debug.WriteLine("ControlUtilities: Cancelling default pointer event action.");
+            Debug.WriteLine("ElementUtilities: Cancelling default pointer event action.");
 
             eventDetails.PreventDefault();
         }

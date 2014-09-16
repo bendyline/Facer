@@ -62,6 +62,7 @@ namespace BL.UI
 
         private Action applyVisibleOnFrameAction;
 
+        private ElementEventListener resizeHandler;
         private ElementEventListener mouseOverHandler;
         private ElementEventListener mouseOutHandler;
         private ElementEventListener mouseEnterHandler;
@@ -524,6 +525,7 @@ namespace BL.UI
                     c.ClearTemplate();
                     c.Element = null;
                 }
+
                 this.template = null;
                 this.templateWasApplied = false;
                 this.fireUpdateOnTemplateComplete = true;
@@ -619,23 +621,28 @@ namespace BL.UI
 
         }
 
+        private void DisposeInteractionEventing()
+        {
+            if (this.interactionEventsRegistered)
+            {
+                this.element.RemoveEventListener("click", this.clickHandler, true);
+                this.element.RemoveEventListener("touchstart", this.touchStartHandler, true);
+                this.element.RemoveEventListener("touchend", this.touchEndHandler, true);
+                this.element.RemoveEventListener("mouseover", this.mouseOverHandler, true);
+                this.element.RemoveEventListener("mouseout", this.mouseOutHandler, true);
+                this.element.RemoveEventListener("mouseenter", this.mouseEnterHandler, true);
+                this.element.RemoveEventListener("mouseleave", this.mouseLeaveHandler, true);
+                this.element.RemoveEventListener("mousemove", this.mouseMoveHandler, true);
+
+                this.interactionEventsRegistered = false;
+            }
+        }
+
         private void HandleInteractionEventing()
         {
             if (!this.trackInteractionEvents)
             {
-                if (this.interactionEventsRegistered)
-                {
-                    this.element.RemoveEventListener("click", this.clickHandler, true);
-                    this.element.RemoveEventListener("touchstart", this.touchStartHandler, true);
-                    this.element.RemoveEventListener("touchend", this.touchEndHandler, true);
-                    this.element.RemoveEventListener("mouseover", this.mouseOverHandler, true);                    
-                    this.element.RemoveEventListener("mouseout", this.mouseOutHandler, true);
-                    this.element.RemoveEventListener("mouseenter", this.mouseEnterHandler, true);
-                    this.element.RemoveEventListener("mouseleave", this.mouseLeaveHandler, true);
-                    this.element.RemoveEventListener("mousemove", this.mouseMoveHandler, true);
-
-                    this.interactionEventsRegistered = false;
-                }
+                this.DisposeInteractionEventing();
 
                 return;
             }
@@ -1157,19 +1164,28 @@ namespace BL.UI
 
         public virtual void Dispose()
         {
-            foreach (Control c in this.templateControls)
+            this.DisposeInteractionEventing();
+            this.DisposeResizeEventing();
+
+            if (this.templateControls != null)
             {
-                if (c is IDisposable)
+                foreach (Control c in this.templateControls)
                 {
-                    ((IDisposable)c).Dispose();
+                    if (c is IDisposable)
+                    {
+                        ((IDisposable)c).Dispose();
+                    }
                 }
             }
 
-            foreach (Control c in this.templateDescendentControls)
+            if (this.templateDescendentControls != null)
             {
-                if (c is IDisposable)
+                foreach (Control c in this.templateDescendentControls)
                 {
-                    ((IDisposable)c).Dispose();
+                    if (c is IDisposable)
+                    {
+                        ((IDisposable)c).Dispose();
+                    }
                 }
             }
 
@@ -1242,6 +1258,19 @@ namespace BL.UI
         /// </summary>
         /// <param name="elementClass">Modifier class.</param>
         /// <returns></returns>
+        protected Element CreateElementWithTypeAndAdditionalClasses(String elementClass, String type, String additionalClasses)
+        {
+            Element e = Document.CreateElement(type);
+
+            e.ClassName = this.GetElementClass(elementClass) + " " + additionalClasses;
+
+            return e;
+        }
+        /// <summary>
+        /// Creates a new DHTML element.
+        /// </summary>
+        /// <param name="elementClass">Modifier class.</param>
+        /// <returns></returns>
         protected Element CreateElementWithType(String elementClass, String type)
         {
             Element e = Document.CreateElement(type);
@@ -1260,6 +1289,20 @@ namespace BL.UI
             Element e = Document.CreateElement("DIV");
 
             e.ClassName = this.GetElementClass(elementClass);
+
+            return e;
+        }
+
+        /// <summary>
+        /// Creates a new DHTML element.
+        /// </summary>
+        /// <param name="elementClass">Modifier class.</param>
+        /// <returns></returns>
+        protected Element CreateElementWithAdditionalClasses(String elementClass, String additionalClasses)
+        {
+            Element e = Document.CreateElement("DIV");
+
+            e.ClassName = this.GetElementClass(elementClass) + " " + additionalClasses;
 
             return e;
         }
@@ -1304,17 +1347,30 @@ namespace BL.UI
         {
         }
 
+        private void DisposeResizeEventing()
+        {
+            if (this.hookedResize)
+            {
+                Window.RemoveEventListener("resize", this.resizeHandler, true);
+                this.hookedResize = false;
+            }
+        }
+
         private void HandleResizeEventing()
         {
+            if (this.resizeHandler == null)
+            {
+                this.resizeHandler = this.HandleResize;
+            }
+
             if (!this.hookedResize && (this.trackResizeEvents && this.Visible))
             {
-                Window.AddEventListener("resize", this.HandleResize, true);
+                Window.AddEventListener("resize", this.resizeHandler, true);
                 this.hookedResize = true;
             }
-            else if (this.hookedResize)
+            else if (this.hookedResize && (!this.trackResizeEvents || !this.Visible))
             {
-                Window.RemoveEventListener("resize", this.HandleResize, true);
-                this.hookedResize = false;
+                this.DisposeResizeEventing();
             }
         }
 

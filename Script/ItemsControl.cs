@@ -157,9 +157,16 @@ namespace BL.UI
             {
                 foreach (Control c in this.ItemControls)
                 {
-                    if (c.Element != null)
+                    if (c.Element != null && this.ItemsContainerElement.Contains(c.Element))
                     {
-                        this.ItemsContainerElement.RemoveChild(c.Element);
+                        try
+                        {
+                            this.ItemsContainerElement.RemoveChild(c.Element);
+                        }
+                        catch (Exception)
+                        {
+                            ;
+                        }
                     }
                 }
             }

@@ -9,20 +9,30 @@
           width: 100%;  
           height:100%;
         }
-
-        #titleText
+        
+        #topBar
         {
-            color:#000000;
-            font-family: 'Lato', Helvetica, Arial, sansserif;
+            padding:6px;
+            padding-bottom:40px;
 
         }
-        
+
         #closeButton
         {
             font-size:large;
+            float:right;
             text-align: right;
-            margin:3px;
-            cursor:default;
+            cursor:default;            
+            vertical-align:middle;
+        }
+
+        #titleText
+        {
+            float:left;
+            font-family: 'Lato', Helvetica, Arial, sansserif;
+
+            font-size:large;
+            vertical-align:middle;
         }
 
         #panel
@@ -30,20 +40,17 @@
             vertical-align:middle;
             align-content:center;
             background:white;
-            border: solid 1px #D0D0D0;
-            border-radius: 4px;
         }
 
         </style>
 	</head>
 	<body>
-           <div id="panel">
+           <div id='panel'>
                <div id="topBar">
                    <div id="titleText"></div>
                     <div id="closeButton"><img src="qla/images/close.png"/></div>
                 </div>
-
-                <ContentContainer />
+                <ContentContainer/>
            </div>
  	</body>
 </html>

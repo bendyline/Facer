@@ -330,6 +330,8 @@ namespace Bendyline.UI.TemplateCompiler
                 }
             }
 
+            Log.Message("Exporting JSON files to {0} with name {1}.", di.FullName, this.Name);
+
             String json = GetCrunchedJson();
             String css = GetFactoredCss();
 

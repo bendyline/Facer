@@ -87,7 +87,7 @@ namespace BL.UI
                 this.scrollingOperation.AddCallback(callback, state);
             }
 
-            ControlUtilities.AnimateOnNextFrame(this.AnimateTick);
+            ElementUtilities.AnimateOnNextFrame(this.AnimateTick);
         }
 
         private void AnimateTick()
@@ -110,7 +110,7 @@ namespace BL.UI
                     Window.Scroll(Window.PageXOffset, (int)(this.fromY + ((this.toY - this.fromY) * proportion)));
                 }
 
-                ControlUtilities.AnimateOnNextFrame(this.AnimateTick);
+                ElementUtilities.AnimateOnNextFrame(this.AnimateTick);
             }
             else
             {

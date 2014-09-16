@@ -11,15 +11,64 @@ namespace BL.UI
 {
     public class Dialog : ContentControl
     {
+        [ScriptName("e_titleText")]
+        public Element titleText;
+
         private bool isShowing = false;
         private int dialogWidth = 0;
         private int dialogHeight = 0;
-        private string overflow = null;
-        private string overflowX = null;
-        private string overflowY = null;
+        private String overflow = null;
+        private String overflowX = null;
+        private String overflowY = null;
+        private String title = null;
 
         private int? maxWidth;
         private int? maxHeight;
+
+        private int horizontalPadding = 30;
+        private int verticalPadding = 30;
+
+        public String Title
+        {
+            get
+            {
+                return this.title;
+            }
+
+            set
+            {
+                this.title = value;
+
+                this.UpdateTitle();
+            }
+        }
+
+        public int HorizontalPadding
+        {
+            get
+            {
+                return this.horizontalPadding;
+            }
+
+            set
+            {
+                this.horizontalPadding = value;
+            }
+        }
+
+        public int VerticalPadding
+        {
+            get
+            {
+                return this.verticalPadding;
+            }
+
+            set
+            {
+                this.verticalPadding = value;
+            }
+        }
+
 
         public int? MaxWidth
         {
@@ -112,8 +161,8 @@ namespace BL.UI
             panelStyle.Position = "absolute";
             panelStyle.ZIndex = 255;
 
-            double width = (Window.InnerWidth - 60);
-            double height = (Window.InnerHeight - 60);
+            double width = (Window.InnerWidth - (horizontalPadding * 2));
+            double height = (Window.InnerHeight - (verticalPadding * 2));
 
             if (this.maxWidth != null)
             {
@@ -140,8 +189,25 @@ namespace BL.UI
             panelStyle.Width =  width + "px";
             panelStyle.Height = height + "px";
 
-
+            this.UpdateTitle();
             Document.Body.AppendChild(this.Element);
+        }
+
+        private void UpdateTitle()
+        {
+            if (this.titleText == null)
+            {
+                return;
+            }
+
+            if (String.IsNullOrEmpty(this.title))
+            {
+                ElementUtilities.SetText(this.titleText, "");
+            }
+            else
+            {
+                ElementUtilities.SetText(this.titleText, this.title);
+            }
         }
 
         public void Hide()

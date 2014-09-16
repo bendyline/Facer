@@ -27,7 +27,7 @@ namespace BL.JQM
             base.OnEnsureElements();
 
 
-            ControlUtilities.DisableElementTouchMove(this.Element);
+            ElementUtilities.DisableElementTouchMove(this.Element);
         }
     }
 }

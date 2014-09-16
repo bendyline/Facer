@@ -19,6 +19,8 @@ namespace BL.UI
 
         private Date start;
         private double length;
+        private int delay;
+        private bool canceled = false;
 
         private Operation opacityOperation;
         public event EventHandler OpacityChangeComplete;
@@ -35,6 +37,7 @@ namespace BL.UI
                 this.element = value;
             }
         }
+
         public List<Element> Elements
         {
             get
@@ -75,10 +78,37 @@ namespace BL.UI
             }
         }
 
+        public void Cancel(bool setToEndValues)
+        {
+            this.canceled = true;
+
+            if (setToEndValues)
+            {
+                this.SetToEndValues();
+            }
+        }
+
+        public void StartAfter(int delay, double length, AsyncCallback callback, object state)
+        {
+            this.length = length;
+            this.start = Date.Empty;
+            this.delay = delay;
+            this.canceled = false;
+            this.opacityOperation = new Operation();
+
+            if (callback != null)
+            {
+                this.opacityOperation.AddCallback(callback, state);
+            }
+
+            ElementUtilities.AnimateOnNextFrame(this.AnimateTick);
+        }
+
         public void Start(double length, AsyncCallback callback, object state)
         {
             this.length = length;
             this.start = Date.Empty;
+            this.canceled = false;
 
             this.opacityOperation = new Operation();
 
@@ -87,7 +117,7 @@ namespace BL.UI
                 this.opacityOperation.AddCallback(callback, state);
             }
 
-            ControlUtilities.AnimateOnNextFrame(this.AnimateTick);
+            ElementUtilities.AnimateOnNextFrame(this.AnimateTick);
         }
 
         private void AnimateTick()
@@ -99,7 +129,20 @@ namespace BL.UI
                 this.start = now;
             }
 
-            int ms = now.GetTime() - this.start.GetTime();
+            if (this.canceled)
+            {
+                return;
+            }
+
+            int ms = (now.GetTime() - this.start.GetTime());
+
+            if (ms <  delay)
+            {
+                ElementUtilities.AnimateOnNextFrame(this.AnimateTick);
+                return;
+            }
+
+            ms -= delay;
 
             double proportion = Easing.EaseInQuad(ms, 0, 1, length);
 
@@ -107,6 +150,11 @@ namespace BL.UI
             {
                 if (this.from != null && this.to != null)
                 {
+                    if (this.canceled)
+                    {
+                        return;
+                    } 
+                    
                     if (this.Element != null)
                     {
                         this.Element.Style.Opacity = (this.from + ((this.to - this.from) * proportion)).ToString();
@@ -121,24 +169,18 @@ namespace BL.UI
                     }
                 }
                 
-                ControlUtilities.AnimateOnNextFrame(this.AnimateTick);
+                ElementUtilities.AnimateOnNextFrame(this.AnimateTick);
             }
             else
             {
                 if (this.to != null)
                 {
-                    if (this.Element != null)
+                    if (this.canceled)
                     {
-                        this.Element.Style.Opacity = this.to.ToString();
+                        return;
                     }
 
-                    if (this.elements != null)
-                    {
-                        foreach (Element e in this.elements)
-                        {
-                            e.Style.Opacity = this.to.ToString();                            
-                        }
-                    }
+                    this.SetToEndValues();
                 }
 
                 this.opacityOperation.CompleteAsAsyncDone(this);
@@ -147,6 +189,22 @@ namespace BL.UI
                 if (this.OpacityChangeComplete != null)
                 {
                     this.OpacityChangeComplete(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        private void SetToEndValues()
+        {
+            if (this.Element != null)
+            {
+                this.Element.Style.Opacity = this.to.ToString();
+            }
+
+            if (this.elements != null)
+            {
+                foreach (Element e in this.elements)
+                {
+                    e.Style.Opacity = this.to.ToString();
                 }
             }
         }

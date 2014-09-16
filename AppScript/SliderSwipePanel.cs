@@ -301,9 +301,9 @@ namespace BL.UI.App
             }
             else
             {
-                double baseLeft = ControlUtilities.GetBoundingRect(this.Element).Left;
+                double baseLeft = ElementUtilities.GetBoundingRect(this.Element).Left;
 
-                double elementLeft = ControlUtilities.GetBoundingRect(this.ItemControls[this.ActiveIndex].Element).Left;
+                double elementLeft = ElementUtilities.GetBoundingRect(this.ItemControls[this.ActiveIndex].Element).Left;
 
                 if (this.mode == SliderSwipeMode.WholePage)
                 {
@@ -312,7 +312,7 @@ namespace BL.UI.App
                     for (int i = 0; i < this.ActiveIndex; i++)
                     {
                         Element previousElement = this.ItemControls[i].Element;
-                        ClientRect previousRect = ControlUtilities.GetBoundingRect(previousElement);
+                        ClientRect previousRect = ElementUtilities.GetBoundingRect(previousElement);
 
                         left += ((previousRect.Right - previousRect.Left) + (this.gapBetweenSections) + 1);
                     }
@@ -326,7 +326,7 @@ namespace BL.UI.App
                     for (int i=0; i<this.PreviousIndex; i++)
                     {
                         Element previousElement = this.ItemControls[this.PreviousIndex].Element;
-                        ClientRect previousRect = ControlUtilities.GetBoundingRect(previousElement);
+                        ClientRect previousRect = ElementUtilities.GetBoundingRect(previousElement);
 
                         left += (previousRect.Right - previousRect.Left);
                     }
@@ -364,7 +364,7 @@ namespace BL.UI.App
 
             this.animationStart = Date.Empty;
 
-            ControlUtilities.AnimateOnNextFrame(this.animationTickHandler);
+            ElementUtilities.AnimateOnNextFrame(this.animationTickHandler);
         }
 
         private void AnimateTick()
@@ -385,7 +385,7 @@ namespace BL.UI.App
             {
                 this.SetPanelLeft(this.fromX + ((this.toX - this.fromX) * proportion));
 
-                ControlUtilities.AnimateOnNextFrame(this.animationTickHandler);
+                ElementUtilities.AnimateOnNextFrame(this.animationTickHandler);
             }
             else
             {
@@ -450,7 +450,7 @@ namespace BL.UI.App
                 linkTitleElement = this.CreateElement(this.GetClassNameForElement(i));
 
                 linkTitleElement.TabIndex = 1;
-                ControlUtilities.SetText(linkTitleElement, linkTitle);
+                ElementUtilities.SetText(linkTitleElement, linkTitle);
 
                 linkTitleElement.SetAttribute("linkIndex", i);
                 linkTitleElement.AddEventListener("click", this.HandleLinkClick, true);
@@ -489,6 +489,15 @@ namespace BL.UI.App
                 if (index == this.activeIndex)
                 {
                     cssBase += " firstLinkSelected";
+                }
+            }
+            else if (index == 1)
+            {
+                cssBase += " secondLink";
+
+                if (index == this.activeIndex)
+                {
+                    cssBase += " secondLinkSelected";
                 }
             }
             else
@@ -546,15 +555,15 @@ namespace BL.UI.App
 
             if (Context.Current.IsTouchOnly)
             {
-                Debug.WriteLine("(SliderSwipePanel::OnApplyTemplate) - Registering touch events " + ControlUtilities.GetTouchStartEventName());
-                this.Element.AddEventListener(ControlUtilities.GetTouchStartEventName(), this.HandleElementMouseDown, true);
+                Debug.WriteLine("(SliderSwipePanel::OnApplyTemplate) - Registering touch events " + ElementUtilities.GetTouchStartEventName());
+                this.Element.AddEventListener(ElementUtilities.GetTouchStartEventName(), this.HandleElementMouseDown, true);
 
-                Document.Body.AddEventListener(ControlUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
-                Document.Body.AddEventListener(ControlUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
+                Document.Body.AddEventListener(ElementUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
+                Document.Body.AddEventListener(ElementUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
 
-                if (ControlUtilities.GetTouchCancelEventName() != null)
+                if (ElementUtilities.GetTouchCancelEventName() != null)
                 {
-                    Document.Body.AddEventListener(ControlUtilities.GetTouchCancelEventName(), this.draggingElementMouseUpHandler, true);
+                    Document.Body.AddEventListener(ElementUtilities.GetTouchCancelEventName(), this.draggingElementMouseUpHandler, true);
                 }
             }
             else
@@ -631,8 +640,8 @@ namespace BL.UI.App
 
                 this.isConsideringDrag = true;
 
-                this.downEventPageX = ControlUtilities.GetPageX(e);
-                this.downEventPageY = ControlUtilities.GetPageY(e);
+                this.downEventPageX = ElementUtilities.GetPageX(e);
+                this.downEventPageY = ElementUtilities.GetPageY(e);
 
                 this.initialScrollX = this.itemsBin.ScrollLeft;
             }
@@ -669,14 +678,14 @@ namespace BL.UI.App
 
                 Window.SetTimeout(this.HandleDragMoveDeadTimeout, 100);
 
-                int newLeft = (int)Math.Floor(this.initialScrollX + (this.downEventPageX - ControlUtilities.GetPageX(e)));
+                int newLeft = (int)Math.Floor(this.initialScrollX + (this.downEventPageX - ElementUtilities.GetPageX(e)));
                 Debug.WriteLine("(SliderSwipePanel::HandleElementMouseMove) - Mouse Move drag: " + newLeft);
 
                 this.SetPanelLeft(newLeft);
 
                 if (this.VerticalScrollChanged != null)
                 {
-                    int newTop = (int)Math.Floor(this.initialScrollY+ (this.downEventPageY - ControlUtilities.GetPageY(e)));
+                    int newTop = (int)Math.Floor(this.initialScrollY+ (this.downEventPageY - ElementUtilities.GetPageY(e)));
 
                     IntegerEventArgs iea = new IntegerEventArgs(newTop);
 
@@ -687,8 +696,8 @@ namespace BL.UI.App
             {
                 if (this.isConsideringDrag)
                 {
-                    double diffX = Math.Abs((this.downEventPageX - ControlUtilities.GetPageX(this.lastMoveEvent)));
-                    double diffY = Math.Abs((this.downEventPageY - ControlUtilities.GetPageY(this.lastMoveEvent)));
+                    double diffX = Math.Abs((this.downEventPageX - ElementUtilities.GetPageX(this.lastMoveEvent)));
+                    double diffY = Math.Abs((this.downEventPageY - ElementUtilities.GetPageY(this.lastMoveEvent)));
 
                     if (diffX != 0 || diffY != 0)
                     {
@@ -707,8 +716,8 @@ namespace BL.UI.App
                 return;
             }
 
-            double diffX = Math.Abs((this.downEventPageX - ControlUtilities.GetPageX(this.lastMoveEvent)));
-            double diffY = Math.Abs((this.downEventPageY - ControlUtilities.GetPageY(this.lastMoveEvent)));
+            double diffX = Math.Abs((this.downEventPageX - ElementUtilities.GetPageX(this.lastMoveEvent)));
+            double diffY = Math.Abs((this.downEventPageY - ElementUtilities.GetPageY(this.lastMoveEvent)));
 
             if (diffX > diffY)
             {
@@ -761,12 +770,12 @@ namespace BL.UI.App
                 Debug.WriteLine("(SliderSwipePanel::ConsiderStartDragging) - Dragging");
          /*       if (Context.Current.IsTouchOnly)
                 {
-                   Document.Body.RemoveEventListener(ControlUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
-                   Document.Body.RemoveEventListener(ControlUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
+                   Document.Body.RemoveEventListener(ElementUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
+                   Document.Body.RemoveEventListener(ElementUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
                 }*/
 
                 this.isDragging = false;
-                double diffX = this.downEventPageX - ControlUtilities.GetPageX(this.lastMoveEvent);
+                double diffX = this.downEventPageX - ElementUtilities.GetPageX(this.lastMoveEvent);
 
 
                 if (diffX > 8 && this.ActiveIndex < this.ItemControls.Count - 1) //this.itemsBin.ScrollLeft > (initialScrollX + (panelWidth / 4)) && this.ActiveIndex < this.ItemControls.Count - 1)
@@ -827,7 +836,7 @@ namespace BL.UI.App
                 return;
             }
 
-            ClientRect cr = ControlUtilities.GetBoundingRect(this.Element);
+            ClientRect cr = ElementUtilities.GetBoundingRect(this.Element);
             double height = 0;
             
             if (this.Height != null)
@@ -836,7 +845,7 @@ namespace BL.UI.App
             }
             else
             {
-                ClientRect topAreaRect = ControlUtilities.GetBoundingRect(this.topAreaOuter);
+                ClientRect topAreaRect = ElementUtilities.GetBoundingRect(this.topAreaOuter);
 
                 height = (cr.Bottom - cr.Top) -  (topAreaRect.Bottom - topAreaRect.Top);
             }

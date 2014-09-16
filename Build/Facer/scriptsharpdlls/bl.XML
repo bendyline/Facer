@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>bl</name>
+    </assembly>
+    <members>
+        <member name="T:BL.UserReference">
+            <summary>
+            Specifies an abstract, implementation agnostic definition of a reference to a user.
+            </summary>
+        </member>
+        <member name="T:BL.User">
+            <summary>
+            Specifies an abstract, implementation agnostic definition of a color.
+            </summary>
+        </member>
+        <member name="P:BL.SerializableProperty.IsAttribute">
+            <summary>
+            Gets/sets whether this serializable property should be serialized as an attribute on a node.
+            </summary>
+        </member>
+        <member name="P:BL.SerializableProperty.IsComplex">
+            <summary>
+            Indicates whether the property is 'complex' -- i.e., is a complex type or a collection of items.
+            </summary>
+        </member>
+        <member name="P:BL.SerializableProperty.Name">
+            <summary>
+            Name MUST be equivalent to its JavaScript serialization and set_ property name.  It should always be camel cased.
+            </summary>
+        </member>
+        <member name="T:BL.AsyncCallback">
+            <summary>
+            Standard callback for callbacks based on the .net IAsync pattern.
+            </summary>
+            <param name="result">
+            Derived class that contains both standard result data plus any custom additional data. 
+            </param>
+        </member>
+        <member name="P:BL.CallbackResult.ErrorMessage">
+            <summary>
+            Returns a human-readable error message that came from this operation.
+            </summary>
+        </member>
+        <member name="P:BL.CallbackResult.AsyncState">
+            <summary>
+             Gets a user-defined object that qualifies or contains information about an asynchronous operation.
+            </summary>
+        </member>
+        <member name="T:BL.ColorDefinition">
+            <summary>
+            Specifies an abstract, implementation agnostic definition of a color.
+            </summary>
+        </member>
+        <member name="M:BL.ColorDefinition.CreateColorInt">
+            <summary>
+            Returns a full opacity version of the color as an Int32.
+            </summary>
+            <returns>Color integer.  Can be used in items such as WriteableBitmap pixel arrays.</returns>
+        </member>
+        <member name="M:BL.ColorDefinition.CreateColorIntWithAlpha(System.Byte)">
+            <summary>
+            Returns an adjustable opacity version of the color as an Int32.
+            </summary>
+            <param name="alpha">Alpha value of the color.  255 means fully opaque; 0 means fully transparent.</param>
+            <returns>Color integer.</returns>
+        </member>
+        <member name="P:BL.ColorDefinition.Red">
+            <summary>
+            Red value of the color.
+            </summary>
+        </member>
+        <member name="P:BL.ColorDefinition.Green">
+            <summary>
+            Green value of the color.
+            </summary>
+        </member>
+        <member name="P:BL.ColorDefinition.Blue">
+            <summary>
+            Blue value of the color.
+            </summary>
+        </member>
+        <member name="T:BL.Log">
+            <summary>
+            Provides a general static function for logging client side behaviors. (Log.Message, Log.Error, etc.)
+            Note that you still need a logging implementation that hooks ItemAdded events and actually persists them to 
+            a logging store of sort.
+            </summary>
+        </member>
+    </members>
+</doc>

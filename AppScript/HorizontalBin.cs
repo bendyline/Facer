@@ -183,7 +183,7 @@ namespace BL.UI.App
 
                 for (int i = 0; i < this.ItemControls.Count && i <= this.StartIndex; i++)
                 {
-                    ClientRect cr = ControlUtilities.GetBoundingRect(this.ItemControls[i].Element);
+                    ClientRect cr = ElementUtilities.GetBoundingRect(this.ItemControls[i].Element);
 
                     this.toX += (cr.Right - cr.Left);
                 }
@@ -254,9 +254,9 @@ namespace BL.UI.App
             
             if (Context.Current.IsTouchOnly)
             {
-                Debug.WriteLine("(HorziontalBin::OnApplyTemplate) - Registering touch events " + ControlUtilities.GetTouchStartEventName());
+                Debug.WriteLine("(HorziontalBin::OnApplyTemplate) - Registering touch events " + ElementUtilities.GetTouchStartEventName());
 
-                this.itemsBin.AddEventListener(ControlUtilities.GetTouchStartEventName(), this.HandleElementMouseDown, true);
+                this.itemsBin.AddEventListener(ElementUtilities.GetTouchStartEventName(), this.HandleElementMouseDown, true);
             }
             else
             {
@@ -342,7 +342,7 @@ namespace BL.UI.App
             {        
                 this.isMouseDown = true;
 
-                this.initialScrollX = this.itemsBin.ScrollLeft + ControlUtilities.GetPageX(e);
+                this.initialScrollX = this.itemsBin.ScrollLeft + ElementUtilities.GetPageX(e);
 
                 if (Context.Current.IsTouchOnly)
                 {
@@ -379,7 +379,7 @@ namespace BL.UI.App
                 this.lastDragEventTime = Date.Now.GetTime();
                 Window.SetTimeout(this.HandleDragMoveDeadTimeout, 100);
 
-                int newLeft = (int)Math.Floor(this.initialScrollX - ControlUtilities.GetPageX(e));
+                int newLeft = (int)Math.Floor(this.initialScrollX - ElementUtilities.GetPageX(e));
                 Debug.WriteLine("(HorizontalBin::HandleElementMouseMove) - Mouse Move drag: " + newLeft);
 
                 this.itemsBin.ScrollLeft = newLeft;
@@ -412,12 +412,12 @@ namespace BL.UI.App
 
             if (Context.Current.IsTouchOnly)
             {
-                Document.Body.AddEventListener(ControlUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
-                Document.Body.AddEventListener(ControlUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
+                Document.Body.AddEventListener(ElementUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
+                Document.Body.AddEventListener(ElementUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
 
-                if (ControlUtilities.GetTouchCancelEventName() != null)
+                if (ElementUtilities.GetTouchCancelEventName() != null)
                 {
-                    Document.Body.AddEventListener(ControlUtilities.GetTouchCancelEventName(), this.draggingElementMouseUpHandler, true);
+                    Document.Body.AddEventListener(ElementUtilities.GetTouchCancelEventName(), this.draggingElementMouseUpHandler, true);
                 }
             }
         }
@@ -458,8 +458,8 @@ namespace BL.UI.App
 
                 if (Context.Current.IsTouchOnly)
                 {
-                   Document.Body.RemoveEventListener(ControlUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
-                   Document.Body.RemoveEventListener(ControlUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
+                   Document.Body.RemoveEventListener(ElementUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
+                   Document.Body.RemoveEventListener(ElementUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
                 }
 
                 this.isDragging = false;
@@ -470,7 +470,7 @@ namespace BL.UI.App
 
                 for (int i=0; i<this.ItemControls.Count; i++)
                 {
-                    ClientRect cr = ControlUtilities.GetBoundingRect(this.ItemControls[i].Element);
+                    ClientRect cr = ElementUtilities.GetBoundingRect(this.ItemControls[i].Element);
 
                     if (cr.Left < this.itemsBin.ScrollLeft)
                     {
@@ -536,7 +536,7 @@ namespace BL.UI.App
             }
             else if (this.Element.ParentNode != null)
             {
-                ClientRect cr = ControlUtilities.GetBoundingRect(this.Element.ParentNode);
+                ClientRect cr = ElementUtilities.GetBoundingRect(this.Element.ParentNode);
 
                 width = (int)((cr.Right - cr.Left) - 48);
             }
@@ -553,7 +553,7 @@ namespace BL.UI.App
                     style.MarginRight = this.gapBetweenSections + "px";
                     style.Height = (height-8).ToString() + "px";
 
-                    ClientRect cr = ControlUtilities.GetBoundingRect(c.Element);
+                    ClientRect cr = ElementUtilities.GetBoundingRect(c.Element);
 
                     itemWidth += (int)(cr.Right - cr.Left);
 

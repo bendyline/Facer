@@ -327,8 +327,8 @@ namespace BL.UI
         {
             this.isMouseDown = true;
 
-            this.initialMouseDownLeft = ControlUtilities.GetPageX(e);
-            this.initialMouseDownTop = ControlUtilities.GetPageY(e);
+            this.initialMouseDownLeft = ElementUtilities.GetPageX(e);
+            this.initialMouseDownTop = ElementUtilities.GetPageY(e);
 
 
             Script.Literal(@"
@@ -367,12 +367,12 @@ namespace BL.UI
         {
             if (this.behavior == ElementBehavior.DragHorizontal || this.behavior == ElementBehavior.Drag2D)
             {
-                this.Left = this.dragStartElementLeft + (ControlUtilities.GetPageX(e) - this.initialMouseDownLeft);
+                this.Left = this.dragStartElementLeft + (ElementUtilities.GetPageX(e) - this.initialMouseDownLeft);
             }
 
             if (this.behavior == ElementBehavior.DragVertical || this.behavior == ElementBehavior.Drag2D)
             {
-                this.Top = this.dragStartElementTop + (ControlUtilities.GetPageY(e) - this.initialMouseDownTop);
+                this.Top = this.dragStartElementTop + (ElementUtilities.GetPageY(e) - this.initialMouseDownTop);
             }
 
             if (this.DragMoved != null)
@@ -501,11 +501,11 @@ namespace BL.UI
             this.originalWidth = elementStyle.Width;
             this.originalPosition = elementStyle.Position;
 
-            this.originalClientRect = ControlUtilities.GetBoundingRect(this.element);
+            this.originalClientRect = ElementUtilities.GetBoundingRect(this.element);
 
             this.parentElement = this.element.ParentNode;
 
-            this.originalParentRect = ControlUtilities.GetBoundingRect(this.parentElement);
+            this.originalParentRect = ElementUtilities.GetBoundingRect(this.parentElement);
 
             this.beforeInParentElement = null;
 
@@ -526,7 +526,7 @@ namespace BL.UI
             this.placeHolderElement.Style.Width = (originalClientRect.Right - originalClientRect.Left) + "px";
             this.placeHolderElement.Style.Height = ((originalClientRect.Bottom - originalClientRect.Top) + 4) + "px";
 
-            ClientRect parentRect = ControlUtilities.GetBoundingRect(this.parentElement);
+            ClientRect parentRect = ElementUtilities.GetBoundingRect(this.parentElement);
 
             
             this.originLeft = parentRect.Left + Window.PageXOffset;
@@ -538,13 +538,13 @@ namespace BL.UI
 
         public void StartMoveContinue()
         {
-       //     ClientRect originalClientRect = ControlUtilities.GetBoundingRect(this.element);
+       //     ClientRect originalClientRect = ElementUtilities.GetBoundingRect(this.element);
             Style elementStyle = this.element.Style;
 
             this.parentElement.RemoveChild(this.element);
             this.parentElement.InsertBefore(this.placeHolderElement, beforeInParentElement);
 
-            ClientRect parentRect = ControlUtilities.GetBoundingRect(this.parentElement);
+            ClientRect parentRect = ElementUtilities.GetBoundingRect(this.parentElement);
 
             this.left = parentRect.Left + Window.PageXOffset;
             this.top = parentRect.Top + Window.PageYOffset;

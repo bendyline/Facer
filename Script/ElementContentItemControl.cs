@@ -38,7 +38,7 @@ namespace BL
         {
             if (this.title != null)
             {
-                ControlUtilities.SetText(this.Element, this.title);
+                ElementUtilities.SetText(this.Element, this.title);
             }
         }
     }

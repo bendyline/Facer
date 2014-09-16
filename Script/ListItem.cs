@@ -63,12 +63,12 @@ namespace BL.UI
 
             if (titleElement != null)
             {
-                ControlUtilities.SetText(titleElement, this.item.Title);
+                ElementUtilities.SetText(titleElement, this.item.Title);
             }
 
             if (contentElement != null)
             {
-                ControlUtilities.SetText(contentElement, this.item.Content);
+                ElementUtilities.SetText(contentElement, this.item.Content);
             }
 
             if (image != null)

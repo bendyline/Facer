@@ -130,7 +130,7 @@ namespace BL.UI.App
                 this.labels.Add(e);
             }
 
-            ControlUtilities.SetText(this.labels[index], area.Caption);
+            ElementUtilities.SetText(this.labels[index], area.Caption);
 
             this.templateImageAreas[index] = area;
 
@@ -206,7 +206,7 @@ namespace BL.UI.App
         private int GetSelectedZone(ElementEvent e)
         {
             int i = 0;
-            Element elt = ControlUtilities.GetEventTarget(e);
+            Element elt = ElementUtilities.GetEventTarget(e);
 
             foreach (Element labelElement in this.labels)
             {

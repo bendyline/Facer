@@ -93,7 +93,7 @@
     <None Include="Properties\FxCop.ruleset" />
     <None Include="Properties\Script.template" />
     <Compile Include="Control.cs" />
-    <Compile Include="ControlUtilities.cs" />
+    <Compile Include="ElementUtilities.cs" />
     <Compile Include="ItemsControl.cs" />
     <Compile Include="LiteralControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -116,9 +116,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DialogFullScreen.htm" />
     <Content Include="Dialog.htm" />
     <Content Include="DebugPanel.htm" />
     <Content Include="SlotsItemControl1x2x1h.htm" />
+    <Content Include="SlotsItemControl2v.htm" />
     <Content Include="SlotsItemControl2x1v.htm" />
     <Content Include="ListItem.htm" />
     <Content Include="List.htm" />

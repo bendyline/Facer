@@ -82,12 +82,12 @@ namespace BL.BS
         {
             if (this.titleElement != null)
             {
-                ControlUtilities.SetText(this.titleElement, this.Title);
+                ElementUtilities.SetText(this.titleElement, this.Title);
             }
 
             if (this.leadElement != null)
             {
-                ControlUtilities.SetText(this.leadElement, this.Lead);
+                ElementUtilities.SetText(this.leadElement, this.Lead);
             }
 
             if (this.imageElement != null && this.imageCellElement != null)
