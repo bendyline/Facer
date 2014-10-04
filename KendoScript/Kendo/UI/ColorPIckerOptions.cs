@@ -15,7 +15,7 @@ namespace Kendo.UI
 
         public bool Buttons;
         public int Columns;
-        public object TileSize;
+        public Size TileSize;
         public bool Opacity;
         public String Palette;
         public bool Preview;

@@ -14,6 +14,7 @@ namespace BL.UI
         [ScriptName("e_titleText")]
         public Element titleText;
 
+        private bool displayCloseButton = true;
         private bool isShowing = false;
         private int dialogWidth = 0;
         private int dialogHeight = 0;
@@ -27,6 +28,19 @@ namespace BL.UI
 
         private int horizontalPadding = 30;
         private int verticalPadding = 30;
+
+        public bool DisplayCloseButton
+        {
+            get
+            {
+                return this.displayCloseButton;
+            }
+
+            set
+            {
+                this.displayCloseButton = value;
+            }
+        }
 
         public String Title
         {
@@ -145,7 +159,6 @@ namespace BL.UI
             Document.Body.Style.OverflowX = "hidden";
             Document.Body.Style.OverflowY = "hidden";
 
-
             Style elementStyle = this.Element.Style;
 
             elementStyle.Position = "absolute";
@@ -190,6 +203,28 @@ namespace BL.UI
             panelStyle.Height = height + "px";
 
             this.UpdateTitle();
+
+            if (this.displayCloseButton)
+            {
+                this.closeButton.Style.Display = String.Empty;
+            }
+            else
+            {
+                this.closeButton.Style.Display = "none";
+            }
+
+            OpacityAnimator oa = new OpacityAnimator();
+            oa.Element = this.Element;
+            oa.From = 0;
+            oa.To = 1;
+            oa.Start(200, null, null);
+            
+            oa = new OpacityAnimator();
+            oa.Element = this.panel;
+            oa.From = 0;
+            oa.To = 1;
+            oa.StartAfter(200, 200, null, null);
+
             Document.Body.AppendChild(this.Element);
         }
 

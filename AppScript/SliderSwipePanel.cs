@@ -861,8 +861,10 @@ namespace BL.UI.App
                 {
                     Style style = c.Element.Style;
 
-                    style.MinWidth = ((cr.Right - cr.Left) - this.gapBetweenSections).ToString() + "px";
-                    style.Width = ((cr.Right - cr.Left) - this.gapBetweenSections).ToString() + "px";
+                    double width = ((cr.Right - cr.Left) - this.gapBetweenSections) + 2;
+
+                    style.MinWidth = width.ToString() + "px";
+                    style.Width = width.ToString() + "px";
                     style.MarginRight = this.gapBetweenSections + "px";
 
 

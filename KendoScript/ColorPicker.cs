@@ -31,6 +31,64 @@ namespace BL.UI.KendoControls
             }
         }
 
+        [ScriptName("i_tileSizeWidth")]
+        public double? TileSizeWidth
+        {
+            get
+            {
+                if (this.options == null)
+                {
+                    return null;
+                }
+
+                return this.options.TileSize.Width;
+            }
+
+            set
+            {
+                if (value == null)
+                {
+                    this.options.TileSize = null;
+                }
+
+                if (this.options.TileSize == null)
+                {
+                    this.options.TileSize = new Size();
+                }
+
+                this.options.TileSize.Width = (double)value;
+            }
+        }
+
+        [ScriptName("i_tileSizeHeight")]
+        public double? TileSizeHeight
+        {
+            get
+            {
+                if (this.options == null)
+                {
+                    return null;
+                }
+
+                return this.options.TileSize.Height;
+            }
+
+            set
+            {
+                if (value == null)
+                {
+                    this.options.TileSize = null;
+                }
+
+                if (this.options.TileSize == null)
+                {
+                    this.options.TileSize = new Size();
+                }
+
+                this.options.TileSize.Height = (double)value;
+            }
+        }
+
         [ScriptName("s_palette")]
         public String Palette
         {

@@ -35,7 +35,7 @@ namespace BL.UI.App
         private Date animationStart;
 
         private int scrollAnimationTime = 200;
-        private int gapBetweenSections = 10;
+        private int gapBetweenSections = 4;
 
         private double initialScrollX;
         private double initialScrollY;
@@ -54,6 +54,20 @@ namespace BL.UI.App
         private ElementEventListener draggingElementMouseOutHandler = null;
 
         public event EventHandler Scrolling;
+
+        public int GapBetweenSections
+        {
+            get
+            {
+                return this.gapBetweenSections;
+            }
+
+            set
+            {
+                this.gapBetweenSections = value;
+            }
+        }
+
         public Date LastScrollTime
         {
             get
@@ -246,12 +260,7 @@ namespace BL.UI.App
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-
-            if (Context.Current.IsSmallFormFactor)
-            {
-                this.gapBetweenSections = 6;
-            }
-            
+           
             if (Context.Current.IsTouchOnly)
             {
                 Debug.WriteLine("(HorziontalBin::OnApplyTemplate) - Registering touch events " + ElementUtilities.GetTouchStartEventName());
@@ -336,7 +345,7 @@ namespace BL.UI.App
             }
             Debug.WriteLine("HorizontalBin: Mouse Down");
 
-            e.PreventDefault();  
+     //       e.PreventDefault();  
 
             if (this.allowSwiping && !this.isDragging)
             {        
@@ -369,17 +378,24 @@ namespace BL.UI.App
         {
             if (IsDefaultInputElement(e))
             {
+                e.CancelBubble = false;
                 return;
             }
 
-            e.PreventDefault();
 
             if (this.isDragging)
             {
                 this.lastDragEventTime = Date.Now.GetTime();
                 Window.SetTimeout(this.HandleDragMoveDeadTimeout, 100);
 
-                int newLeft = (int)Math.Floor(this.initialScrollX - ElementUtilities.GetPageX(e));
+                double eventX = ElementUtilities.GetPageX(e);
+                int newLeft = (int)Math.Floor(this.initialScrollX - eventX);
+
+                if (Math.Abs((newLeft + eventX) - this.initialScrollX) > 10)
+                {
+                    e.PreventDefault();
+                }
+
                 Debug.WriteLine("(HorizontalBin::HandleElementMouseMove) - Mouse Move drag: " + newLeft);
 
                 this.itemsBin.ScrollLeft = newLeft;
@@ -391,7 +407,7 @@ namespace BL.UI.App
                 }
 
                 this.ApplyPaddleVisibility();
-                e.CancelBubble = true;
+          //      e.CancelBubble = true;
             }
             else
             {
@@ -424,12 +440,12 @@ namespace BL.UI.App
 
         private void HandleDragMouseOut(ElementEvent e)
         {
-            e.PreventDefault();
-
             if (!this.AllowSwiping || !this.isDragging)
             {
                 return;
             }
+
+            e.PreventDefault();
 
             Debug.WriteLine("(HorizontalBin::HandleDragMouseOut)");
 
@@ -444,17 +460,16 @@ namespace BL.UI.App
 
         private void HandleElementMouseUp(ElementEvent e)
         {
-            if (e != null)
-            {
-                e.PreventDefault();
-            }
-
             this.isMouseDown = false;
             Debug.WriteLine("(HorizontalBin::HandleElementMouseUp)");
 
             if (this.isDragging)
             {
                 Debug.WriteLine("(HorizontalBin::HandleElementMouseUp) - Is Dragging ");
+                if (e != null)
+                {
+                    e.PreventDefault();
+                }
 
                 if (Context.Current.IsTouchOnly)
                 {

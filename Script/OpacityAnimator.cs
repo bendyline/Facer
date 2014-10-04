@@ -101,7 +101,22 @@ namespace BL.UI
                 this.opacityOperation.AddCallback(callback, state);
             }
 
-            ElementUtilities.AnimateOnNextFrame(this.AnimateTick);
+            if (this.Element != null)
+            {
+                this.Element.Style.Opacity = this.from.ToString();
+            }
+
+            if (this.elements != null)
+            {
+                foreach (Element e in this.elements)
+                {
+                    e.Style.Opacity = this.from.ToString();
+                }
+            }
+
+            this.AnimateTick();
+
+       //     ElementUtilities.AnimateOnNextFrame(this.AnimateTick);
         }
 
         public void Start(double length, AsyncCallback callback, object state)
@@ -117,7 +132,9 @@ namespace BL.UI
                 this.opacityOperation.AddCallback(callback, state);
             }
 
-            ElementUtilities.AnimateOnNextFrame(this.AnimateTick);
+            this.AnimateTick();
+
+   //         ElementUtilities.AnimateOnNextFrame(this.AnimateTick);
         }
 
         private void AnimateTick()

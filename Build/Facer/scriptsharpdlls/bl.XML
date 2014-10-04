@@ -4,6 +4,11 @@
         <name>bl</name>
     </assembly>
     <members>
+        <member name="T:BL.Extern.Easing">
+            <summary>
+            Imported ScriptSharp library for an easing library, for animations and other purposes. (see qlaextern.js.)
+            </summary>
+        </member>
         <member name="T:BL.UserReference">
             <summary>
             Specifies an abstract, implementation agnostic definition of a reference to a user.
@@ -12,6 +17,38 @@
         <member name="T:BL.User">
             <summary>
             Specifies an abstract, implementation agnostic definition of a color.
+            </summary>
+        </member>
+        <member name="T:BL.Context">
+            <summary>
+            Provides all general, ambient, app agnostic app state, plus helper functions to determine properties of the browser.
+            </summary>
+        </member>
+        <member name="T:BL.GeoBoundingBox">
+            <summary>
+            Simple object definition of a geopgraphic bounding box.
+            </summary>
+        </member>
+        <member name="T:BL.GeoUtilities">
+            <summary>
+            Helper functions for computing geopgrahic concepts.
+            </summary>
+        </member>
+        <member name="T:BL.IAppObjectProvider">
+            <summary>
+            Provides a basic interface to describe "object factories" -- for letting app implementations choose what kind
+            of object to create.
+            </summary>
+        </member>
+        <member name="T:BL.Geopoint">
+            <summary>
+            Simple description of a point on the earth (note: this object does not include altitude.)
+            </summary>
+        </member>
+        <member name="T:BL.IDisposable">
+            <summary>
+            Standard interface to indicate that an object supports explicit Dispose semantics, where it will
+            clean itself up (e.g., unhook events, remove references to objects, etc.)
             </summary>
         </member>
         <member name="P:BL.SerializableProperty.IsAttribute">
@@ -37,6 +74,38 @@
             Derived class that contains both standard result data plus any custom additional data. 
             </param>
         </member>
+        <member name="T:BL.CallbackResult">
+            <summary>
+            Contains the result of a particular callback method, including result Data and the original State that was 
+            passed by the caller.
+            </summary>
+        </member>
+        <member name="T:BL.IAsyncResult">
+            <summary>
+            Provides a standard interface for passing the results of a callback.
+            </summary>
+        </member>
+        <member name="P:BL.IAsyncResult.AsyncState">
+            <summary>
+            Arbitrary state passed by the caller of an asynchronous call, to "hold on to" and "hand back" when an 
+            asynchronous call is complete.
+            </summary>
+        </member>
+        <member name="P:BL.IAsyncResult.Data">
+            <summary>
+            Results of the asynchronous call, if necessary.
+            </summary>
+        </member>
+        <member name="P:BL.IAsyncResult.IsCompleted">
+            <summary>
+            Indicates whether the call is completed or not.
+            </summary>
+        </member>
+        <member name="P:BL.IAsyncResult.CompletedSynchronously">
+            <summary>
+            Indicates whether the call was completed immediately or not.
+            </summary>
+        </member>
         <member name="P:BL.CallbackResult.ErrorMessage">
             <summary>
             Returns a human-readable error message that came from this operation.
@@ -45,6 +114,44 @@
         <member name="P:BL.CallbackResult.AsyncState">
             <summary>
              Gets a user-defined object that qualifies or contains information about an asynchronous operation.
+            </summary>
+        </member>
+        <member name="T:BL.CallbackState">
+            <summary>
+            Internal class that holds a collection of state items needed to process an asynchronous call, including the 
+            callback to fire when the call is complete.
+            </summary>
+        </member>
+        <member name="M:BL.CallbackState.Wrap(BL.AsyncCallback,System.Object)">
+            <summary>
+            Helper function to construct a new callback state.
+            </summary>
+            <param name="callback">Callback to fire when the call is complete.</param>
+            <param name="state">State passed in by the caller.  Can be null.</param>
+            <returns>A new callbackstate object that the asynchronous call can use.</returns>
+        </member>
+        <member name="M:BL.CallbackState.WrapWithTag(BL.AsyncCallback,System.Object,System.Object)">
+            <summary>
+            Helper function to construct a callback state, with an optional "tag' blob of data.
+            </summary>
+            <param name="callback">Callback to fire when the call is complete.</param>
+            <param name="state"></param>
+            <param name="tag"></param>
+            <returns></returns>
+        </member>
+        <member name="P:BL.CallbackState.Callback">
+            <summary>
+            Callback to fire.
+            </summary>
+        </member>
+        <member name="P:BL.CallbackState.State">
+            <summary>
+            Temporary state passed by the caller to the asynchronous call, to "hold on to" during the call.
+            </summary>
+        </member>
+        <member name="P:BL.CallbackState.Tag">
+            <summary>
+            Arbitrary extra data used by the callback, internally.
             </summary>
         </member>
         <member name="T:BL.ColorDefinition">
