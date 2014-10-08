@@ -30,7 +30,8 @@
         {
             float:left;
             font-family: 'Lato', Helvetica, Arial, sansserif;
-
+            margin-top:3px;
+            margin-left:10px;
             font-size:large;
             vertical-align:middle;
         }
@@ -42,6 +43,33 @@
             background:white;
         }
 
+        #content
+        {
+            margin-left:14px;
+            margin-right:14px;
+        }
+
+            #doneButton
+            {
+                background-color: #6AC5E8;
+                font-size: small;
+                text-align: right;
+                padding: 8px;
+                padding-left:10px;
+                padding-right:10px;
+                margin-top:40px;
+                margin-right:14px;
+                margin-bottom:14px;
+                margin-left:14px;
+                border: solid 0px;
+                height:32px;
+                min-width:60px;
+                vertical-align:middle;
+                text-align:center;
+                color: white;
+                width:120px;
+            }
+
         </style>
 	</head>
 	<body>
@@ -50,7 +78,8 @@
                    <div id="titleText"></div>
                     <div id="closeButton"><img src="qla/images/close.png"/></div>
                 </div>
-                <ContentContainer/>
+                <ContentContainer id="content"/>
+                <div id="doneButton" style="display:none">Done</div>
            </div>
  	</body>
 </html>

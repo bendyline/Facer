@@ -14,14 +14,16 @@
         {
             color:#000000;
             font-family: 'Lato', Helvetica, Arial, sansserif;
-
+            margin-top:3px;
+            margin-left:10px;
         }
         
         #closeButton
         {
             font-size:large;
             text-align: right;
-            margin:3px;
+            margin-top:8px;
+            margin-right:11px;
             cursor:default;
         }
 
@@ -34,6 +36,28 @@
             border-radius: 4px;
         }
 
+
+            #doneButton
+            {
+                background-color: #6AC5E8;
+                font-size: small;
+                text-align: right;
+                padding: 4px;
+                padding-left:10px;
+                padding-right:10px;
+                margin-top:40px;
+                margin-left:14px;
+                margin-right:14px;
+                margin-bottom:14px;
+                border: solid 0px;
+                height:32px;
+                min-width:60px;
+                vertical-align:middle;
+                text-align:center;
+                color: white;
+                width:120px;
+            }
+
         </style>
 	</head>
 	<body>
@@ -44,6 +68,7 @@
                 </div>
 
                 <ContentContainer />
+                <div id="doneButton" style="display:none">Done</div>
            </div>
  	</body>
 </html>

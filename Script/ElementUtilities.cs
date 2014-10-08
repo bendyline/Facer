@@ -133,6 +133,18 @@ namespace BL.UI
             return e.Target;
         }
 
+        public static bool RemoveIfChildOf(Element element, Element parentToLookFor)
+        {
+            if (!ElementIsChildOf(element, parentToLookFor))
+            {
+                return false;
+            }
+
+            parentToLookFor.RemoveChild(element);
+
+            return true;
+        }
+
         public static bool ElementIsChildOf(Element element, Element parentToLookFor)
         {
             for (int i = 0; i < parentToLookFor.Children.Length; i++)

@@ -160,8 +160,11 @@ namespace BL.UI.KendoControls
 
         public override void Dispose()
         {
-           this.grid.Destroy();
-            
+            if (this.grid != null)
+            {
+                this.grid.Destroy();
+            }
+
             base.Dispose();
         }
     }

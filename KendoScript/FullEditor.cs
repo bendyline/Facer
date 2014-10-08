@@ -103,7 +103,7 @@ namespace BL.UI.KendoControls
             d.VerticalPadding = 0;
             d.HorizontalPadding = 0;
             d.Title = this.title;
-
+            d.DisplayDoneButton = true;
             d.Show();
 
             if (this.popupEditor != null)
@@ -114,7 +114,7 @@ namespace BL.UI.KendoControls
 
             this.popupEditor = new Editor();
             this.popupEditor.Rows = 0;
-            this.popupEditor.EditorHeight = "calc(100vh-32px)";
+            this.popupEditor.EditorHeight = "calc(100vh-62px)";
             this.popupEditor.DisplayInlineToolbar = true;
 
             if (this.html != null)

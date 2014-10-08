@@ -14,7 +14,11 @@ namespace BL.UI
         [ScriptName("e_titleText")]
         public Element titleText;
 
+        [ScriptName("e_doneButton")]
+        public Element doneButton;
+
         private bool displayCloseButton = true;
+        private bool displayDoneButton = false;
         private bool isShowing = false;
         private int dialogWidth = 0;
         private int dialogHeight = 0;
@@ -29,6 +33,21 @@ namespace BL.UI
         private int horizontalPadding = 30;
         private int verticalPadding = 30;
 
+        public bool DisplayDoneButton
+        {
+            get
+            {
+                return this.displayDoneButton;
+            }
+
+            set
+            {
+                this.displayDoneButton = value;
+
+                this.UpdateDoneButton();
+            }
+        }
+
         public bool DisplayCloseButton
         {
             get
@@ -39,6 +58,8 @@ namespace BL.UI
             set
             {
                 this.displayCloseButton = value;
+
+                this.UpdateCloseButton();
             }
         }
 
@@ -126,11 +147,43 @@ namespace BL.UI
             base.OnApplyTemplate();
 
             this.closeButton.AddEventListener("mouseup", this.HandleCloseButton, true);
+            this.doneButton.AddEventListener("mouseup", this.HandleCloseButton, true);
         }
 
         private void HandleCloseButton(ElementEvent ee)
         {
             this.Hide();
+        }
+
+
+        private void UpdateCloseButton()
+        {
+            if (this.displayCloseButton)
+            {
+                this.closeButton.Style.Display = String.Empty;
+            }
+            else
+            {
+                this.closeButton.Style.Display = "none";
+            }
+        }
+
+        private void UpdateDoneButton()
+        {
+
+            if (this.doneButton == null)
+            {
+                return;
+            }
+
+            if (this.displayDoneButton)
+            {
+                this.doneButton.Style.Display = String.Empty;
+            }
+            else
+            {
+                this.doneButton.Style.Display = "none";
+            }
         }
 
         public void Show()
@@ -203,15 +256,8 @@ namespace BL.UI
             panelStyle.Height = height + "px";
 
             this.UpdateTitle();
-
-            if (this.displayCloseButton)
-            {
-                this.closeButton.Style.Display = String.Empty;
-            }
-            else
-            {
-                this.closeButton.Style.Display = "none";
-            }
+            this.UpdateDoneButton();
+            this.UpdateCloseButton();
 
             OpacityAnimator oa = new OpacityAnimator();
             oa.Element = this.Element;
