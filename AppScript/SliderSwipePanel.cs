@@ -409,6 +409,11 @@ namespace BL.UI.App
 
       //      transform: translate(3em,0);
 
+            if (this.itemsBin == null)
+            {
+                return;
+            }
+
             this.itemsBin.ScrollLeft = (int)left;
         }
 
@@ -843,11 +848,15 @@ namespace BL.UI.App
             {
                 height = (double)this.Height;
             }
-            else
+            else if (this.topAreaOuter != null)
             {
                 ClientRect topAreaRect = ElementUtilities.GetBoundingRect(this.topAreaOuter);
 
                 height = (cr.Bottom - cr.Top) -  (topAreaRect.Bottom - topAreaRect.Top);
+            }
+            else
+            {
+                height = (cr.Bottom - cr.Top);
             }
 
             this.panelWidth = Window.InnerWidth;

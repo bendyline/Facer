@@ -158,6 +158,11 @@ namespace BL.UI
 
         private void UpdateCloseButton()
         {
+            if (this.closeButton == null)
+            {
+                return;
+            }
+
             if (this.displayCloseButton)
             {
                 this.closeButton.Style.Display = String.Empty;
