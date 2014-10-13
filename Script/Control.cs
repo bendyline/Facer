@@ -59,6 +59,7 @@ namespace BL.UI
         private bool fireUpdateOnTemplateComplete = false;
         private ElementEffects effects;
         private long touchStartTime = 0;
+        private long lastClickTime = 0;
 
         private Action applyVisibleOnFrameAction;
 
@@ -548,22 +549,28 @@ namespace BL.UI
         private void HandleTouchStart(ElementEvent e)
         {
             this.touchStartTime = Date.Now.GetTime();
-
         }
 
         private void HandleTouchEnd(ElementEvent e)
         {
             Date now = Date.Now;
 
-            if (now.GetTime() - this.touchStartTime < 200)
+            if (now.GetTime() - this.touchStartTime < 200 && now.GetTime() - this.lastClickTime > 200)
             {
+                this.lastClickTime = now.GetTime();
                 this.OnClick(e);
             }
         }
 
         private void HandleClick(ElementEvent e)
         {
-            this.OnClick(e);
+            Date now = Date.Now;
+
+            if (now.GetTime() - lastClickTime > 200)
+            {
+                this.lastClickTime = now.GetTime();
+                this.OnClick(e);
+            }
         }
 
         protected virtual void OnClick(ElementEvent e)

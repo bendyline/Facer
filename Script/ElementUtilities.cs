@@ -30,7 +30,8 @@ namespace BL.UI
 
         public static void SetIsCheckedFromObject(InputElement ie, object isChecked)
         {
-            Script.Literal("{0}.checked={1}", ie, isChecked.ToString());
+            bool bval = Boolean.Parse(isChecked.ToString());
+            Script.Literal("{0}.checked={1}", ie, bval);
         }
 
         public static void SetBackgroundSize(Element element, String value)
