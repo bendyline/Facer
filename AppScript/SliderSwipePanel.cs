@@ -80,6 +80,7 @@ namespace BL.UI.App
         private ElementEventListener draggingElementMouseOutHandler = null;
 
         public event IntegerEventHandler VerticalScrollChanged;
+        public event EventHandler IndexChangeAnimationCompleted;
 
         public int PreviousIndex
         {
@@ -246,6 +247,36 @@ namespace BL.UI.App
             this.draggingElementMouseUpHandler = this.HandleElementMouseUp;
         }
 
+        public void SetActiveIndexImmediate(int newActiveIndex)
+        {
+            if (this.activeIndex == newActiveIndex)
+            {
+                this.SetFinalPosition();
+                return;
+            }
+
+            this.previousIndex = this.activeIndex;
+            this.activeIndex = newActiveIndex;
+
+            this.ApplyVisibility();
+            this.SetFinalPosition();
+
+            this.UpdateLinkHighlights();
+
+            if (this.containerLinkBin != null && this.containerLinkBin.ChildNodes.Length > this.activeIndex)
+            {
+                Element activeTab = this.containerLinkBin.ChildNodes[this.activeIndex];
+                activeTab.Focus();
+            }
+
+            if (this.ActiveControlChanged != null)
+            {
+                ControlIntegerEventArgs ciea = new ControlIntegerEventArgs(this.ItemControls[this.activeIndex], this.activeIndex);
+
+                this.ActiveControlChanged(this.activeIndex, ciea);
+            }
+        }
+
         public void SetVisible(int index, bool isVisible)
         {
             while (this.visibilities.Count < index)
@@ -391,6 +422,11 @@ namespace BL.UI.App
             {
                 this.SetFinalPosition();
                 this.isAnimating = false;
+
+                if (this.IndexChangeAnimationCompleted != null)
+                {
+                    this.IndexChangeAnimationCompleted(this, EventArgs.Empty);
+                }
             }
         }
 
