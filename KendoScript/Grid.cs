@@ -143,6 +143,11 @@ namespace BL.UI.KendoControls
             }
         }
 
+        public void SaveRow()
+        {
+            this.grid.SaveRow();
+        }
+
         private void HandleSave(object e)
         {
             Model model = null;

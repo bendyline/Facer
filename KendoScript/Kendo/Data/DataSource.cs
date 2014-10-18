@@ -18,5 +18,10 @@ namespace kendo.data
         {
 
         }
+
+        public void Add(object newItem)
+        {
+
+        }
     }
 }

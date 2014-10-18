@@ -24,6 +24,6 @@ namespace Kendo.UI
         public bool Navigatable;
         public object Pageable;
         public GridSortableOptions Sortable;
-        public List<GridToolbarOptions> Toolbar;
+        public object Toolbar;
     }
 }
