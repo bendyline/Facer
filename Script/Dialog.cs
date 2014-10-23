@@ -131,6 +131,14 @@ namespace BL.UI
             }
         }
 
+        public bool IsShowing
+        {
+            get
+            {
+                return this.isShowing;
+            }
+        }
+
         [ScriptName("e_closeButton")]
         private Element closeButton;
 
