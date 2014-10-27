@@ -291,6 +291,11 @@ namespace BL.UI.App
 
         private void ApplyVisibility()
         {
+            if (this.containerLinkBin == null)
+            {
+                return;
+            }
+
             for (int i = 0; i < this.ItemControls.Count; i++ )
             {
                 bool vis = true;
@@ -620,6 +625,7 @@ namespace BL.UI.App
             this.UpdateLinkBin();
 
             this.UpdateSizings();
+            this.ApplyVisibility();
 
             Window.SetTimeout(new Action(this.UpdateSizings), 1);
             Window.SetTimeout(new Action(this.UpdateSizings), 100);
@@ -647,6 +653,7 @@ namespace BL.UI.App
             c.Visible = true;
 
             this.UpdateSizings();
+            this.ApplyVisibility();
 
             Window.SetTimeout(new Action(this.UpdateSizings), 1);
             Window.SetTimeout(new Action(this.UpdateSizings), 100);
@@ -832,16 +839,6 @@ namespace BL.UI.App
                     this.AnimateToIndexPosition();
                 }
             }
-/*
-                int newIndex = Math.Floor((this.itemsBin.ScrollLeft + panelWidth / 2) / panelWidth);
-
-                if (newIndex != this.ActiveIndex)
-                {
-                    this.ActiveIndex = newIndex;
-                }
-                else
-                {
-                         }*/
         }
 
         private void HandleDragStartEvent(ElementEvent e)

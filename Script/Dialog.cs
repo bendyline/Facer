@@ -147,7 +147,7 @@ namespace BL.UI
 
         public Dialog()
         {
-
+            this.TrackResizeEvents = true;
         }
 
         protected override void OnApplyTemplate()
@@ -199,6 +199,63 @@ namespace BL.UI
             }
         }
 
+        protected override void OnResize()
+        {
+            base.OnResize();
+
+            this.DoResize();
+        }
+
+        private void DoResize()
+        {
+            if (this.Element != null)
+            {
+                Style elementStyle = this.Element.Style;
+
+                elementStyle.Position = "absolute";
+                elementStyle.ZIndex = 254;
+                elementStyle.Top = Window.PageYOffset + "px";
+                elementStyle.Left = "0px";
+
+                elementStyle.Width = Window.InnerWidth + "px";
+                elementStyle.Height = Window.InnerHeight + "px";
+
+            }
+
+            if (this.panel != null)
+            {
+                double width = (Window.InnerWidth - (horizontalPadding * 2));
+                double height = (Window.InnerHeight - (verticalPadding * 2));
+
+                if (this.maxWidth != null)
+                {
+                    width = (int)this.maxWidth;
+
+                    if (width > Window.InnerWidth)
+                    {
+                        width = Window.InnerWidth - 20;
+                    }
+                }
+
+                if (this.maxHeight != null)
+                {
+                    height = (int)this.maxHeight;
+
+                    if (height > Window.InnerHeight)
+                    {
+                        height = Window.InnerHeight - 20;
+                    }
+                }
+
+                Style panelStyle = this.panel.Style;
+
+                panelStyle.Left = ((Window.InnerWidth - width) / 2) + "px";
+                panelStyle.Top = ((Window.InnerHeight - height) / 2) + "px";
+                panelStyle.Width = width + "px";
+                panelStyle.Height = height + "px";
+            }
+        }
+
         public void Show()
         {
             if (this.Element == null)
@@ -225,48 +282,10 @@ namespace BL.UI
             Document.Body.Style.OverflowX = "hidden";
             Document.Body.Style.OverflowY = "hidden";
 
-            Style elementStyle = this.Element.Style;
-
-            elementStyle.Position = "absolute";
-            elementStyle.ZIndex = 254;
-            elementStyle.Top = Window.PageYOffset+ "px";
-            elementStyle.Left = "0px";
-
-            elementStyle.Width = Window.InnerWidth + "px";
-            elementStyle.Height = Window.InnerHeight + "px";
-
             Style panelStyle = this.panel.Style;
 
             panelStyle.Position = "absolute";
             panelStyle.ZIndex = 255;
-
-            double width = (Window.InnerWidth - (horizontalPadding * 2));
-            double height = (Window.InnerHeight - (verticalPadding * 2));
-
-            if (this.maxWidth != null)
-            {
-                width = (int)this.maxWidth;
-
-                if (width > Window.InnerWidth)
-                {
-                    width = Window.InnerWidth - 20;
-                }
-            }
-
-            if (this.maxHeight != null)
-            {
-                height = (int)this.maxHeight;
-
-                if (height > Window.InnerHeight)
-                {
-                    height = Window.InnerHeight - 20;
-                }
-            }
-
-            panelStyle.Left = ((Window.InnerWidth - width) / 2) + "px";
-            panelStyle.Top = ((Window.InnerHeight - height) / 2) + "px";
-            panelStyle.Width =  width + "px";
-            panelStyle.Height = height + "px";
 
             this.UpdateTitle();
             this.UpdateDoneButton();
@@ -285,6 +304,8 @@ namespace BL.UI
             oa.StartAfter(200, 200, null, null);
 
             Document.Body.AppendChild(this.Element);
+
+            this.DoResize();
         }
 
         private void UpdateTitle()
