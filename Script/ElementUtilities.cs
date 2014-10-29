@@ -91,7 +91,7 @@ namespace BL.UI
         {
             double pageX = 0;
 
-            Script.Literal("if ({1}.touches != null) {{ {0}=e.touches[0].pageX; }} else {{ {0}={1}.pageX;}}", pageX, e);
+            Script.Literal("if ({1}.touches != null) {{ {0}={1}.touches[0].pageX; }} else {{ {0}={1}.pageX;}}", pageX, e);
 
             return pageX;
         }
@@ -100,7 +100,7 @@ namespace BL.UI
         {
             double pageY = 0;
 
-            Script.Literal("if({1}.touches != null) {{ {0}=e.touches[0].pageY;}} else {{ {0}={1}.pageY;}}", pageY, e);
+            Script.Literal("if({1}.touches != null) {{ {0}={1}.touches[0].pageY;}} else {{ {0}={1}.pageY;}}", pageY, e);
 
             return pageY;
         }

@@ -117,7 +117,7 @@ namespace BL.UI.KendoControls
         {
             Model model = null;
 
-            Script.Literal("{0}=e.model", model);
+            Script.Literal("{0}={1}.model", model, e);
 
             if (this.Edit != null)
             {
@@ -132,7 +132,7 @@ namespace BL.UI.KendoControls
         {
             Model model = null;
 
-            Script.Literal("{0}=e.model", model);
+            Script.Literal("{0}={1}.model", model, e);
 
             if (this.Remove != null)
             {
@@ -152,7 +152,7 @@ namespace BL.UI.KendoControls
         {
             Model model = null;
 
-            Script.Literal("{0}=e.model", model);
+            Script.Literal("{0}={1}.model", model, e);
 
             if (this.Save != null)
             {

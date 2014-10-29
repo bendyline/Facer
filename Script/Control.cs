@@ -788,7 +788,7 @@ namespace BL.UI
 
         public void AttachTo(object elementOrId, object options)
         {
-            Script.Literal(@"if (elementOrId != null) {{ if (elementOrId.tagName != null) {{ {0} = elementOrId; }} if (typeof(elementOrId) == ""string"") {{ {0} = document.getElementById(elementOrId); }}}}", this.element);
+            Script.Literal(@"if ({1} != null) {{ if ({1}.tagName != null) {{ {0} = {1}; }} if (typeof({1}) == ""string"") {{ {0} = document.getElementById({1}); }}}}", this.element, elementOrId);
 
             this.HandleInteractionEventing();
 
