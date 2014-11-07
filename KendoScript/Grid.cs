@@ -18,6 +18,7 @@ namespace BL.UI.KendoControls
 
         public event ModelEventHandler Save;
         public event ModelEventHandler Edit;
+        public event ModelEventHandler Cancel;
         public event ModelEventHandler Remove;
 
         
@@ -143,9 +144,28 @@ namespace BL.UI.KendoControls
             }
         }
 
+        public void CancelRow()
+        {
+            this.grid.CancelRow();
+        }
+
+        public void SaveChanges()
+        {
+            this.grid.SaveChanges();
+        }
+        public void ClearSelection()
+        {
+            this.grid.ClearSelection();
+        }
+
         public void SaveRow()
         {
             this.grid.SaveRow();
+        }
+
+        public void EditRow(jQueryObject row)
+        {
+            this.grid.EditRow(row);
         }
 
         private void HandleSave(object e)

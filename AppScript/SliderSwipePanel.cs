@@ -115,6 +115,7 @@ namespace BL.UI.App
                 this.mode = value;
 
                 this.ApplyVisibility();
+                this.SetToX();
             }
         }
 
@@ -318,7 +319,15 @@ namespace BL.UI.App
                         elt.Style.Display = "none";
                     }
                 }
-                if ((this.mode == SliderSwipeMode.WholePage && i <= this.activeIndex + 1) || (i <= this.activeIndex && (i <= this.previousIndex || this.activeIndex == i)))
+
+                int maxIndexToShow = this.activeIndex;
+
+                if (this.allowSwiping)
+                {
+                    maxIndexToShow++;
+                }
+
+                if ((this.mode == SliderSwipeMode.WholePage && i <= maxIndexToShow) || (i <= this.activeIndex && (i <= this.previousIndex || this.activeIndex == i)))
                 {
                     this.ItemControls[i].Visible = vis;
                 }
@@ -350,7 +359,10 @@ namespace BL.UI.App
                         Element previousElement = this.ItemControls[i].Element;
                         ClientRect previousRect = ElementUtilities.GetBoundingRect(previousElement);
 
-                        left += ((previousRect.Right - previousRect.Left) + (this.gapBetweenSections) + 1);
+                        if ((this.visibilities.Count <= i || this.visibilities[i]) && this.ItemControls[i].Visible)
+                        {
+                            left += ((previousRect.Right - previousRect.Left) + (this.gapBetweenSections) + 1);
+                        }
                     }
 
                     this.toX = left;// ((elementLeft + this.itemsBin.ScrollLeft) - baseLeft);
@@ -364,7 +376,10 @@ namespace BL.UI.App
                         Element previousElement = this.ItemControls[this.PreviousIndex].Element;
                         ClientRect previousRect = ElementUtilities.GetBoundingRect(previousElement);
 
-                        left += (previousRect.Right - previousRect.Left);
+                        if ((this.visibilities.Count <= i || this.visibilities[i]) && this.ItemControls[i].Visible)
+                        {
+                            left += (previousRect.Right - previousRect.Left);
+                        }
                     }
 
                     this.toX = left + 300;
@@ -649,8 +664,6 @@ namespace BL.UI.App
         protected override void OnItemControlAdded(Control c)
         {
             base.OnItemControlAdded(c);
-
-            c.Visible = true;
 
             this.UpdateSizings();
             this.ApplyVisibility();

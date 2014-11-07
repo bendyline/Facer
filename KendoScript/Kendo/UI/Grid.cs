@@ -74,7 +74,7 @@ namespace Kendo.UI
         {
 
         }
-        public void EditRow(jQueryObject cell)
+        public void EditRow(jQueryObject row)
         {
 
         }
