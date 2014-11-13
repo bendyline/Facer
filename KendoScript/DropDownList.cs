@@ -61,6 +61,19 @@ namespace BL.UI.KendoControls
             }
         }
 
+        public double DropdownHeight
+        {
+            get
+            {
+                return this.dropDownListOptions.Height;
+            }
+
+            set
+            {
+                this.dropDownListOptions.Height = value;
+            }
+        }
+
         public String DataValueField
         {
             get
