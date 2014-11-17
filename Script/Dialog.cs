@@ -33,6 +33,8 @@ namespace BL.UI
         private int horizontalPadding = 30;
         private int verticalPadding = 30;
 
+        public event EventHandler Closing;
+
         public bool DisplayDoneButton
         {
             get
@@ -219,7 +221,6 @@ namespace BL.UI
 
                 elementStyle.Width = Window.InnerWidth + "px";
                 elementStyle.Height = Window.InnerHeight + "px";
-
             }
 
             if (this.panel != null)
@@ -328,6 +329,11 @@ namespace BL.UI
         public void Hide()
         {
             this.isShowing = false;
+
+            if (this.Closing != null)
+            {
+                this.Closing(this, EventArgs.Empty);
+            }
 
             Document.Body.Style.OverflowX = this.overflowX;
             Document.Body.Style.OverflowY = this.overflowY;

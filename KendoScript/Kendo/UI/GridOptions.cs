@@ -19,9 +19,11 @@ namespace Kendo.UI
         public GridColumnMenuOptions ColumnMenu;
         public object DataSource;
         public object DetailTemplate;
+        public object Filterable;
         public GridGroupableOptions Groupable;
         public double Height;
         public bool Navigatable;
+        public bool Scrollable;
         public object Pageable;
         public GridSortableOptions Sortable;
         public object Toolbar;

@@ -95,8 +95,6 @@ namespace BL.UI.KendoControls
             
         }
 
-        
-
         protected override void OnEnsureElements()
         { 
             if (this.gridOptions != null)
@@ -142,6 +140,11 @@ namespace BL.UI.KendoControls
 
                 this.Remove(mea);
             }
+        }
+
+        public void SaveAsExcel()
+        {
+            this.grid.SaveAsExcel();
         }
 
         public void CancelRow()

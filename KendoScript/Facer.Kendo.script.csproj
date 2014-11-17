@@ -70,6 +70,7 @@
     <Compile Include="Kendo\Mobile\Application.cs" />
     <Compile Include="Kendo\Mobile\MobileSwitch.cs" />
     <Compile Include="Kendo\Mobile\MobileSwitchOptions.cs" />
+    <Compile Include="Kendo\UI\GridColumnUserInterfaceFactoryOptions.cs" />
     <Compile Include="Kendo\UI\Size.cs" />
     <Compile Include="Kendo\UI\ColorPicker.cs" />
     <Compile Include="Kendo\UI\ColorPickerOptions.cs" />

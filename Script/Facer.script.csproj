@@ -58,6 +58,7 @@
     <CodeAnalysisRuleSet>Properties\FxCop.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Message.cs" />
     <Compile Include="IControl.cs" />
     <Compile Include="IDialogManager.cs" />
     <Compile Include="Dialog.cs" />
@@ -116,6 +117,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Message.htm" />
     <Content Include="DialogFullScreen.htm" />
     <Content Include="Dialog.htm" />
     <Content Include="DebugPanel.htm" />

@@ -1,0 +1,74 @@
+﻿<!-- saved from url=(0013)about:internet -->
+<!DOCTYPE html>
+<html>
+	<head>
+        <title></title>
+
+        <!-- standard template preview content.  point base href at your facer template sample folder.  -->
+            <base href="../../facer/ts/" />
+            <script src="ts.js"></script><link rel="stylesheet" href="ts.css" />
+        <!-- end sample preview content -->
+
+        <style>
+            body
+            {
+                padding:20px;
+            }
+            
+            #closeButton
+            {
+                background-color: #6AC5E8;
+                font-size: small;
+                text-align: right;
+                padding: 4px;
+                margin-top:60px;
+                border: solid 0px;
+                height:36px;
+                min-width:60px;
+                vertical-align:middle;
+                text-align:center;
+                color: white;
+            }
+
+            #outerTable
+            {
+                display:table;
+                height:100%;
+            }
+
+            #contentRow
+            {
+                display:table-row;
+            }
+
+            #contentArea
+            {
+                display:table-cell;
+                height:100%;
+            }
+
+            #toolbarCell
+            {
+                display:table-cell;
+                height:40px;
+                text-align:right;
+            }            
+        </style>
+	</head>
+	<body>        
+        <div id="outerTable">
+            <div id="contentRow">
+                <div id="contentArea">
+                    <h2 id="heading">&#160;</h2>
+                    <div id="message">&#160;</div>
+                </div>
+            </div>
+            <div data-ctl-class="contentRow">
+                <div id="toolbarCell">
+                    <input type="button" id="ok" value="OK"/>               
+                    <input type="button" id="cancel" value="Cancel"/>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

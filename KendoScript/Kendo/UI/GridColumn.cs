@@ -16,7 +16,7 @@ namespace Kendo.UI
         public bool Encoded;
         public bool Filterable;
 
-        public Action Editor;
+        public GridColumnUserInterfaceFactory Editor;
         public String FooterTemplate;
         public String Format;
         public String GroupHeaderTemplate;
@@ -26,7 +26,7 @@ namespace Kendo.UI
         public object Hidden;
         public object Command;
         public bool Sortable;
-        public String Template;
+        public ItemTemplateFactory Template;
         public double Width;
         public List<DataValue> Values;
 
