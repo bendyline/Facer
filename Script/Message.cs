@@ -226,6 +226,7 @@ namespace BL.UI
             Message m = new Message();
             m.Content = content;
             m.Heading = heading;
+            m.Type = messageType;
 
             m.AffirmAction = affirmAction;
             m.CloseAction = closeAction;

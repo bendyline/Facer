@@ -13,6 +13,7 @@
             body
             {
                 padding:20px;
+                height:100%;
             }
             
             #closeButton
@@ -33,6 +34,7 @@
             #outerTable
             {
                 display:table;
+                width:100%;
                 height:100%;
             }
 
@@ -52,7 +54,27 @@
                 display:table-cell;
                 height:40px;
                 text-align:right;
-            }            
+            }           
+            
+            
+            #button
+            {
+                margin:3px;
+                border: solid 1px  #6AC5E8;
+                background-color:#6AC5E8;
+                font-size:medium;
+                padding-left:4px;
+                padding-top:4px;
+                padding-bottom:4px;
+                min-width:100px;
+                color:white;
+                width:100px;
+                cursor:default;
+                white-space:nowrap;
+                min-width:10px;
+                min-height:10px;
+            }
+ 
         </style>
 	</head>
 	<body>        
@@ -65,8 +87,8 @@
             </div>
             <div data-ctl-class="contentRow">
                 <div id="toolbarCell">
-                    <input type="button" id="ok" value="OK"/>               
-                    <input type="button" id="cancel" value="Cancel"/>
+                    <input type="button" id="ok" value="OK" data-ctl-class="button"/>               
+                    <input type="button" id="cancel" value="Cancel" data-ctl-class="button"/>
                 </div>
             </div>
         </div>

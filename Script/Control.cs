@@ -34,6 +34,7 @@ namespace BL.UI
         private List<Control> templateControls;
         private List<Control> templateDescendentControls;
         private List<Element> templateElements;
+        private List<String> setElements;
         private Dictionary<String, Element> templateStandaloneElements;
         private String templateId;
         private String template;
@@ -901,6 +902,16 @@ namespace BL.UI
                     Script.Literal("var fn = {0}[\"set_contentContainerElement\"];  if (fn != null) {{ fn.apply(this, new Array({1})); }}", this, e);
                 }
 
+                if (this.setElements != null)
+                {
+                    foreach (String memberId in this.setElements)
+                    {
+                        Script.Literal("{0}[{1}]=null", this, memberId);
+                    }
+                }
+
+                this.setElements = new List<string>();
+
                 for (int i = 0; i < tpr.Controls.Count; i++)
                 {
                     List<int> path = tpr.ControlElementPaths[i];
@@ -919,6 +930,7 @@ namespace BL.UI
                         if (controlId != null)
                         {
                             Script.Literal("{0}['e_' + {1}]={2}", this, controlId, element);
+                            this.setElements.Add("e_" + controlId);
                         }
                     }
                     else
@@ -929,6 +941,7 @@ namespace BL.UI
                     if (controlId != null)
                     {
                         Script.Literal("{0}['c_' + {1}]={2}", this, controlId, c);
+                        this.setElements.Add("c_" + controlId);
                     }
                 }
 
@@ -943,6 +956,7 @@ namespace BL.UI
                     {
                         this.templateStandaloneElements[elementId] = element;
                         Script.Literal("{0}['e_' + {1}]={2}", this, elementId, element);
+                        this.setElements.Add("e_" + elementId);
                     }
                 }
             }
