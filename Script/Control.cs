@@ -38,6 +38,7 @@ namespace BL.UI
         private Dictionary<String, Element> templateStandaloneElements;
         private String templateId;
         private String template;
+        private String tagName;
         private bool initted = false;
         private bool childControlsCreated = false;
         private bool elementsEnsured = false;
@@ -187,7 +188,12 @@ namespace BL.UI
         {
             get
             {
-                return null;
+                return tagName;
+            }
+
+            set
+            {
+                this.tagName = value;
             }
         }
 
