@@ -10,6 +10,21 @@ namespace BL.UI.App
     public class PaneSettings
     {
         private bool fitToHeight = true;
+        private bool visible = true;
+        private bool fitToWidth = true;
+
+        public bool Visible
+        {
+            get
+            {
+                return this.visible;
+            }
+
+            set
+            {
+                this.visible = value;
+            }
+        }
 
         public bool FitToHeight
         {
@@ -21,6 +36,19 @@ namespace BL.UI.App
             set
             {
                 this.fitToHeight = value;
+            }
+        }
+
+        public bool FitToWidth
+        {
+            get
+            {
+                return this.fitToWidth;
+            }
+
+            set
+            {
+                this.fitToWidth = value;
             }
         }
     }

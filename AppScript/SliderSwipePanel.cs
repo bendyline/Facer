@@ -327,7 +327,7 @@ namespace BL.UI.App
                     maxIndexToShow++;
                 }
 
-                if ((this.mode == SliderSwipeMode.WholePage && i <= maxIndexToShow) || (i <= this.activeIndex && (i <= this.previousIndex || this.activeIndex == i)))
+                if (this.paneSettingsCollection[i].Visible && ((this.mode == SliderSwipeMode.WholePage && i <= maxIndexToShow) || (i <= this.activeIndex && (i <= this.previousIndex || this.activeIndex == i))))
                 {
                     this.ItemControls[i].Visible = vis;
                 }
@@ -918,10 +918,18 @@ namespace BL.UI.App
 
                     double width = ((cr.Right - cr.Left) - this.gapBetweenSections) + 2;
 
-                    style.MinWidth = width.ToString() + "px";
-                    style.Width = width.ToString() + "px";
+                    if (ps.FitToWidth)
+                    {
+                        style.MinWidth = width.ToString() + "px";
+                        style.Width = width.ToString() + "px";
+                    }
+                    else
+                    {
+                        style.MinWidth = null;
+                        style.Width = null;
+                    }
+                      
                     style.MarginRight = this.gapBetweenSections + "px";
-
 
                     if (this.InteriorItemHeight != null)
                     {
