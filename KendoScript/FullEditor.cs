@@ -161,7 +161,17 @@ namespace BL.UI.KendoControls
 
         public void Blur()
         {
-            this.Element.Blur();
+            try
+            {
+                if (this.Element != null)
+                {
+                    this.Element.Blur();
+                }
+            }
+            catch (Exception)
+            {
+                ;
+            }
         }
 
         private void HandleDateChange(object e)
