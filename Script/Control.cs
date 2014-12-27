@@ -36,6 +36,7 @@ namespace BL.UI
         private List<Element> templateElements;
         private List<String> setElements;
         private Dictionary<String, Element> templateStandaloneElements;
+        private Dictionary<Element, IElementEventHandler> clickEventDelegates;
         private String templateId;
         private String template;
         private String tagName;
@@ -962,6 +963,12 @@ namespace BL.UI
                     {
                         this.templateStandaloneElements[elementId] = element;
                         Script.Literal("{0}['e_' + {1}]={2}", this, elementId, element);
+
+                        // hook click functions if they exist in the form of functions called v_on<ElementId>Click
+                        String clickFunctionName = "v_on" + elementId.Substring(0, 1).ToUpperCase() + elementId.Substring(1, elementId.Length) + "Click";
+
+                        Script.Literal("if ({0}[{1}] != null) {{ if ({3} == null) {{ {3} = {{}}; }} var del = ss.Delegate.create({0}, {0}[{1}]); {3}[{2}]=del; {2}.addEventListener('click', del, true); {2}.addEventListener('touchEnd', del, true); }}", this, clickFunctionName, element, this.clickEventDelegates);
+
                         this.setElements.Add("e_" + elementId);
                     }
                 }
@@ -1194,6 +1201,15 @@ namespace BL.UI
             this.DisposeInteractionEventing();
             this.DisposeResizeEventing();
 
+            if (this.clickEventDelegates != null)
+            {
+                foreach (KeyValuePair<Element, IElementEventHandler> del in this.clickEventDelegates)
+                {
+                    del.Key.RemoveEventListener("click", del.Value, true);
+                    del.Key.RemoveEventListener("touchend", del.Value, true);
+                }
+            }
+
             if (this.templateControls != null)
             {
                 foreach (Control c in this.templateControls)
@@ -1281,7 +1297,7 @@ namespace BL.UI
         }
 
         /// <summary>
-        /// Creates a new DHTML element.
+        /// Creates a new DOM element.
         /// </summary>
         /// <param name="elementClass">Modifier class.</param>
         /// <returns></returns>
@@ -1294,7 +1310,7 @@ namespace BL.UI
             return e;
         }
         /// <summary>
-        /// Creates a new DHTML element.
+        /// Creates a new DOM element.
         /// </summary>
         /// <param name="elementClass">Modifier class.</param>
         /// <returns></returns>
@@ -1307,7 +1323,7 @@ namespace BL.UI
             return e;
         }
         /// <summary>
-        /// Creates a new DHTML element.
+        /// Creates a new DOM element.
         /// </summary>
         /// <param name="elementClass">Modifier class.</param>
         /// <returns></returns>
@@ -1321,7 +1337,7 @@ namespace BL.UI
         }
 
         /// <summary>
-        /// Creates a new DHTML element.
+        /// Creates a new DOM element.
         /// </summary>
         /// <param name="elementClass">Modifier class.</param>
         /// <returns></returns>
