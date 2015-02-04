@@ -61,6 +61,24 @@
                 vertical-align:top;
             }
 
+            #swipeGuideRight
+            {
+                display:none;
+                position:absolute;
+                text-align:left;
+                vertical-align:middle;
+                padding-top:46px;
+                padding-left:10px;
+                width:120px;
+                height:120px;
+                border: solid 1px #C0C0C0;
+                border-bottom-left-radius: 60px;
+                border-top-left-radius:60px;
+                opacity:0.8;
+                background-color: #E0E0E0;
+                color:#333333;
+            }
+
     </style>
 	</head>
 	<body>
@@ -79,6 +97,9 @@
                 <div id="itemsRow">
                     <ItemsContainer id='items'/>
                 </div>
+            </div>
+            <div id="swipeGuideRight">
+                swipe &gt;
             </div>
         </div>
 	</body>

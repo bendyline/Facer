@@ -34,6 +34,9 @@ namespace BL.UI.App
         [ScriptName("e_containerLinkRight")]
         private Element containerLinkRight;
 
+        [ScriptName("e_swipeGuideRight")]
+        private Element swipeGuideRight;
+
         private SliderSwipeMode mode = SliderSwipeMode.WholePage;
 
         private List<bool> visibilities;
@@ -56,6 +59,7 @@ namespace BL.UI.App
         private Date animationStart;
 
         private double downEventPageX;
+        private bool displayedSwipeGuides = false;
         private double downEventPageY;
 
         private ElementEvent lastMoveEvent;
@@ -246,6 +250,26 @@ namespace BL.UI.App
 
             this.draggingElementMouseMoveHandler = this.HandleElementMouseMove;
             this.draggingElementMouseUpHandler = this.HandleElementMouseUp;
+        }
+
+
+        public void ConsiderShowingSwipeGuidelines()
+        {
+            if (this.allowSwiping && Context.Current.IsTouchOnly && !displayedSwipeGuides)
+            {
+                this.swipeGuideRight.Style.Display = "block";
+                
+                OpacityAnimator oa = new OpacityAnimator();
+                oa.Element = this.swipeGuideRight;
+                oa.From = 1;
+                oa.To = 0;
+                oa.StartAfter(2000, 2000, null, null);
+
+                Window.SetTimeout(this.UpdateSizings, 10);
+
+                Window.SetTimeout(this.UpdateSizings, 500);
+                this.displayedSwipeGuides = true;
+            }
         }
 
         public void SetActiveIndexImmediate(int newActiveIndex)
@@ -888,6 +912,20 @@ namespace BL.UI.App
             }
 
             ClientRect cr = ElementUtilities.GetBoundingRect(this.Element);
+
+            if (this.swipeGuideRight != null)
+            {
+                double right = cr.Right;
+
+                if (right > Window.InnerWidth)
+                {
+                    right = Window.InnerWidth;
+                }
+
+                this.swipeGuideRight.Style.Left = (right - 70).ToString() + "px";
+                this.swipeGuideRight.Style.Top = (((cr.Bottom - cr.Top) / 2) + cr.Top - 70).ToString() + "px";
+            }
+
             double height = 0;
             
             if (this.Height != null)
@@ -918,7 +956,7 @@ namespace BL.UI.App
 
                     double width = ((cr.Right - cr.Left) - this.gapBetweenSections) + 2;
 
-                    if (ps.FitToWidth)
+                    if (ps.FitToWidth && width > 100)
                     {
                         style.MinWidth = width.ToString() + "px";
                         style.Width = width.ToString() + "px";
