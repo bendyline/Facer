@@ -124,6 +124,13 @@ namespace BL.UI
             element.AppendChild(Document.CreateTextNode(text));
         }
 
+        public static string ToStaticHTML(String html)
+        {
+            Script.Literal("if (typeof window.toStaticHTML == \"undefined\") {{ {0}=window.toStaticHTML({0})}}", html);
+
+            return html;
+        }
+
 
         public static void AnimateOnNextFrame(Action callback)
         {

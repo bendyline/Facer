@@ -145,7 +145,7 @@ namespace BL.UI.KendoControls
             {
                 if (this.html != null)
                 {
-                    this.contentDisplay.InnerHTML = this.html;
+                    this.contentDisplay.InnerHTML = ElementUtilities.ToStaticHTML(this.html);
                 }
                 else
                 {
