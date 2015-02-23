@@ -563,7 +563,7 @@ namespace BL.UI
         {
             Date now = Date.Now;
 
-            if (now.GetTime() - this.touchStartTime < 200 && now.GetTime() - this.lastClickTime > 200)
+            if (now.GetTime() - this.touchStartTime < 100 && now.GetTime() - this.lastClickTime > 200)
             {
                 this.lastClickTime = now.GetTime();
                 this.OnClick(e);

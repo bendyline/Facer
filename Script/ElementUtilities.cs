@@ -126,7 +126,7 @@ namespace BL.UI
 
         public static string ToStaticHTML(String html)
         {
-            Script.Literal("if (typeof window.toStaticHTML == \"undefined\") {{ {0}=window.toStaticHTML({0})}}", html);
+            Script.Literal("if (typeof window.toStaticHTML !== \"undefined\") {{ {0}=window.toStaticHTML({0}); }}", html);
 
             return html;
         }

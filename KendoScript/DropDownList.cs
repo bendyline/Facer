@@ -184,7 +184,7 @@ namespace BL.UI.KendoControls
             }
         }
 
-        public void InitControl()
+        private void InitControl()
         {
             if (!this.isInitialized && this.DataSource != null && this.ElementsEnsured)
             {
