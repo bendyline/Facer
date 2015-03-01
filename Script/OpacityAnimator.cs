@@ -119,9 +119,9 @@ namespace BL.UI
        //     ElementUtilities.AnimateOnNextFrame(this.AnimateTick);
         }
 
-        public void Start(double length, AsyncCallback callback, object state)
+        public void Start(double lengthInMilliseconds, AsyncCallback callback, object state)
         {
-            this.length = length;
+            this.length = lengthInMilliseconds;
             this.start = Date.Empty;
             this.canceled = false;
 

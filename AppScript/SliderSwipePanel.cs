@@ -252,6 +252,21 @@ namespace BL.UI.App
             this.draggingElementMouseUpHandler = this.HandleElementMouseUp;
         }
 
+        public void RevertToPreviousWholePage()
+        {
+            this.Mode = SliderSwipeMode.WholePage;
+            this.ActiveIndex = this.PreviousIndex;
+
+            this.previousIndex = -1;
+            this.ApplyVisibility();
+        }
+
+        public void FocusOnRightSlidePanel(int index)
+        {
+            this.mode = SliderSwipeMode.RightSlide;
+
+            this.ActiveIndex = index;
+        }
 
         public void ConsiderShowingSwipeGuidelines()
         {
@@ -312,6 +327,25 @@ namespace BL.UI.App
             this.visibilities[index] = isVisible;
 
             this.ApplyVisibility();
+
+            if (!this.isAnimating)
+            {
+                this.SetFinalPosition();
+            }
+        }
+
+
+        private bool HasAdditionalPageToRight(int index)
+        {
+            for (int i = index + 1; i < this.ItemControls.Count; i++)
+            {
+                if (this.visibilities.Count <= i || this.visibilities[i])
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void ApplyVisibility()
@@ -319,6 +353,16 @@ namespace BL.UI.App
             if (this.containerLinkBin == null)
             {
                 return;
+            }
+
+            int maxIndexToShow = this.activeIndex;
+
+            if (this.allowSwiping)
+            {
+                if (this.HasAdditionalPageToRight(maxIndexToShow))
+                {
+                    maxIndexToShow++;
+                }
             }
 
             for (int i = 0; i < this.ItemControls.Count; i++ )
@@ -344,14 +388,12 @@ namespace BL.UI.App
                     }
                 }
 
-                int maxIndexToShow = this.activeIndex;
-
-                if (this.allowSwiping)
-                {
-                    maxIndexToShow++;
-                }
-
-                if (this.paneSettingsCollection[i].Visible && ((this.mode == SliderSwipeMode.WholePage && i <= maxIndexToShow) || (i <= this.activeIndex && (i <= this.previousIndex || this.activeIndex == i))))
+                if (this.paneSettingsCollection[i].Visible && 
+                    (
+                        (this.mode == SliderSwipeMode.WholePage && i <= maxIndexToShow) || 
+                        (i <= Math.Max(this.activeIndex, this.previousIndex) && (i <= this.previousIndex || this.activeIndex == i))
+                    )
+                  )
                 {
                     this.ItemControls[i].Visible = vis;
                 }
@@ -360,6 +402,8 @@ namespace BL.UI.App
                     this.ItemControls[i].Visible = false;
                 }
             }
+
+            this.UpdateSizingsOverTime();
         }
 
         private void SetToX()
@@ -494,6 +538,7 @@ namespace BL.UI.App
                 return;
             }
 
+            Log.DebugMessage("Setting item bin scroll position to " + left);
             this.itemsBin.ScrollLeft = (int)left;
         }
 
@@ -546,6 +591,12 @@ namespace BL.UI.App
             }
 
             this.ApplyVisibility();
+
+
+            if (!this.isAnimating)
+            {
+                this.SetFinalPosition();
+            }
         }
 
         private String GetClassNameForElement(int index)
@@ -663,12 +714,12 @@ namespace BL.UI.App
             
             this.UpdateLinkBin();
 
-            this.UpdateSizings();
             this.ApplyVisibility();
 
-            Window.SetTimeout(new Action(this.UpdateSizings), 1);
-            Window.SetTimeout(new Action(this.UpdateSizings), 100);
-
+            if (!this.isAnimating)
+            {
+                this.SetFinalPosition();
+            }
         }
 
         protected override void OnVisibilityChanged()
@@ -683,17 +734,20 @@ namespace BL.UI.App
             {
                 Window.RemoveEventListener("resize", this.windowSizeChanged);
             }
+
+            this.UpdateSizingsOverTime();
         }
 
         protected override void OnItemControlAdded(Control c)
         {
             base.OnItemControlAdded(c);
 
-            this.UpdateSizings();
             this.ApplyVisibility();
 
-            Window.SetTimeout(new Action(this.UpdateSizings), 1);
-            Window.SetTimeout(new Action(this.UpdateSizings), 100);
+            if (!this.isAnimating)
+            {
+                this.SetFinalPosition();
+            }
         }
 
         private bool IsDefaultInputElement(ElementEvent e)
@@ -863,7 +917,7 @@ namespace BL.UI.App
                 double diffX = this.downEventPageX - ElementUtilities.GetPageX(this.lastMoveEvent);
 
 
-                if (diffX > 8 && this.ActiveIndex < this.ItemControls.Count - 1) //this.itemsBin.ScrollLeft > (initialScrollX + (panelWidth / 4)) && this.ActiveIndex < this.ItemControls.Count - 1)
+                if (diffX > 8 && this.ActiveIndex < this.ItemControls.Count - 1 && this.HasAdditionalPageToRight(this.ActiveIndex)) //this.itemsBin.ScrollLeft > (initialScrollX + (panelWidth / 4)) && this.ActiveIndex < this.ItemControls.Count - 1)
                 {
                     this.ActiveIndex++;
                 }
@@ -890,13 +944,25 @@ namespace BL.UI.App
         {
             base.OnDimensionChanged();
 
-            this.UpdateSizings();
+            this.UpdateSizingsOverTime();
 
-            Window.SetTimeout(new Action(this.UpdateSizings), 1);
-            Window.SetTimeout(new Action(this.UpdateSizings), 100);
+            if (!this.isAnimating)
+            {
+                this.SetFinalPosition();
+            }
         }
 
         public void UpdateSizingsEvent(ElementEvent e)
+        {
+            this.UpdateSizingsOverTime();
+
+            if (!this.isAnimating)
+            {
+                this.SetFinalPosition();
+            }
+        }
+
+        private void UpdateSizingsOverTime()
         {
             this.UpdateSizings();
 
@@ -988,11 +1054,6 @@ namespace BL.UI.App
                 }
 
                 index++;
-            }
-
-            if (!this.isAnimating)
-            {
-                this.SetFinalPosition();
             }
         }
     }

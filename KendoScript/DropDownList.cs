@@ -45,6 +45,8 @@ namespace BL.UI.KendoControls
             set
             {
                 this.dropDownList.Value(value);
+
+                this.ApplyVisibility();
             }
         }
 
@@ -58,6 +60,8 @@ namespace BL.UI.KendoControls
             set
             {
                 this.dropDownListOptions.DataTextField = value;
+
+                this.ApplyVisibility();
             }
         }
 
@@ -84,6 +88,8 @@ namespace BL.UI.KendoControls
             set
             {
                 this.dropDownListOptions.DataValueField = value;
+
+                this.ApplyVisibility();
             }
         }
 
@@ -97,6 +103,8 @@ namespace BL.UI.KendoControls
             set
             {
                 this.dropDownListOptions.HeaderTemplate = value;
+
+                this.ApplyVisibility();
             }
         }
 
@@ -110,6 +118,8 @@ namespace BL.UI.KendoControls
             set
             {
                 this.dropDownListOptions.Template = value;
+
+                this.ApplyVisibility();
             }
         }
         public String ValueTemplate
@@ -122,6 +132,8 @@ namespace BL.UI.KendoControls
             set
             {
                 this.dropDownListOptions.ValueTemplate = value;
+
+                this.ApplyVisibility();
             }
         }
 
@@ -163,6 +175,8 @@ namespace BL.UI.KendoControls
                 }
 
                 this.dropDownListOptions.DataSource = value;
+
+                this.ApplyVisibility();
             }
         }
 
@@ -188,12 +202,22 @@ namespace BL.UI.KendoControls
         {
             if (!this.isInitialized && this.DataSource != null && this.ElementsEnsured)
             {
-                Script.Literal("var j = {0}; j.kendoDropDownList({2}); {1} = j.data('kendoDropDownList')", this.J, this.dropDownList, this.dropDownListOptions);
+                Element e = Document.CreateElement("DIV");
+
+                e.Style.Width = "100%";
+
+                jQueryObject jqueryObject = jQuery.FromObject(e);
+
+                this.Element.AppendChild(e);
+
+                Script.Literal("var j = {0}; j.kendoDropDownList({2}); {1} = j.data('kendoDropDownList')", jqueryObject, this.dropDownList, this.dropDownListOptions);
 
                 this.dropDownList.Bind("change", this.HandleDataChange);
 
                 this.isInitialized = true;
             }
+
+            this.ApplyVisibility();
         }
 
         private void HandleDataChange(object e)

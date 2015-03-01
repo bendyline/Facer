@@ -122,7 +122,14 @@ namespace BL.UI
 
                 this.templateId = value;
 
+                bool templateWasAppliedBefore = this.templateWasApplied;
+
                 this.ClearTemplate();
+
+                if (templateWasAppliedBefore)
+                {
+                    this.ApplyTemplate();
+                }
 
                 this.ApplyClass();
             }
@@ -239,6 +246,14 @@ namespace BL.UI
             }
         }
 
+        public bool TemplateWasApplied
+        {
+            get
+            {
+                return this.templateWasApplied;
+            }
+        }
+
         public int EffectiveHeight
         {
             get
@@ -314,7 +329,7 @@ namespace BL.UI
                     } 
                 }
 
-                this.ApplyVisible();
+                this.ApplyVisibility();
             }
         }
 
@@ -533,13 +548,28 @@ namespace BL.UI
                 {
                     c.ClearTemplate();
                     c.Element = null;
+                    c.Dispose();
+                }
+
+                this.OnTemplateDisposed();
+
+                if (this.setElements != null)
+                {
+                    foreach (String memberId in this.setElements)
+                    {
+                        Script.Literal("{0}[{1}]=null", this, memberId);
+                    }
                 }
 
                 this.template = null;
                 this.templateWasApplied = false;
                 this.fireUpdateOnTemplateComplete = true;
-                this.ApplyTemplate();
             }
+        }
+
+        protected virtual void OnTemplateDisposed()
+        {
+
         }
 
         public void EnsurePrepared()
@@ -909,13 +939,14 @@ namespace BL.UI
                     Script.Literal("var fn = {0}[\"set_contentContainerElement\"];  if (fn != null) {{ fn.apply(this, new Array({1})); }}", this, e);
                 }
 
+                /*
                 if (this.setElements != null)
                 {
                     foreach (String memberId in this.setElements)
                     {
                         Script.Literal("{0}[{1}]=null", this, memberId);
                     }
-                }
+                }*/
 
                 this.setElements = new List<string>();
 
@@ -1100,7 +1131,7 @@ namespace BL.UI
                 this.ensureElementsRequested = true;
             }
 
-            this.ApplyVisible();
+            this.ApplyVisibility();
         }
 
         private String GetControlShortId(String id)
@@ -1145,8 +1176,7 @@ namespace BL.UI
             return null;
         }
 
-
-        private void ApplyVisible()
+        protected void ApplyVisibility()
         {
             Script.Literal("if (window.requestAnimationFrame) {{window.requestAnimationFrame({0});}}else{{window.setTimeout({0}, 1);}}", this.applyVisibleOnFrameAction);
         }
@@ -1210,16 +1240,7 @@ namespace BL.UI
                 }
             }
 
-            if (this.templateControls != null)
-            {
-                foreach (Control c in this.templateControls)
-                {
-                    if (c is IDisposable)
-                    {
-                        ((IDisposable)c).Dispose();
-                    }
-                }
-            }
+            this.ClearTemplate();
 
             if (this.templateDescendentControls != null)
             {

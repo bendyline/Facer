@@ -20,6 +20,8 @@ namespace BL.UI
         private User user;
         private UserReference userReference;
 
+        private PropertyChangedEventHandler userPropertyChangedEventHandler;
+
         public User User
         {
             get
@@ -35,10 +37,11 @@ namespace BL.UI
                 }
 
                 this.user = value;
-
+                this.user.PropertyChanged += user_PropertyChanged;
                 this.Update();
             }
         }
+
 
         public UserReference UserReference
         {
@@ -99,7 +102,7 @@ namespace BL.UI
 
         public UserControl()
         {
-
+            this.userPropertyChangedEventHandler = user_PropertyChanged;
         }
 
         protected void OnUserReferenceUpdated()
@@ -120,7 +123,13 @@ namespace BL.UI
             }
         }
 
-        protected void OnUserUpdated()
+        
+        private void user_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            this.OnUserUpdated();
+        }
+
+        protected virtual void OnUserUpdated()
         {
 
         }
