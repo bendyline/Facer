@@ -64,7 +64,7 @@
             #swipeGuideRight
             {
                 display:none;
-                position:absolute;
+                position:fixed;
                 text-align:left;
                 vertical-align:middle;
                 padding-top:46px;
@@ -77,8 +77,51 @@
                 opacity:0.8;
                 background-color: #E0E0E0;
                 color:#333333;
+                box-shadow: 0px 0px 20px rgba(120, 120, 120, 0.3);
+            }
+            
+            #swipeNavigation
+            {
+                box-shadow: 0px 0px 20px rgba(120, 120, 120, 0.3);
+                display:none;
+                position:fixed;
+                opacity:0.6;
+                text-align:left;
+                border: solid 1px #C0C0C0;
+                border-radius: 3px;
+                vertical-align:middle;
+                text-align:center;
+                padding:10px;
+                background-color: #E0E0E0;
+                color:#333333;
+            }
+                    
+            #swipeDotBase
+            {
+                display:inline-block;
+                min-width: 10px;
+                min-height: 10px;
+                max-height: 10px;
+                max-width:10px;
+                margin: 3px;
+                border-style:solid;
+                font-size:1pt;
+                border-width: 1px;
+                border-radius:5px;
             }
 
+            #swipeDotBaseInactive
+            {
+                border-color: black;
+                background-color: black;
+            }
+
+            #swipeDotBaseActive
+            {
+                border-color: white;
+                background-color: white;
+            }
+            
     </style>
 	</head>
 	<body>
@@ -100,6 +143,10 @@
             </div>
             <div id="swipeGuideRight">
                 swipe &gt;
+            </div>
+            <div id="swipeNavigation">
+                <div id="swipeNavigationTitle"></div>
+                <div id="swipeNavigationDotBin"></div>
             </div>
         </div>
 	</body>

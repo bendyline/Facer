@@ -165,7 +165,6 @@ namespace BL.UI
             this.Hide();
         }
 
-
         private void UpdateCloseButton()
         {
             if (this.closeButton == null)
@@ -339,7 +338,17 @@ namespace BL.UI
             Document.Body.Style.OverflowY = this.overflowY;
             Document.Body.Style.Overflow = this.overflow;
 
-            Document.Body.RemoveChild(this.Element);
+            try
+            {
+                if (Document.Body.Contains(this.Element))
+                {
+                    Document.Body.RemoveChild(this.Element);
+                }
+            }
+            catch (Exception)
+            {
+                ;
+            }
         }
     }
 }

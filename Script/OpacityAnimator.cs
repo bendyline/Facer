@@ -17,7 +17,7 @@ namespace BL.UI
 
         private double? to;
 
-        private Date start;
+        private Date start = Date.Empty;
         private double length;
         private int delay;
         private bool canceled = false;
@@ -88,13 +88,27 @@ namespace BL.UI
             }
         }
 
-        public void StartAfter(int delay, double length, AsyncCallback callback, object state)
+        public void StartAfter(int delayInMilliseconds, double lengthInMilliseconds, AsyncCallback callback, object state)
         {
-            this.length = length;
+            this.length = lengthInMilliseconds;
+
+            bool isRunning = false;
+
+            // are we already in an animation?  If so, avoid using the delay, and just start the animation.
+            if (this.start != Date.Empty)
+            {
+                delayInMilliseconds = 0;
+                isRunning = true;
+            }
+
             this.start = Date.Empty;
-            this.delay = delay;
+            this.delay = delayInMilliseconds;
             this.canceled = false;
-            this.opacityOperation = new Operation();
+
+            if (this.opacityOperation == null)
+            {
+                this.opacityOperation = new Operation();
+            }
 
             if (callback != null)
             {
@@ -114,27 +128,15 @@ namespace BL.UI
                 }
             }
 
-            this.AnimateTick();
-
-       //     ElementUtilities.AnimateOnNextFrame(this.AnimateTick);
+            if (!isRunning)
+            {
+                this.AnimateTick();
+            }
         }
 
         public void Start(double lengthInMilliseconds, AsyncCallback callback, object state)
         {
-            this.length = lengthInMilliseconds;
-            this.start = Date.Empty;
-            this.canceled = false;
-
-            this.opacityOperation = new Operation();
-
-            if (callback != null)
-            {
-                this.opacityOperation.AddCallback(callback, state);
-            }
-
-            this.AnimateTick();
-
-   //         ElementUtilities.AnimateOnNextFrame(this.AnimateTick);
+            this.StartAfter(0, lengthInMilliseconds, callback, state);
         }
 
         private void AnimateTick()
@@ -200,8 +202,13 @@ namespace BL.UI
                     this.SetToEndValues();
                 }
 
-                this.opacityOperation.CompleteAsAsyncDone(this);
-                this.opacityOperation= null;
+                if (this.opacityOperation != null)
+                {
+                    this.opacityOperation.CompleteAsAsyncDone(this);
+                    this.opacityOperation = null;
+                }
+
+                this.start = Date.Empty;
 
                 if (this.OpacityChangeComplete != null)
                 {
@@ -224,6 +231,8 @@ namespace BL.UI
                     e.Style.Opacity = this.to.ToString();
                 }
             }
+
+            this.start = Date.Empty;
         }
     }
 }
