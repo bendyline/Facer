@@ -20,6 +20,7 @@ namespace BL.UI.KendoControls
         private bool displayInlineToolbar;
         private String editorHeight = null;
         private String tempValue = null;
+        private bool calledImageBrowserCallback = false;
 
         public bool DisplayInlineToolbar
         {
@@ -107,12 +108,45 @@ namespace BL.UI.KendoControls
             }
         }
 
+        public EditorOptions Options
+        {
+            get
+            {
+                return this.editorOptions;
+            }
+
+            set
+            {
+                this.editorOptions = value;
+            }
+        }
+
         public Editor()
         {
-            this.editorOptions = new EditorOptions();
         }
 
         protected override void OnEnsureElements()
+        {
+            if (this.editorOptions != null && this.editorOptions.ImageBrowser != null && this.editorOptions.ImageBrowser.BeforeLaunch != null && !this.calledImageBrowserCallback)
+            {
+                this.editorOptions.ImageBrowser.BeforeLaunch(this.PostLaunchContinue, this.editorOptions);
+            }
+            else
+            {
+                this.EnsureElementsContinue();
+            }
+        }
+
+        private void PostLaunchContinue(IAsyncResult result)
+        {
+            if (result.IsCompleted)
+            {
+                this.calledImageBrowserCallback = true;
+                this.EnsureElementsContinue();
+            }
+        }
+
+        private void EnsureElementsContinue()
         {
             if (this.editorHeight != null)
             {
@@ -129,8 +163,60 @@ namespace BL.UI.KendoControls
             
             this.Element.Style.Width = "100%";
 
+            if (this.editorOptions == null)
+            {
+                this.editorOptions = new EditorOptions();
+            }
+
+            if (this.editorOptions.Tools == null)
+            {
+                String[] toolsToUse = new String[] 
+                {
+                "formatting",
+                "fontName",
+                "fontSize",
+                "bold",
+                "italic",
+                "underline",
+                "strikethrough",
+                "foreColor",
+                "backColor",
+                "cleanFormatting",
+                "subscript",
+                "superscript",
+                "createLink",
+                "unlink",
+                "insertImage",
+                "insertFile",
+                "insertUnorderedList",
+                "insertOrderedList",
+                "indent",
+                "outdent",
+                "justifyLeft",
+                "justifyCenter",
+                "justifyRight",
+                "justifyFull",
+                "createTable",
+                "addRowAbove",
+                "addRowBelow",
+                "addColumnLeft",
+                "addColumnRight",
+                "deleteRow",
+                "deleteColumn"
+                };
+
+                this.editorOptions.Tools = toolsToUse;
+            }
+
+            if (this.editorOptions.Stylesheets == null)
+            {
+                this.editorOptions.Stylesheets = new String[] { Context.Current.ResourceBasePath + "qla/css/qla.css?v=" + Context.Current.VersionToken };
+            }
+
             // note we are try catching to work around an exception issue in IE
             Script.Literal("var j={0};j.kendoEditor({2});{1}=j.data('kendoEditor')", this.J, this.editor, this.editorOptions);
+
+            this.Element.Style.BorderWidth = "0px";
 
             if (this.editor != null)
             {

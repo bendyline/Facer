@@ -26,8 +26,27 @@ namespace BL.UI.KendoControls
         public event EventHandler Changed;
         private String html;
         private bool popupMode = false;
+        private EditorOptions editorOptions;
 
         private EventHandler popupChanged;
+
+        public EditorOptions EditorOptions
+        {
+            get
+            {
+                if (this.editorOptions == null)
+                {
+                    this.editorOptions = new EditorOptions();
+                }
+
+                return this.editorOptions;
+            }
+
+            set
+            {
+                this.editorOptions = value;
+            }
+        }
 
         [ScriptName("s_title")]
         public String Title
@@ -113,8 +132,9 @@ namespace BL.UI.KendoControls
             }
 
             this.popupEditor = new Editor();
+            this.popupEditor.Options = this.EditorOptions;
             this.popupEditor.Rows = 0;
-            this.popupEditor.EditorHeight = "calc(100vh-62px)";
+            this.popupEditor.EditorHeight = "100%";
             this.popupEditor.DisplayInlineToolbar = true;
 
             if (this.html != null)

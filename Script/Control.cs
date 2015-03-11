@@ -107,7 +107,7 @@ namespace BL.UI
             {
                 if (this.templateId == null)
                 {
-                    this.templateId = this.GetType().FullName.Replace(".", "-").ToLowerCase();
+                    this.templateId = this.GetDefaultTemplateId();
                 }
 
                 return this.templateId;
@@ -115,7 +115,7 @@ namespace BL.UI
 
             set
             { 
-                if (this.templateId == value)
+                if (this.templateId == value || (value == null && this.templateId == this.GetDefaultTemplateId()))
                 {
                     return;
                 }
@@ -664,6 +664,11 @@ namespace BL.UI
         protected virtual void OnMouseMove(ElementEvent e)
         {
 
+        }
+
+        private String GetDefaultTemplateId()
+        {
+            return this.GetType().FullName.Replace(".", "-").ToLowerCase();
         }
 
         private void DisposeInteractionEventing()

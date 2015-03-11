@@ -9,10 +9,8 @@ namespace Kendo.UI
     [Imported]
     [IgnoreNamespace]
     [ScriptName("Object")]
-    public class EditorOptions
+    public class ImageBrowserMessage
     {
-        public String[] Tools;
-        public String[] Stylesheets;
-        public ImageBrowserOptions ImageBrowser;
+        public String DropFilesHere;
     }
 }

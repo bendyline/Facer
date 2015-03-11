@@ -326,7 +326,7 @@ namespace BL.UI
                                 {
                                     if (kvp.Key == "src")
                                     {
-                                        resultingMarkup.Append(String.Format(" {0}=\"{1}\"", kvp.Key, Context.Current.ResourceBasePath + kvp.Value));
+                                        resultingMarkup.Append(String.Format(" {0}=\"{1}\"", kvp.Key, Context.Current.ResourceBasePath + kvp.Value + "?v=" + Context.Current.VersionToken));
                                     }
                                     else
                                     {

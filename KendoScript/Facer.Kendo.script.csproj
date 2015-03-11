@@ -70,6 +70,10 @@
     <Compile Include="Kendo\Mobile\Application.cs" />
     <Compile Include="Kendo\Mobile\MobileSwitch.cs" />
     <Compile Include="Kendo\Mobile\MobileSwitchOptions.cs" />
+    <Compile Include="Kendo\UI\ProtocolTransport.cs" />
+    <Compile Include="Kendo\UI\ImageBrowserTransport.cs" />
+    <Compile Include="Kendo\UI\ImageBrowserMessage.cs" />
+    <Compile Include="Kendo\UI\ImageBrowserOptions.cs" />
     <Compile Include="Kendo\UI\GridColumnUserInterfaceFactoryOptions.cs" />
     <Compile Include="Kendo\UI\Size.cs" />
     <Compile Include="Kendo\UI\ColorPicker.cs" />
@@ -174,10 +178,6 @@
     <ProjectReference Include="..\..\Baser\Script\Baser.script.csproj">
       <Project>{674d49a1-23ad-45c2-a93e-b637418b772f}</Project>
       <Name>Baser.script</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\JqmScript\Facer.JQM.script.csproj">
-      <Project>{3584de97-f65b-4bbb-a91a-4c3ec687bb1a}</Project>
-      <Name>Facer.JQM.script</Name>
     </ProjectReference>
     <ProjectReference Include="..\Script\Facer.script.csproj">
       <Project>{527CAA8A-9E4C-4E54-955C-DC5CB58EA062}</Project>

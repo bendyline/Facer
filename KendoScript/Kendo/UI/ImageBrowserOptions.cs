@@ -1,4 +1,5 @@
-﻿using kendo.data;
+﻿using BL;
+using kendo.data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,10 @@ namespace Kendo.UI
     [Imported]
     [IgnoreNamespace]
     [ScriptName("Object")]
-    public class EditorOptions
+    public class ImageBrowserOptions
     {
-        public String[] Tools;
-        public String[] Stylesheets;
-        public ImageBrowserOptions ImageBrowser;
+        public AsyncOperation BeforeLaunch;
+        public ImageBrowserMessage Message;
+        public ImageBrowserTransport Transport;
     }
 }

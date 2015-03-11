@@ -5,7 +5,7 @@
         
         BODY
         {
-          background: rgba(204,204,204,0.4);
+          background: rgba(220,220,220,0.6);
           width: 100%;  
           height:100%;
         }
@@ -14,17 +14,21 @@
         {
             color:#000000;
             font-family: 'Lato', Helvetica, Arial, sansserif;
-            margin-top:3px;
+            margin-top:5px;
             margin-left:10px;
-        }
-        
+            float:left;
+        }        
+
         #closeButton
         {
-            font-size:large;
+            font-size:medium;
+            float:right;
             text-align: right;
-            margin-top:8px;
-            margin-right:11px;
-            cursor:default;
+            cursor:default;            
+            padding:4px;
+            padding-right:8px;
+            padding-bottom:6px;
+            vertical-align:middle;
         }
 
         #panel
@@ -34,45 +38,81 @@
             background:white;
             border: solid 1px #D0D0D0;
             border-radius: 4px;
+            display:table;
+            height:100%;
         }
 
+        #topBar
+        {
+            display:table-row;
+        }
 
-            #doneButton
-            {
-                background-color: #6AC5E8;
-                font-size: small;
-                text-align: right;
-                padding: 4px;
-                padding-left:10px;
-                padding-right:10px;
-                margin-top:40px;
-                margin-left:14px;
-                margin-right:14px;
-                margin-bottom:14px;
-                border: solid 0px;
-                height:32px;
-                min-width:60px;
-                vertical-align:middle;
-                text-align:center;
-                color: white;
-                width:120px;
-            }
+        #topInterior
+        {
+            display:table-cell;
+            background-color:#B3E3F3;
+        }
 
-            #contentContainer
-            {
-                height:100%;
-            }
+        #contentArea
+        {
+            display:table-row;
+        }
+
+        #bottomBar
+        {
+            display:table-row;
+        }
+
+        #bottomInterior
+        {
+            display:table-cell;
+        }
+
+        #doneButton
+        {
+            background-color: #6AC5E8;
+            font-size: small;
+            display:inline-block;
+            text-align: right;
+            padding: 4px;
+            padding-left:10px;
+            padding-right:10px;
+            margin-top:40px;
+            margin-left:14px;
+            margin-right:14px;
+            margin-bottom:14px;
+            border: solid 0px;
+            height:32px;
+            min-width:60px;
+            vertical-align:middle;
+            text-align:center;
+            color: white;
+            width:120px;
+        }
+
+        #contentContainer
+        {
+            display:table-cell;
+            height:100%;
+        }
         </style>
 	</head>
 	<body>
            <div id="panel">
                <div id="topBar">
-                   <div id="titleText"></div>
-                    <div id="closeButton"><img src="qla/images/close.png"/></div>
+                   <div id="topInterior">
+                       <div id="titleText"></div>
+                        <div id="closeButton"><img src="qla/images/close.png" style="width:14px;height:14px;padding-bottom:2px;"/></div>
+                    </div>
                 </div>
-
-                <ContentContainer id="contentContainer"/>
-                <div id="doneButton" style="display:none">Done</div>
+               <div id="contentArea">
+                    <ContentContainer id="contentContainer"/>
+                </div>
+               <div id="bottomBar">
+                   <div id="bottomInterior">
+                        <div id="doneButton" style="display:none">Done</div>
+                    </div>
+                </div>
            </div>
  	</body>
 </html>
