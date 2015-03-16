@@ -1,6 +1,8 @@
 /* Copyright (c) Bendyline LLC. All rights reserved. Licensed under the Apache License, Version 2.0.
     You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. */
 
+using Bendyline.Base;
+using jQueryApi;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +12,87 @@ namespace BL.UI
 
     public class TemplateParser
     {
+        private int scriptsToLoadCount = 0;
 
+        public event EventHandler ScriptsLoaded;
+
+        public bool EnsureScriptsLoaded(String markup)
+        {
+            Dictionary<String, bool> librariesToLoad = new Dictionary<string, bool>();
+            bool hasAllScripts = true;
+
+            int nextLeftSign = markup.IndexOf("<");
+
+            while (nextLeftSign >= 0 && nextLeftSign < markup.Length - 3)
+            {
+                if (markup.CharAt(nextLeftSign + 1) != '/')
+                {
+                    nextLeftSign++;
+
+                    int nextSeperator = markup.IndexOf(" ", nextLeftSign);
+                    int nextSlash = markup.IndexOf("/", nextLeftSign);
+                    int nextRight = markup.IndexOf(">", nextLeftSign);
+
+                    if (nextSeperator < 0 || (nextSlash >= 0 && nextSlash <= nextSeperator))
+                    {
+                        nextSeperator = nextSlash;
+                    }
+
+                    if (nextSeperator < 0 || (nextRight>= 0 && nextRight <= nextSeperator))
+                    {
+                        nextSeperator = nextRight;
+                    }
+
+                    if (nextSeperator > nextLeftSign)
+                    {
+                        String tagName = markup.Substring(nextLeftSign, nextSeperator);
+                        int lastPeriod = tagName.LastIndexOf(".");
+
+                        if (lastPeriod >= 0)
+                        {
+                            String namespaceStr = tagName.Substring(0, lastPeriod);
+
+                            if (!librariesToLoad.ContainsKey(namespaceStr))
+                            {
+                                librariesToLoad[namespaceStr] = true;
+
+                                String typeNameStr = tagName.Substring(lastPeriod + 1, tagName.Length);
+
+                                if (!ControlManager.Current.IsLoadedNamespace(namespaceStr))
+                                {
+                                    String adjust = String.Format(Context.Current.ScriptLibraryTemplate, namespaceStr.ToLowerCase());
+
+                                    hasAllScripts = false;
+
+                                    adjust += "?v=" + Context.Current.VersionToken;
+
+                                    String path = UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + adjust;
+                                    scriptsToLoadCount++;
+
+                                    jQuery.GetScript(path, this.ScriptLoadedContinue);
+
+                                    //Script.Alert("Could not find '" + tagName + "', loading" + path);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                nextLeftSign = markup.IndexOf("<", nextLeftSign + 1);
+            }
+
+            return hasAllScripts;
+        }
+
+        private void ScriptLoadedContinue(object o)
+        {
+            this.scriptsToLoadCount--;
+
+            if (this.scriptsToLoadCount <= 0 && this.ScriptsLoaded != null)
+            {
+                this.ScriptsLoaded(this, EventArgs.Empty);
+            }
+        }
 
         public TemplateParserResult Parse(String parentId, String templateCssPrefix, String markup)
         {

@@ -208,6 +208,13 @@ namespace BL.UI.KendoControls
                 this.editorOptions.Tools = toolsToUse;
             }
 
+            if (this.editorOptions.Serialization == null)
+            {
+                this.editorOptions.Serialization = new EditorSerializationOptions();
+                // use presentational <b>/<i>/<font> tags because server side santization doesn't like <span style="">
+                this.editorOptions.Serialization.Semantic = false;
+            }
+
             if (this.editorOptions.Stylesheets == null)
             {
                 this.editorOptions.Stylesheets = new String[] { Context.Current.ResourceBasePath + "qla/css/qla.css?v=" + Context.Current.VersionToken };

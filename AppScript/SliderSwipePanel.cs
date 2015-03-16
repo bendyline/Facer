@@ -62,6 +62,7 @@ namespace BL.UI.App
         private bool isDragging;
         private bool isAnimatingToSlot;
 
+        private int lastFlashIndex = -1;
         private double panelWidth;
 
         private double lastDragEventTime;
@@ -131,6 +132,7 @@ namespace BL.UI.App
                 this.mode = value;
 
                 this.ApplyVisibility();
+                this.UpdateSizingsOverTime();
                 this.SetToX();
             }
         }
@@ -205,10 +207,10 @@ namespace BL.UI.App
                     return;
                 }
 
-                this.FlashSwipeNavigation();
-
                 this.previousIndex = this.activeIndex;
                 this.activeIndex = value;
+
+                this.FlashSwipeNavigation();
 
                 this.ApplyVisibility();
                 this.AnimateToIndexPosition();
@@ -271,6 +273,7 @@ namespace BL.UI.App
 
             this.previousIndex = -1;
             this.ApplyVisibility();
+            this.UpdateSizingsOverTime();
         }
 
         public void FocusOnRightSlidePanel(int index)
@@ -290,7 +293,7 @@ namespace BL.UI.App
                 oa.Element = this.swipeGuideRight;
                 oa.From = 1;
                 oa.To = 0;
-                oa.StartAfter(2000, 1500, null, null);
+                oa.StartAfter(3000, 500, null, null);
 
                 this.UpdateSizingsOverTime();
 
@@ -300,7 +303,7 @@ namespace BL.UI.App
 
         private void FlashSwipeNavigation()
         {
-            if (this.allowSwiping && this.swipeNavigation != null && this.swipeNavigationTitle != null && Context.Current.IsTouchOnly)
+            if (this.allowSwiping && this.swipeNavigation != null && this.swipeNavigationTitle != null && Context.Current.IsTouchOnly && this.lastFlashIndex != this.ActiveIndex)
             {
                 this.swipeNavigation.Style.Display = "block";
 
@@ -310,11 +313,13 @@ namespace BL.UI.App
                 {
                     this.swipeNavigationOpacityAnimator = new OpacityAnimator();
                 }
-                
+
+                this.lastFlashIndex = this.ActiveIndex;
+
                 this.swipeNavigationOpacityAnimator.Element = this.swipeNavigation;
                 this.swipeNavigationOpacityAnimator.From = 1;
                 this.swipeNavigationOpacityAnimator.To = 0;
-                this.swipeNavigationOpacityAnimator.StartAfter(2000, 1500, null, null);
+                this.swipeNavigationOpacityAnimator.StartAfter(3000, 500, null, null);
                 
                 this.UpdateSizingsOverTime();
 
@@ -359,7 +364,7 @@ namespace BL.UI.App
             if (this.activeIndex == newActiveIndex)
             {
                 this.ApplyVisibility();
-
+                this.UpdateSizings();
                 this.SetFinalPosition();
                 return;
             }
@@ -384,10 +389,7 @@ namespace BL.UI.App
                 this.ActiveControlChanged(this.activeIndex, ciea);
             }
 
-            if (!this.isAnimating)
-            {
-                this.SetFinalPosition();
-            }
+            this.UpdateSizingsOverTime();
         }
 
 
@@ -411,11 +413,7 @@ namespace BL.UI.App
             this.visibilities[index] = isVisible;
 
             this.ApplyVisibility();
-
-            if (!this.isAnimating)
-            {
-                this.SetFinalPosition();
-            }
+            this.UpdateSizingsOverTime();
 
             this.FlashSwipeNavigation();
         }
@@ -487,8 +485,6 @@ namespace BL.UI.App
                     this.ItemControls[i].Visible = false;
                 }
             }
-
-            this.UpdateSizingsOverTime();
         }
 
         private void SetToX()
@@ -677,11 +673,7 @@ namespace BL.UI.App
             }
 
             this.ApplyVisibility();
-
-            if (!this.isAnimating)
-            {
-                this.SetFinalPosition();
-            }
+            this.UpdateSizingsOverTime();
         }
 
         private String GetClassNameForElement(int index)
@@ -804,11 +796,6 @@ namespace BL.UI.App
             this.ApplyVisibility();
 
             this.UpdateSizingsOverTime();
-
-            if (!this.isAnimating)
-            {
-                this.SetFinalPosition();
-            }
         }
 
         protected override void OnVisibilityChanged()
@@ -832,11 +819,7 @@ namespace BL.UI.App
             base.OnItemControlAdded(c);
 
             this.ApplyVisibility();
-
-            if (!this.isAnimating)
-            {
-                this.SetFinalPosition();
-            }
+            this.UpdateSizingsOverTime();
         }
 
         private bool IsDefaultInputElement(ElementEvent e)
@@ -1094,15 +1077,16 @@ namespace BL.UI.App
             {
                 height = (double)this.Height;
             }
-            else if (this.topAreaOuter != null)
-            {
-                ClientRect topAreaRect = ElementUtilities.GetBoundingRect(this.topAreaOuter);
-
-                height = (cr.Bottom - cr.Top) - (topAreaRect.Bottom - topAreaRect.Top);
-            }
             else
             {
                 height = (cr.Bottom - cr.Top);
+            }
+
+            if (this.topAreaOuter != null)
+            {
+                ClientRect topAreaRect = ElementUtilities.GetBoundingRect(this.topAreaOuter);
+
+                height = height - (topAreaRect.Bottom - topAreaRect.Top);
             }
 
             this.panelWidth = Window.InnerWidth;
@@ -1118,11 +1102,8 @@ namespace BL.UI.App
 
             if (this.swipeNavigation != null && elementVisibleRight > 0)
             {
-                this.swipeNavigation.Style.MaxWidth = "160px";
-
-                this.swipeNavigation.Style.Width = "160px";
                 this.swipeNavigation.Style.Left = ((elementWidth - 160) / 2).ToString() + "px";
-                this.swipeNavigation.Style.Top = (elementVisibleBottom - 60).ToString() + "px";
+                this.swipeNavigation.Style.Top = (elementVisibleBottom - 64).ToString() + "px";
             }
 
             int index = 0;

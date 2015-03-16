@@ -63,6 +63,7 @@ namespace BL.UI
         private ElementEffects effects;
         private long touchStartTime = 0;
         private long lastClickTime = 0;
+        private TemplateParser controlLoader = null;
 
         private Action applyVisibleOnFrameAction;
 
@@ -891,7 +892,7 @@ namespace BL.UI
 
             if (templateId != null)
             {
-                this.templateWasApplied = true; 
+                this.templateWasApplied = true;  // 3.15.2015: should this really be here rather than in HandleApplyTemplateContinue?
                 TemplateManager.Current.GetTemplateAsync(templateId, this.HandleApplyTemplateContinue, null);
             }
         }
@@ -904,13 +905,25 @@ namespace BL.UI
             {
                 this.templateId = t.Id;
                 this.template = t.Content;
-                this.ApplyTemplateContinue();
+
+                this.controlLoader =  new TemplateParser();
+                this.controlLoader.ScriptsLoaded += controlLoader_ScriptsLoaded;
+
+                if (this.controlLoader.EnsureScriptsLoaded(this.template))
+                {
+                    this.ApplyTemplateContinue();
+                }
             }
             else
             {
                 Log.DebugMessage(String.Format("Expected template '{0}' was not found.", templateId));
                 this.OnBaseControlsElementsPostInit();
             }
+        }
+
+        private void controlLoader_ScriptsLoaded(object sender, EventArgs e)
+        {
+            this.ApplyTemplateContinue();
         }
 
         private void ApplyTemplateContinue()

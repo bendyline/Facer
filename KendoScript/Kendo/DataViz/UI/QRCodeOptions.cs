@@ -12,5 +12,8 @@ namespace Kendo.DataViz.UI
     {
         public String Value;
         public String RenderAs;
+        public Nullable<int> Size;
+        public String Color;
+        public String Background;
     }
 }

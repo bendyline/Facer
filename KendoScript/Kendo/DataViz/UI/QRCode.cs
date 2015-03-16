@@ -37,8 +37,7 @@ namespace Kendo.DataViz.UI
             return null;
         }
 
-        [ScriptName("imageDataURL")]
-        public String GetImageDataUrl()
+        public String Value(String value)
         {
             return null;
         }

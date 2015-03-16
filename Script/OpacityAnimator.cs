@@ -97,7 +97,6 @@ namespace BL.UI
             // are we already in an animation?  If so, avoid using the delay, and just start the animation.
             if (this.start != Date.Empty)
             {
-                delayInMilliseconds = 0;
                 isRunning = true;
             }
 
@@ -115,10 +114,17 @@ namespace BL.UI
                 this.opacityOperation.AddCallback(callback, state);
             }
 
-            if (this.Element != null)
+            this.SetToStartValues();
+
+            if (!isRunning)
             {
-                this.Element.Style.Opacity = this.from.ToString();
+                this.AnimateTick();
             }
+        }
+
+        private void SetToStartValues()
+        {
+            this.Element.Style.Opacity = this.from.ToString();
 
             if (this.elements != null)
             {
@@ -128,10 +134,6 @@ namespace BL.UI
                 }
             }
 
-            if (!isRunning)
-            {
-                this.AnimateTick();
-            }
         }
 
         public void Start(double lengthInMilliseconds, AsyncCallback callback, object state)
@@ -157,6 +159,7 @@ namespace BL.UI
 
             if (ms <  delay)
             {
+                this.SetToStartValues();
                 ElementUtilities.AnimateOnNextFrame(this.AnimateTick);
                 return;
             }

@@ -39,24 +39,26 @@ namespace BL.UI.KendoControls
             }
         }
 
-        public String ImageDataUrl
+        public String Value
         {
             get
             {
-                if (this.qrCode == null)
+                return this.Options.Value;
+            }
+            set
+            {
+                this.Options.Value = value;
+
+                if (this.qrCode != null)
                 {
-                    this.EnsureElements();
+                    this.qrCode.Value(value);
                 }
-
-
-
-                return this.qrCode.GetImageDataUrl();
             }
         }
 
         protected override void OnEnsureElements()
         {
-            Script.Literal("var j = {0}; j.kendoQRCode({2}); {1} = j.data('kendoQRCode')", this.J, this.qrCode, this.qrCodeOptions);
+            Script.Literal("var j={0}; j.kendoQRCode({2}); {1}=j.data('kendoQRCode')", this.J, this.qrCode, this.qrCodeOptions);
         }
 
         public override void Dispose()

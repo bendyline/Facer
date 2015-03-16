@@ -19,6 +19,9 @@ namespace BL.UI.KendoControls
         private Editor popupEditor;
         private String title;
 
+        [ScriptName("e_cta")]
+        private Element cta;
+
         [ScriptName("e_contentDisplay")]
         private Element contentDisplay;
 
@@ -29,6 +32,23 @@ namespace BL.UI.KendoControls
         private EditorOptions editorOptions;
 
         private EventHandler popupChanged;
+
+        private bool readOnly = false;
+
+        public bool ReadOnly
+        {
+            get
+            {
+                return this.readOnly;
+            }
+
+            set
+            {
+                this.readOnly = value;
+
+                this.ApplyReadOnly();
+            }
+        }
 
         public EditorOptions EditorOptions
         {
@@ -116,6 +136,11 @@ namespace BL.UI.KendoControls
 
         protected override void OnClick(ElementEvent e)
         {
+            if (this.readOnly)
+            {
+                return;
+            }
+
             Dialog d = new Dialog();
             d.TemplateId = "bl-ui-dialogfullscreen";
 
@@ -145,6 +170,30 @@ namespace BL.UI.KendoControls
             this.popupEditor.Changed += this.popupChanged;
 
             d.Content = this.popupEditor;
+        }
+
+        private void ApplyReadOnly()
+        {
+            if (this.cta == null)
+            {
+                return;
+            }
+
+            if (this.readOnly)
+            {
+                ElementUtilities.SetText(this.cta, "");
+            }
+            else
+            {
+                ElementUtilities.SetText(this.cta, "(click to edit)");
+            }
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            this.ApplyReadOnly();
         }
 
         private void popupEditor_Changed(object sender, EventArgs e)

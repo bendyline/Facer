@@ -9,6 +9,7 @@ namespace BL.UI
     public class ControlManager
     {
         private Dictionary<String, IControlFactory> factoriesByShortNamespace;
+        private Dictionary<string, bool> namespaceStatuses;
 
         private static ControlManager current = new ControlManager();
 
@@ -23,12 +24,54 @@ namespace BL.UI
         public ControlManager()
         {
             this.factoriesByShortNamespace = new Dictionary<string, IControlFactory>();
+            this.namespaceStatuses = new Dictionary<string, bool>();
+        }
+
+        public bool IsLoadedNamespace(String namespaceStr)
+        {
+            if (this.namespaceStatuses.ContainsKey(namespaceStr))
+            {                
+                if (this.namespaceStatuses[namespaceStr])
+                {
+                    return true;
+                }
+            }
+
+            object o = Script.Eval(namespaceStr);
+
+            bool result = true;
+
+            if (Script.IsNullOrUndefined(o))
+            {
+                result = false;
+            }
+
+            this.namespaceStatuses[namespaceStr] = result;
+
+            return result;
         }
 
         public Control Create(String fullControlName)
         {
             object c = null;
-    
+
+            for (int i = 0; i < fullControlName.Length; i++ )
+            {
+                char ch = fullControlName.CharAt(i);
+
+                if (!((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '.'))
+                {
+                    throw new Exception("Not a valid control name");
+                }
+            }
+
+            int lastPeriod = fullControlName.LastIndexOf(".");
+
+            if (lastPeriod < 0)
+            {
+                throw new Exception("Not a valid control name");
+            }
+
             if (c == null)
             {
                 c = Script.Eval("new " + fullControlName + "()");

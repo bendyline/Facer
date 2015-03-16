@@ -70,7 +70,7 @@ namespace BL.UI
 
             if (isNew)
             {
-                jQuery.GetJson(rootTemplatePath + this.fileName + ".t.json", new AjaxCallback<object>(this.TemplatesRetrieved));
+                jQuery.GetJson(rootTemplatePath + this.fileName + ".t.json?v=" + Context.Current.VersionToken, new AjaxCallback<object>(this.TemplatesRetrieved));
             }
         }
 

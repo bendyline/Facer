@@ -70,6 +70,7 @@
     <Compile Include="Kendo\Mobile\Application.cs" />
     <Compile Include="Kendo\Mobile\MobileSwitch.cs" />
     <Compile Include="Kendo\Mobile\MobileSwitchOptions.cs" />
+    <Compile Include="Kendo\UI\EditorSerializationOptions.cs" />
     <Compile Include="Kendo\UI\ProtocolTransport.cs" />
     <Compile Include="Kendo\UI\ImageBrowserTransport.cs" />
     <Compile Include="Kendo\UI\ImageBrowserMessage.cs" />
