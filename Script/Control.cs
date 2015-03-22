@@ -7,7 +7,6 @@ using System.Html;
 using System.Diagnostics;
 using jQueryApi;
 using System.Runtime.CompilerServices;
-using Bendyline.Base;
 
 namespace BL.UI
 {

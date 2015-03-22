@@ -41,8 +41,8 @@ namespace BL.UI
             }
         }
 
-        public static String rootTemplatePath = "/gs/t/";
-        public static String rootCssPath = "/gs/t/";
+        public static String rootTemplatePath = "gs/t/";
+        public static String rootCssPath = "gs/t/";
 
         public Operation Operation
         {
@@ -73,7 +73,7 @@ namespace BL.UI
             if (isNew)
             {
                 ElementCollection ec = Document.GetElementsByTagName("LINK");
-                String cssPath = rootCssPath + this.fileName + ".t.css?v=" + Context.Current.VersionToken;
+                String cssPath = UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + rootCssPath + this.fileName + ".t.css?v=" + Context.Current.VersionToken;
                 bool foundCss = false;
 
                 for (int i = 0; i < ec.Length; i++ )
@@ -98,7 +98,7 @@ namespace BL.UI
                     Document.GetElementsByTagName("head")[0].AppendChild(e);
                 }
 
-                jQuery.GetJson(rootTemplatePath + this.fileName + ".t.json?v=" + Context.Current.VersionToken, new AjaxCallback<object>(this.TemplatesRetrieved));
+                jQuery.GetJson(UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + rootTemplatePath + this.fileName + ".t.json?v=" + Context.Current.VersionToken, new AjaxCallback<object>(this.TemplatesRetrieved));
             }
         }
 
