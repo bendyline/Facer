@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using jQueryApi;
+using System.Html;
 
 namespace BL.UI
 {
@@ -41,6 +42,7 @@ namespace BL.UI
         }
 
         public static String rootTemplatePath = "/gs/t/";
+        public static String rootCssPath = "/gs/t/";
 
         public Operation Operation
         {
@@ -70,6 +72,32 @@ namespace BL.UI
 
             if (isNew)
             {
+                ElementCollection ec = Document.GetElementsByTagName("LINK");
+                String cssPath = rootCssPath + this.fileName + ".t.css?v=" + Context.Current.VersionToken;
+                bool foundCss = false;
+
+                for (int i = 0; i < ec.Length; i++ )
+                {
+                    Element e = ec[i];
+
+                    String href = (String)e.GetAttribute("href");
+
+                    if (href == cssPath)
+                    {
+                        foundCss = true;
+                    }
+                }
+
+                if (!foundCss)
+                {
+                    Element e = Document.CreateElement("LINK");
+                    e.SetAttribute("rel", "stylesheet");
+                    e.SetAttribute("type", "text/css");
+                    e.SetAttribute("href", cssPath);
+
+                    Document.GetElementsByTagName("head")[0].AppendChild(e);
+                }
+
                 jQuery.GetJson(rootTemplatePath + this.fileName + ".t.json?v=" + Context.Current.VersionToken, new AjaxCallback<object>(this.TemplatesRetrieved));
             }
         }

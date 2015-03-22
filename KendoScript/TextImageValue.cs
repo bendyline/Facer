@@ -17,6 +17,6 @@ namespace BL.UI.KendoControls
     {
         public String Text;
         public String Image;
-        public String Value;
+        public object Value;
     }
 }

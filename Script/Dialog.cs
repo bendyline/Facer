@@ -215,7 +215,7 @@ namespace BL.UI
 
                 elementStyle.Position = "fixed";
                 elementStyle.ZIndex = 254;
-                elementStyle.Top = Window.PageYOffset + "px";
+                elementStyle.Top = "0px";
                 elementStyle.Left = "0px";
 
                 elementStyle.Width = Window.InnerWidth + "px";

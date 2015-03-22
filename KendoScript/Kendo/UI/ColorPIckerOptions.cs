@@ -17,7 +17,7 @@ namespace Kendo.UI
         public int Columns;
         public Size TileSize;
         public bool Opacity;
-        public String Palette;
+        public object Palette;
         public bool Preview;
 
         public String Value;

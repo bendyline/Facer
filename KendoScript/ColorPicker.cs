@@ -90,7 +90,7 @@ namespace BL.UI.KendoControls
         }
 
         [ScriptName("s_palette")]
-        public String Palette
+        public object Palette
         {
             get
             {

@@ -1218,6 +1218,12 @@ namespace BL.UI
                     }
 
                     this.OnVisibilityChanged();
+
+                    if (this.trackResizeEvents)
+                    {
+                        this.OnResize();
+                        Window.SetTimeout(this.OnResize, 1);
+                    }
                 }
                 else
                 {

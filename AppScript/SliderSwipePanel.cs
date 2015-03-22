@@ -99,6 +99,8 @@ namespace BL.UI.App
         public event IntegerEventHandler VerticalScrollChanged;
         public event EventHandler IndexChangeAnimationCompleted;
 
+        private const int SwipeNavigationDistanceFromBottom = 144;
+
         public int PreviousIndex
         {
             get
@@ -129,11 +131,18 @@ namespace BL.UI.App
                     return;
                 }
 
-                this.mode = value;
+                if (this.mode == SliderSwipeMode.RightSlide && value == SliderSwipeMode.WholePage)
+                {
+                    this.RevertToPreviousWholePage();
+                }
+                else
+                {
+                    this.mode = value;
 
-                this.ApplyVisibility();
-                this.UpdateSizingsOverTime();
-                this.SetToX();
+                    this.ApplyVisibility();
+                    this.UpdateSizingsOverTime();
+                    this.SetToX();
+                }
             }
         }
 
@@ -268,16 +277,23 @@ namespace BL.UI.App
 
         public void RevertToPreviousWholePage()
         {
-            this.Mode = SliderSwipeMode.WholePage;
+            this.mode = SliderSwipeMode.WholePage;
+
             this.ActiveIndex = this.PreviousIndex;
 
             this.previousIndex = -1;
             this.ApplyVisibility();
             this.UpdateSizingsOverTime();
+            this.SetToX();
         }
 
         public void FocusOnRightSlidePanel(int index)
         {
+            if (this.mode == SliderSwipeMode.RightSlide)
+            {
+                this.RevertToPreviousWholePage();
+            }
+
             this.mode = SliderSwipeMode.RightSlide;
 
             this.ActiveIndex = index;
@@ -531,9 +547,20 @@ namespace BL.UI.App
                         }
                     }
 
-                    this.toX = left + 300;
+                    this.toX = left + GetSlideoutWidth();
                 }
             }
+        }
+
+
+        public int GetSlideoutWidth()
+        {
+            if (Window.InnerWidth < 768)
+            {
+                return Window.InnerWidth;
+            }
+
+            return 300;
         }
 
 
@@ -711,6 +738,15 @@ namespace BL.UI.App
                 if (index == this.activeIndex)
                 {
                     cssBase += " secondLinkSelected";
+                }
+            }
+            else if (index == 2)
+            {
+                cssBase += " thirdLink";
+
+                if (index == this.activeIndex)
+                {
+                    cssBase += " thirdLinkSelected";
                 }
             }
             else
@@ -1103,7 +1139,7 @@ namespace BL.UI.App
             if (this.swipeNavigation != null && elementVisibleRight > 0)
             {
                 this.swipeNavigation.Style.Left = ((elementWidth - 160) / 2).ToString() + "px";
-                this.swipeNavigation.Style.Top = (elementVisibleBottom - 64).ToString() + "px";
+                this.swipeNavigation.Style.Top = (elementVisibleBottom - SwipeNavigationDistanceFromBottom).ToString() + "px";
             }
 
             int index = 0;

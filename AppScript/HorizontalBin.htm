@@ -19,6 +19,7 @@
                 width:100%;
                 overflow-x:hidden;
                 overflow-y:hidden;
+                text-align:center;
                 -webkit-overflow-scrolling:touch;
 
             }
@@ -73,15 +74,22 @@
                 padding:2px;
             }
 
+            #itemsSpacer
+            {
+                display:inline-block;
+            }
+
     </style>
 	</head>
 	<body>
         <div id="outer">
             <div id="outerrow">
                 <div id="leftPaddle"><span class="glyphicon glyphicon-chevron-left" id="backIcon"></span></div>
-                 <div id="itemsBin">
-                    <div id="itemsTable">
+                <div id="itemsBin">
+                    <div id="itemsSpacer">
+                        <div id="itemsTable">
                             <ItemsContainer id='items'/>
+                        </div>
                     </div>
                 </div>
                 <div id="rightPaddle"><span class="glyphicon glyphicon-chevron-right" id="backIcon"></span></div>
