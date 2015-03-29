@@ -37,8 +37,11 @@ namespace BL.UI.KendoControls
 
         public override void Dispose()
         {
-           this.tabStrip.Destroy();
-            
+            if (this.tabStrip != null)
+            {
+                this.tabStrip.Destroy();
+            }
+
             base.Dispose();
         }
     }

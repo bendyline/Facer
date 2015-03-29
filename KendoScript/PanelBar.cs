@@ -35,8 +35,11 @@ namespace BL.UI.KendoControls
 
         public override void Dispose()
         {
-           this.panelBar.Destroy();
-            
+            if (this.panelBar != null)
+            {
+                this.panelBar.Destroy();
+            }
+
             base.Dispose();
         }
     }

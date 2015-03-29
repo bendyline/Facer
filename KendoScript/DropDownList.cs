@@ -20,6 +20,7 @@ namespace BL.UI.KendoControls
 
         private bool isInitialized = false;
         private bool delayLoad = false;
+        private object dropdownValue = null;
 
         public bool DelayLoad
         {
@@ -39,12 +40,22 @@ namespace BL.UI.KendoControls
         {
             get
             {
-                return this.dropDownList.Value();
+                if (this.dropDownList != null)
+                {
+                    return this.dropDownList.Value();
+                }
+
+                return dropdownValue;
             }
 
             set
             {
-                this.dropDownList.Value(value);
+                if (this.dropDownList != null)
+                {
+                    this.dropDownList.Value(value);
+                }
+                
+                this.dropdownValue = value;
 
                 this.ApplyVisibility();
             }
@@ -108,7 +119,7 @@ namespace BL.UI.KendoControls
             }
         }
 
-        public String Template
+        public String DropdownTemplate
         {
             get
             {
@@ -122,6 +133,7 @@ namespace BL.UI.KendoControls
                 this.ApplyVisibility();
             }
         }
+
         public String ValueTemplate
         {
             get
@@ -157,7 +169,10 @@ namespace BL.UI.KendoControls
 
                 this.dropDownListOptions.DataSource = ds;
 
-                this.InitControl();
+                if (this.TemplateWasApplied)
+                {
+                    this.InitControl();
+                }
             }
         }
 
@@ -183,10 +198,17 @@ namespace BL.UI.KendoControls
 
         public DropDownList()
         {
+            KendoControlFactory.EnsureKendoBaseUx(this);
+            KendoControlFactory.EnsureKendoData(this);
+
+            this.EnsurePrerequisite("kendo.mobile.ui.Scroller", "js/kendo/kendo.mobile.scroller.min.js");
+            this.EnsurePrerequisite("kendo.ui.List", "js/kendo/kendo.list.min.js");
+            this.EnsurePrerequisite("kendo.ui.DropDownList", "js/kendo/kendo.dropdownlist.min.js");
+
             this.dropDownListOptions = new DropDownListOptions();
         }
 
-        protected override void OnEnsureElements()
+        protected override void OnApplyTemplate()
         {
             if (this.DelayLoad)
             {
@@ -202,6 +224,8 @@ namespace BL.UI.KendoControls
         {
             if (!this.isInitialized && this.DataSource != null && this.ElementsEnsured)
             {
+                ElementUtilities.ClearChildElements(this.Element);
+
                 Element e = Document.CreateElement("DIV");
 
                 e.Style.Width = "100%";
@@ -211,6 +235,11 @@ namespace BL.UI.KendoControls
                 this.Element.AppendChild(e);
 
                 Script.Literal("var j = {0}; j.kendoDropDownList({2}); {1} = j.data('kendoDropDownList')", jqueryObject, this.dropDownList, this.dropDownListOptions);
+
+                if (this.dropdownValue != null)
+                {
+                    this.dropDownList.Value(this.dropdownValue);
+                }
 
                 this.dropDownList.Bind("change", this.HandleDataChange);
 
@@ -230,8 +259,11 @@ namespace BL.UI.KendoControls
 
         public override void Dispose()
         {
-           this.dropDownList.Destroy();
-            
+            if (this.dropDownList != null)
+            {
+                this.dropDownList.Destroy();
+            }
+
             base.Dispose();
         }
     }

@@ -21,7 +21,7 @@ namespace Kendo.UI
         public object DetailTemplate;
         public object Filterable;
         public GridGroupableOptions Groupable;
-        public double Height;
+        public object Height;
         public bool Navigatable;
         public bool Scrollable;
         public object Pageable;

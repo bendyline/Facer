@@ -218,8 +218,11 @@ namespace BL.UI.KendoControls
 
         public override void Dispose()
         {
-           this.numericTextBox.Destroy();
-            
+            if (this.numericTextBox != null)
+            {
+                this.numericTextBox.Destroy();
+            }
+
             base.Dispose();
         }
     }

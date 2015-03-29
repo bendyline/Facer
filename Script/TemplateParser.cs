@@ -57,7 +57,7 @@ namespace BL.UI
 
                                 String typeNameStr = tagName.Substring(lastPeriod + 1, tagName.Length);
 
-                                if (!ControlManager.Current.IsLoadedNamespace(namespaceStr))
+                                if (!ControlManager.Current.IsLoadedScriptItem(namespaceStr))
                                 {
                                     String adjust = String.Format(Context.Current.ScriptLibraryTemplate, namespaceStr.ToLowerCase());
 

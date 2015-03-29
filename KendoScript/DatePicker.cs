@@ -66,7 +66,13 @@ namespace BL.UI.KendoControls
             }
         }
 
-        protected override void OnEnsureElements()
+        public DatePicker()
+        {
+            KendoControlFactory.EnsureKendoBaseUx(this);
+            KendoControlFactory.EnsureKendoEditable(this);
+        }
+
+        protected override void OnApplyTemplate()
         {
             Script.Literal("var j = {0}; j.kendoDatePicker(); {1} = j.data('kendoDatePicker')", this.J, datePicker);
 
@@ -83,8 +89,11 @@ namespace BL.UI.KendoControls
 
         public override void Dispose()
         {
-           this.datePicker.Destroy();
-            
+            if (this.datePicker != null)
+            {
+                this.datePicker.Destroy();
+            }
+
             base.Dispose();
         }
     }

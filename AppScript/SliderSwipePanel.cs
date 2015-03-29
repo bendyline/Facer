@@ -526,7 +526,7 @@ namespace BL.UI.App
 
                         if ((this.visibilities.Count <= i || this.visibilities[i]) && this.ItemControls[i].Visible)
                         {
-                            left += ((previousRect.Right - previousRect.Left) + (this.gapBetweenSections) + 1);
+                            left += ((previousRect.Right - previousRect.Left) + (this.gapBetweenSections));
                         }
                     }
 
@@ -605,8 +605,8 @@ namespace BL.UI.App
 
             int ms = now.GetTime() - this.animationStart.GetTime();
             double proportion = Easing.EaseInOutQuart(ms, 0, 1, this.scrollAnimationTime );
-            
-            Debug.WriteLine("SliderSwipePanel Animation Frame @ " + ms + " pos: " + proportion);
+
+            // Log.DebugMessage("SliderSwipePanel Animation Frame @ " + ms + " pos: " + proportion);
             
             if (proportion < 1 && proportion > -1 && ms <= this.scrollAnimationTime)
             {
@@ -630,7 +630,7 @@ namespace BL.UI.App
         {
             this.SetToX();
 
-            Log.DebugMessage("SetFinalPosition: Setting swipe panel position to " + this.toX + "|" + this.activeIndex);
+            // Log.DebugMessage("SetFinalPosition: Setting swipe panel position to " + this.toX + "|" + this.activeIndex);
 
             this.SetPanelLeft(this.toX);
         }
@@ -1152,7 +1152,7 @@ namespace BL.UI.App
                 {
                     Style style = c.Element.Style;
 
-                    double width = (elementWidth - this.gapBetweenSections) + 2;
+                    double width = (elementWidth - this.gapBetweenSections) + 3;
 
                     if (ps.FitToWidth && width > 100)
                     {

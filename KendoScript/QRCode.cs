@@ -56,15 +56,26 @@ namespace BL.UI.KendoControls
             }
         }
 
-        protected override void OnEnsureElements()
+        public QRCode()
+        {
+            KendoControlFactory.EnsureKendoBaseUx(this);
+            KendoControlFactory.EnsureKendoDataViz(this);
+
+            this.EnsurePrerequisite("kendo.dataviz.ui.QRCode", "js/kendo/kendo.dataviz.qrcode.min.js");
+        }
+
+        protected override void OnApplyTemplate()
         {
             Script.Literal("var j={0}; j.kendoQRCode({2}); {1}=j.data('kendoQRCode')", this.J, this.qrCode, this.qrCodeOptions);
         }
 
         public override void Dispose()
         {
-           this.qrCode.Destroy();
-            
+            if (this.qrCode != null)
+            {
+                this.qrCode.Destroy();
+            }
+
             base.Dispose();
         }
     }

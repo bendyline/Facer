@@ -17,6 +17,8 @@ namespace BL.UI.KendoControls
         private Kendo.UI.ColorPicker colorPicker;
         private Kendo.UI.ColorPickerOptions options;
 
+        private String colorValue;
+
         [ScriptName("b_preview")]
         public Boolean Preview
         {
@@ -123,23 +125,43 @@ namespace BL.UI.KendoControls
         {
             get
             {
-                return this.colorPicker.Value();
+                if (this.colorPicker != null)
+                {
+                    return this.colorPicker.Value();
+                }
+
+                return this.colorValue;
             }
 
             set
             {
-                this.colorPicker.Value(value);
+                if (this.colorPicker != null)
+                {
+                    this.colorPicker.Value(value);
+                }
+
+                this.colorValue = value;
             }
         }
 
         public ColorPicker()
         {
+            KendoControlFactory.EnsureKendoBaseUx(this);
+
+            this.EnsurePrerequisite("kendo.ui.Slider", "js/kendo/kendo.slider.min.js");
+            this.EnsurePrerequisite("kendo.ui.ColorPicker", "js/kendo/kendo.colorpicker.min.js");
+
             this.options = new ColorPickerOptions();
         }
 
-        protected override void OnEnsureElements()
+        protected override void OnApplyTemplate()
         {
             Script.Literal("var j = {0}; j.kendoColorPicker({2}); {1} = j.data('kendoColorPicker')", this.J, colorPicker, this.options);
+
+            if (this.colorValue != null)
+            {
+                this.colorPicker.Value(this.colorValue);
+            }
 
             colorPicker.Bind("change", this.HandleColorChange);
         }
@@ -154,8 +176,11 @@ namespace BL.UI.KendoControls
 
         public override void Dispose()
         {
-           this.colorPicker.Destroy();
-            
+            if (this.colorPicker != null)
+            {
+                this.colorPicker.Destroy();
+            }
+
             base.Dispose();
         }
     }

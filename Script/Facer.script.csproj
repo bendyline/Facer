@@ -58,6 +58,7 @@
     <CodeAnalysisRuleSet>Properties\FxCop.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ScriptLoader.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="IControl.cs" />
     <Compile Include="IDialogManager.cs" />

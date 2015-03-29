@@ -58,11 +58,15 @@ namespace BL.UI
         private bool templateWasApplied = false;
         private bool trackInteractionEvents = false;
         private bool interactionEventsRegistered = false;
-        private bool fireUpdateOnTemplateComplete = false;
+        private bool fireUpdateOnTemplateComplete = true;
         private ElementEffects effects;
         private long touchStartTime = 0;
         private long lastClickTime = 0;
         private TemplateParser controlLoader = null;
+
+        private Dictionary<String, String> prerequisiteScripts = null;
+        private int prerequisiteScriptsRequested = 0;
+        private bool hasRequestedPrerequisites = false;
 
         private Action applyVisibleOnFrameAction;
 
@@ -857,6 +861,16 @@ namespace BL.UI
         {
 
         }
+        
+        public void EnsurePrerequisite(String scriptItem, String scriptPath)
+        {
+            if (this.prerequisiteScripts == null)
+            {
+                this.prerequisiteScripts = new Dictionary<string, string>();
+            }
+
+            this.prerequisiteScripts[scriptItem] = scriptPath;
+        }
 
         public void CreateChildControls()
         {
@@ -880,9 +894,51 @@ namespace BL.UI
                 return;
             }
 
+            if (this.hasRequestedPrerequisites && this.prerequisiteScriptsRequested > 0)
+            {
+                return;
+            }
+
+            if (this.prerequisiteScripts != null && !this.hasRequestedPrerequisites)
+            {
+                this.hasRequestedPrerequisites = true;
+                bool foundAllScripts = true;
+
+                this.prerequisiteScriptsRequested = 0;
+                Dictionary<String, String> scriptsToLoad = new Dictionary<String, String>();
+
+                foreach (KeyValuePair<String, String> script in this.prerequisiteScripts)
+                {
+                    if (!ControlManager.Current.IsLoadedScriptItem(script.Key) && !scriptsToLoad.ContainsKey(script.Key))
+                    {
+                        this.prerequisiteScriptsRequested++;
+
+                        foundAllScripts = false;
+
+                        scriptsToLoad[script.Key] = script.Value;
+                    }
+                }
+
+                foreach (KeyValuePair<String, String> script in scriptsToLoad)
+                {
+                    String adjust = script.Value.ToLowerCase();
+
+                    adjust += "?v=" + Context.Current.VersionToken;
+
+                    String path = UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + adjust;
+                
+                    ControlManager.Current.LoadScript(path, script.Key, this.ScriptLoadedContinue, path);
+                }
+
+                if (!foundAllScripts)
+                {
+                    return;
+                }
+            }
+
             if (this.Template != null)
             {
-                this.templateWasApplied = true;
+                //this.templateWasApplied = true;
                 this.ApplyTemplateContinue();
                 return;
             }
@@ -891,9 +947,12 @@ namespace BL.UI
 
             if (templateId != null)
             {
-                this.templateWasApplied = true;  // 3.15.2015: should this really be here rather than in HandleApplyTemplateContinue?
                 TemplateManager.Current.GetTemplateAsync(templateId, this.HandleApplyTemplateContinue, null);
+                return;
             }
+
+            // if no template is defined for this, then just call OnApplyTemplate and call it good.
+            this.CompleteApplyTemplate();
         }
 
         private void HandleApplyTemplateContinue(IAsyncResult result)
@@ -916,8 +975,45 @@ namespace BL.UI
             else
             {
                 Log.DebugMessage(String.Format("Expected template '{0}' was not found.", templateId));
-                this.OnBaseControlsElementsPostInit();
+               
+                this.CompleteApplyTemplate();
             }
+        }
+
+        private void ScriptLoadedContinue(IAsyncResult result)
+        {
+            Log.DebugMessage("Control with template '" + this.TemplateId + "' has " + this.prerequisiteScriptsRequested + " scripts left. Path: " + result.AsyncState.ToString());
+
+            this.prerequisiteScriptsRequested--;
+
+            this.ConsiderScriptsAreLoaded();
+        }
+
+        private void MonitorScripts()
+        {
+            if (!this.ConsiderScriptsAreLoaded())
+            {
+                Window.SetTimeout(this.MonitorScripts, 1000);
+                Log.DebugMessage("Monitoring " + this.prerequisiteScriptsRequested + " scripts for " + this.TemplateId);
+                return;
+            }
+
+            Debug.Fail("Initialized scripts from monitoring");
+        }
+
+        private bool ConsiderScriptsAreLoaded()
+        {
+            foreach (KeyValuePair<String, String> script in this.prerequisiteScripts)
+            {
+                if (!ControlManager.Current.IsLoadedScriptItem(script.Key))
+                {
+                    return false;
+                }
+            }
+
+            this.ApplyTemplate();
+
+            return true;
         }
 
         private void controlLoader_ScriptsLoaded(object sender, EventArgs e)
@@ -1032,6 +1128,12 @@ namespace BL.UI
                 c.AttachTo(e, null);
             }
 
+            this.CompleteApplyTemplate();
+        }
+
+        private void CompleteApplyTemplate()
+        {
+            this.templateWasApplied = true;
             this.OnApplyTemplate();
 
             this.OnBaseControlsElementsPostInit();

@@ -123,9 +123,31 @@ namespace BL.UI.KendoControls
 
         public Editor()
         {
+            KendoControlFactory.EnsureKendoBaseUx(this);
+            KendoControlFactory.EnsureKendoData(this);
+
+            this.EnsurePrerequisite("kendo.mobile.ui.Scroller", "js/kendo/kendo.mobile.scroller.min.js");
+            this.EnsurePrerequisite("kendo.ui.List", "js/kendo/kendo.list.min.js");
+            this.EnsurePrerequisite("kendo.ui.Selectable", "js/kendo/kendo.selectable.min.js");
+
+            this.EnsurePrerequisite("kendo.observable", "js/kendo/kendo.binder.min.js");
+
+            KendoControlFactory.EnsureKendoEditable(this);
+
+            this.EnsurePrerequisite("kendo.ui.Slider", "js/kendo/kendo.slider.min.js");
+            this.EnsurePrerequisite("kendo.ui.Resizable", "js/kendo/kendo.resizable.min.js");
+            this.EnsurePrerequisite("kendo.ui.Upload", "js/kendo/kendo.upload.min.js");
+            this.EnsurePrerequisite("kendo.ui.Window", "js/kendo/kendo.window.min.js");
+            this.EnsurePrerequisite("kendo.ui.DropDownList", "js/kendo/kendo.dropdownlist.min.js");
+            this.EnsurePrerequisite("kendo.ui.ComboBox", "js/kendo/kendo.combobox.min.js");
+            this.EnsurePrerequisite("kendo.ui.ColorPicker", "js/kendo/kendo.colorpicker.min.js");
+            this.EnsurePrerequisite("kendo.ui.ListView", "js/kendo/kendo.listview.min.js");
+            this.EnsurePrerequisite("kendo.ui.FileBrowser", "js/kendo/kendo.filebrowser.min.js");
+            this.EnsurePrerequisite("kendo.ui.ImageBrowser", "js/kendo/kendo.imagebrowser.min.js");
+            this.EnsurePrerequisite("kendo.ui.Editor", "js/kendo/kendo.editor.min.js");
         }
 
-        protected override void OnEnsureElements()
+        protected override void OnApplyTemplate()
         {
             if (this.editorOptions != null && this.editorOptions.ImageBrowser != null && this.editorOptions.ImageBrowser.BeforeLaunch != null && !this.calledImageBrowserCallback)
             {
@@ -252,8 +274,11 @@ namespace BL.UI.KendoControls
 
         public override void Dispose()
         {
-           this.editor.Destroy();
-            
+            if (this.editor != null)
+            {
+                this.editor.Destroy();
+            }
+
             base.Dispose();
         }
     }

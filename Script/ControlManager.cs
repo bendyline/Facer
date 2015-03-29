@@ -1,6 +1,7 @@
 /* Copyright (c) Bendyline LLC. All rights reserved. Licensed under the Apache License, Version 2.0.
     You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. */
 
+using jQueryApi;
 using System;
 using System.Collections.Generic;
 
@@ -9,7 +10,8 @@ namespace BL.UI
     public class ControlManager
     {
         private Dictionary<String, IControlFactory> factoriesByShortNamespace;
-        private Dictionary<string, bool> namespaceStatuses;
+        private Dictionary<string, bool> scriptItemStatuses;
+        private Dictionary<String, ScriptLoader> loadersByScript;
 
         private static ControlManager current = new ControlManager();
 
@@ -23,32 +25,58 @@ namespace BL.UI
 
         public ControlManager()
         {
+            this.loadersByScript = new Dictionary<string, ScriptLoader>();
             this.factoriesByShortNamespace = new Dictionary<string, IControlFactory>();
-            this.namespaceStatuses = new Dictionary<string, bool>();
+            this.scriptItemStatuses = new Dictionary<string, bool>();
         }
 
-        public bool IsLoadedNamespace(String namespaceStr)
+        public void LoadScript(String scriptPath, String scriptToken, AsyncCallback callback, object state)
         {
-            if (this.namespaceStatuses.ContainsKey(namespaceStr))
+            ScriptLoader sl = null;
+
+            if (this.loadersByScript.ContainsKey(scriptPath))
+            {
+                sl = this.loadersByScript[scriptPath];
+            }
+            else
+            {
+                this.loadersByScript[scriptPath] = new ScriptLoader(scriptPath, scriptToken);
+                sl = this.loadersByScript[scriptPath];
+            }
+
+            sl.EnsureLoaded(callback, state);
+        }
+
+        public bool IsLoadedScriptItem(String scriptItem)
+        {
+            if (this.scriptItemStatuses.ContainsKey(scriptItem))
             {                
-                if (this.namespaceStatuses[namespaceStr])
+                if (this.scriptItemStatuses[scriptItem] == true)
                 {
                     return true;
                 }
             }
 
-            object o = Script.Eval(namespaceStr);
+            object o = null;
 
-            bool result = true;
+            try
+            {
+                o = Script.Eval(scriptItem);
+            }
+            catch 
+            {
+                o = null;
+            }
 
             if (Script.IsNullOrUndefined(o))
             {
-                result = false;
+                return false;
             }
-
-            this.namespaceStatuses[namespaceStr] = result;
-
-            return result;
+            else
+            {
+                this.scriptItemStatuses[scriptItem] = true;
+                return true;
+            }
         }
 
         public Control Create(String fullControlName)

@@ -35,7 +35,16 @@ namespace BL.UI.KendoControls
             }
         }
 
-        protected override void OnEnsureElements()
+        public Chart()
+        {
+            KendoControlFactory.EnsureKendoBaseUx(this);
+            KendoControlFactory.EnsureKendoData(this);
+            KendoControlFactory.EnsureKendoDataViz(this);
+
+            this.EnsurePrerequisite("kendo.dataviz.ui.Chart", "js/kendo/kendo.dataviz.chart.min.js");
+        }
+
+        protected override void OnApplyTemplate()
         {
             Script.Literal("var j = {0}; j.kendoChart({2}); {1} = j.data('kendoChart')", this.J, chart, this.chartOptions);
 
@@ -52,8 +61,11 @@ namespace BL.UI.KendoControls
 
         public override void Dispose()
         {
-           this.chart.Destroy();
-            
+            if (this.chart != null)
+            {
+                this.chart.Destroy();
+            }
+
             base.Dispose();
         }
     }

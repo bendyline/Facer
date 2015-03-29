@@ -35,6 +35,11 @@ namespace BL.UI.KendoControls
         {
             get
             {
+                if (this.gridOptions == null)
+                {
+                    this.gridOptions = new GridOptions();
+                }
+
                 return this.gridOptions;
             }
 
@@ -42,7 +47,35 @@ namespace BL.UI.KendoControls
             {
                 this.gridOptions = value;
 
-                this.UpdateGrid();
+                if (this.TemplateWasApplied)
+                {
+                    this.UpdateGrid();
+                }
+            }
+        }
+
+        public double Height
+        {
+            get
+            {
+                return (double)this.Options.Height;
+            }
+
+            set
+            {
+                this.Options.Height = value;
+
+                if (this.TemplateWasApplied)
+                {
+                    this.Element.Style.Height = value + "px";
+
+                    if (this.Element.ChildNodes.Length >= 2)
+                    {
+                        Element contentContainer = this.Element.ChildNodes[1];
+
+                        contentContainer.Style.Height = (value -35) + "px";
+                    }
+                }
             }
         }
 
@@ -86,6 +119,45 @@ namespace BL.UI.KendoControls
 
         public Grid()
         {
+            KendoControlFactory.EnsureKendoBaseUx(this);
+            KendoControlFactory.EnsureKendoData(this);
+
+            this.EnsurePrerequisite("kendo.ui.ColumnSorter", "js/kendo/kendo.columnsorter.min.js");
+
+            KendoControlFactory.EnsureKendoEditable(this);
+            this.EnsurePrerequisite("kendo.observable", "js/kendo/kendo.binder.min.js");
+
+            this.EnsurePrerequisite("kendo.ui.Window", "js/kendo/kendo.window.min.js");
+
+            this.EnsurePrerequisite("kendo.mobile.ui.Scroller", "js/kendo/kendo.mobile.scroller.min.js");
+            this.EnsurePrerequisite("kendo.ui.List", "js/kendo/kendo.list.min.js");
+            this.EnsurePrerequisite("kendo.View", "js/kendo/kendo.view.min.js");
+            this.EnsurePrerequisite("kendo.ui.DropDownList", "js/kendo/kendo.dropdownlist.min.js");
+            this.EnsurePrerequisite("kendo.mobile.ui.Scroller", "js/kendo/kendo.mobile.scroller.min.js");
+            this.EnsurePrerequisite("kendo.drawing.Surface", "js/kendo/kendo.drawing.min.js");
+
+            this.EnsurePrerequisite("kendo.ui.Selectable", "js/kendo/kendo.selectable.min.js");
+            this.EnsurePrerequisite("kendo.ui.Menu", "js/kendo/kendo.menu.min.js");
+            this.EnsurePrerequisite("kendo.ui.FilterMenu", "js/kendo/kendo.filtermenu.min.js");
+            this.EnsurePrerequisite("kendo.ui.ColumnMenu", "js/kendo/kendo.columnmenu.min.js");
+            this.EnsurePrerequisite("kendo.ui.Groupable", "js/kendo/kendo.groupable.min.js");
+            this.EnsurePrerequisite("kendo.ui.Pager", "js/kendo/kendo.pager.min.js");
+            this.EnsurePrerequisite("kendo.ui.Sortable", "js/kendo/kendo.sortable.min.js");
+            this.EnsurePrerequisite("kendo.ui.Reorderable", "js/kendo/kendo.reorderable.min.js");
+            this.EnsurePrerequisite("kendo.ui.Resizable", "js/kendo/kendo.resizable.min.js");
+
+            this.EnsurePrerequisite("kendo.mobile.ui.Loader", "js/kendo/kendo.mobile.loader.min.js");
+            this.EnsurePrerequisite("kendo.mobile.ui.View", "js/kendo/kendo.mobile.view.min.js");
+            this.EnsurePrerequisite("kendo.mobile.ui.Pane", "js/kendo/kendo.mobile.pane.min.js");
+            this.EnsurePrerequisite("kendo.mobile.ui.Shim", "js/kendo/kendo.mobile.shim.min.js");
+            this.EnsurePrerequisite("kendo.mobile.ui.PopOver", "js/kendo/kendo.mobile.popover.min.js");
+            this.EnsurePrerequisite("kendo.mobile.ui.ActionSheet", "js/kendo/kendo.mobile.actionsheet.min.js");
+
+            this.EnsurePrerequisite("kendo.ooxml.Worksheet", "js/kendo/kendo.ooxml.min.js");
+            this.EnsurePrerequisite("kendo.pdf.Document", "js/kendo/kendo.pdf.min.js");
+            this.EnsurePrerequisite("kendo.ExcelMixin", "js/kendo/kendo.excel.min.js");
+
+            this.EnsurePrerequisite("kendo.ui.Grid", "js/kendo/kendo.grid.min.js");
 
         }
 
@@ -95,7 +167,7 @@ namespace BL.UI.KendoControls
             
         }
 
-        protected override void OnEnsureElements()
+        protected override void OnApplyTemplate()
         { 
             if (this.gridOptions != null)
             {
