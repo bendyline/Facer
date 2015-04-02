@@ -62,6 +62,12 @@
     <None Include="Properties\FxCop.ruleset" />
     <None Include="Properties\Script.template" />
     <Compile Include="ColorPicker.cs" />
+    <Compile Include="KendoUtilities.cs" />
+    <Compile Include="Kendo\UI\ExportFileOptions.cs" />
+    <Compile Include="Kendo\UI\Menu.cs" />
+    <Compile Include="Kendo\UI\MenuOptions.cs" />
+    <Compile Include="Kendo\UI\SelectionEventArgs.cs" />
+    <Compile Include="Menu.cs" />
     <Compile Include="Kendo\Data\ModelEventArgs.cs" />
     <Compile Include="Kendo\Data\ModelOptions.cs" />
     <Compile Include="Kendo\Data\Schema.cs" />
@@ -84,6 +90,7 @@
     <Compile Include="QRCode.cs" />
     <Compile Include="Kendo\DataViz\UI\QRCodeOptions.cs" />
     <Compile Include="Kendo\DataViz\UI\QRCode.cs" />
+    <Compile Include="TextImageItems.cs" />
     <Compile Include="TextImageValue.cs" />
     <Compile Include="TextValue.cs" />
     <Compile Include="Chart.cs" />

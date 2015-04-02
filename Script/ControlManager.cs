@@ -30,7 +30,39 @@ namespace BL.UI
             this.scriptItemStatuses = new Dictionary<string, bool>();
         }
 
-        public void LoadScript(String scriptPath, String scriptToken, AsyncCallback callback, object state)
+        public void CreateControlAsync(String namespaceName, String typeName, AsyncCallback callback, object state)
+        {
+            String adjust = String.Format(Context.Current.ScriptLibraryTemplate, namespaceName.ToLowerCase());
+
+            adjust += "?v=" + Context.Current.VersionToken;
+
+
+            CallbackState cs = CallbackState.Wrap(callback, state);
+
+            cs.Tag = namespaceName + "." + typeName;
+
+            this.LoadScript(namespaceName, adjust, this.CreateControlAsyncContinue, cs);
+        }
+
+        private void CreateControlAsyncContinue(IAsyncResult result)
+        {
+            CallbackState cs = (CallbackState)result.AsyncState;
+
+            String fullTypeName = (String)cs.Tag;
+
+            object o = Script.Eval("new " + fullTypeName + "()");
+
+            if (cs.Callback != null)
+            {
+                CallbackResult cr = new CallbackResult();
+                cr.Data = o;
+                cr.AsyncState = cs.State;
+
+                cs.Callback(cr);
+            }
+        }
+
+        public void LoadScript(String scriptToken, String scriptPath, AsyncCallback callback, object state)
         {
             ScriptLoader sl = null;
 

@@ -14,8 +14,24 @@ namespace BL.UI
         [ScriptName("e_titleText")]
         public Element titleText;
 
+        [ScriptName("e_leftCloseBin")]
+        public Element leftCloseBin;
+
         [ScriptName("e_doneButton")]
         public Element doneButton;
+
+        [ScriptName("e_topBar")]
+        public Element topBar;
+
+        [ScriptName("e_closeButtonR")]
+        public Element closeButtonR;
+
+        [ScriptName("e_closeButtonL")]
+        public Element closeButtonL;
+
+        [ScriptName("e_panel")]
+        private Element panel;
+
 
         private bool displayCloseButton = true;
         private bool displayDoneButton = false;
@@ -141,12 +157,7 @@ namespace BL.UI
             }
         }
 
-        [ScriptName("e_closeButton")]
-        private Element closeButton;
-
-        [ScriptName("e_panel")]
-        private Element panel;
-
+ 
         public Dialog()
         {
             this.TrackResizeEvents = true;
@@ -156,29 +167,55 @@ namespace BL.UI
         {
             base.OnApplyTemplate();
 
-            this.closeButton.AddEventListener("mouseup", this.HandleCloseButton, true);
-            this.doneButton.AddEventListener("mouseup", this.HandleCloseButton, true);
+            this.topBar.Style.PaddingTop = Context.Current.FullScreenTopBufferHeight + "px";
+
+            this.UpdateCloseButton();
         }
 
-        private void HandleCloseButton(ElementEvent ee)
+        [ScriptName("v_onDoneButtonClick")]
+        private void HandleDneButton(ElementEvent ee)
+        {
+            this.Hide();
+        }
+
+        [ScriptName("v_onCloseButtonLClick")]
+        private void HandleCloseButtonL(ElementEvent ee)
+        {
+            this.Hide();
+        }
+
+        [ScriptName("v_onCloseButtonRClick")]
+        private void HandleCloseButtonR(ElementEvent ee)
         {
             this.Hide();
         }
 
         private void UpdateCloseButton()
         {
-            if (this.closeButton == null)
+            if (this.closeButtonR == null)
             {
                 return;
             }
 
             if (this.displayCloseButton)
             {
-                this.closeButton.Style.Display = String.Empty;
+                if (Context.Current.IsSmallFormFactor)
+                {
+                    this.closeButtonR.Style.Display = "none";
+                    this.closeButtonL.Style.Display = "";
+                    this.leftCloseBin.Style.Display = "";
+                }
+                else
+                {
+                    this.closeButtonR.Style.Display = "";
+                    this.closeButtonL.Style.Display = "none";
+                    this.leftCloseBin.Style.Display = "none";
+                }
             }
             else
             {
-                this.closeButton.Style.Display = "none";
+                this.closeButtonL.Style.Display = "none";
+                this.closeButtonR.Style.Display = "none";    
             }
         }
 
@@ -222,10 +259,20 @@ namespace BL.UI
                 elementStyle.Height = Window.InnerHeight + "px";
             }
 
+
+            int effectiveHorizontalPadding = this.horizontalPadding;
+            int effectiveVerticalPadding = this.verticalPadding;
+
+            if (Context.Current.IsSmallFormFactor)
+            {
+                effectiveHorizontalPadding = 0;
+                effectiveVerticalPadding = 0;
+            }
+
             if (this.panel != null)
             {
-                double width = (Window.InnerWidth - (horizontalPadding * 2));
-                double height = (Window.InnerHeight - (verticalPadding * 2));
+                double width = (Window.InnerWidth - (effectiveHorizontalPadding * 2));
+                double height = (Window.InnerHeight - (effectiveVerticalPadding * 2));
 
                 if (this.maxWidth != null)
                 {

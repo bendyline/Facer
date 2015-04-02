@@ -60,6 +60,12 @@ namespace Kendo.UI
 
         }
 
+        [ScriptName("saveAsPDF")]
+        public void SaveAsPdf()
+        {
+
+        }
+
         public void CollapseGroup(object row)
         {
 
@@ -122,9 +128,9 @@ namespace Kendo.UI
         {
 
         }
-        public void Select(object rows)
+        public object Select(object rows)
         {
-
+            return null;
         }
 
         public void SetDataSource(DataSource dataSource)

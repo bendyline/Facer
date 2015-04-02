@@ -122,17 +122,20 @@ namespace BL.UI
 
                     if (tf.IsLoaded)
                     {
-                        CallbackResult cr = new CallbackResult();
-                        cr.AsyncState = state;
-                        cr.Data = this.templatesById[id];
-                        cr.CompletedSynchronously = true;
-                        cr.IsCompleted = true;
-                        ac(cr);
+                        if (ac != null)
+                        {
+                            CallbackResult cr = new CallbackResult();
+                            cr.AsyncState = state;
+                            cr.Data = this.templatesById[id];
+                            cr.CompletedSynchronously = true;
+                            cr.IsCompleted = true;
+                            ac(cr);
+                        }
                         return;
                     }
                     else
                     {
-                        tf.EnsureRetrieving(id, ac, state);
+                        tf.EnsureRetrieved(id, ac, state);
                         return;
                     }
                 }
@@ -143,7 +146,7 @@ namespace BL.UI
 
                     this.templateFilesById[fileName] = newTemplateFile;
 
-                    newTemplateFile.EnsureRetrieving(id, ac, state);
+                    newTemplateFile.EnsureRetrieved(id, ac, state);
                     return;
                 }
             }

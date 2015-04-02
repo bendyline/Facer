@@ -17,24 +17,55 @@
             display:table-row;
         }
 
+        #topBarSizer
+        {
+            display:table;
+            width:100%;
+        }
+
+        #topBarSizerInterior{
+            display:table-row;
+        }
+
+        #closeButtonWrapper
+        {
+            padding-left:4px;                        
+            padding-right:4px;
+            padding-top:2px;
+            display:table-cell;
+            width:32px;
+            min-width:32px;
+            font-size:1pt;
+            vertical-align:middle;
+            text-align:center;
+        }
+
         #closeButton
         {
             font-size:medium;
-            float:right;
             text-align: right;
             cursor:default;            
-            padding:4px;
-            vertical-align:middle;
-        }
-
+        }        
+  
         #titleText
         {
-            float:left;
+            color:#FFFFFF;
             font-family: 'Lato', Helvetica, Arial, sansserif;
-            margin-top:3px;
             margin-left:10px;
-            font-size:large;
-            vertical-align:middle;
+            font-size:14pt;
+            display:table-cell;
+            width:100%;
+            vertical-align:top;
+            padding-top:2px;
+            text-transform:uppercase;
+        }
+
+        @media (max-width: 767px)
+        {
+            #titleText
+            {
+                text-align:center;
+            }
         }
 
         #panel
@@ -50,7 +81,7 @@
         #topInterior
         {
             display:table-cell;
-            background-color:#B3E3F3;
+            background-color:#6AC5E8;
             padding:4px;
             padding-bottom:6px;
         }
@@ -111,9 +142,18 @@
            <div id='panel'>
                <div id="topBar">
                    <div id="topInterior">  
-                        <div id="titleText"></div>
-                        <div id="closeButton"><img src="qla/images/close.png" style="width:16px;height:16px;padding-bottom:2px;"/></div>
-                    </div>
+                       <div id="topBarSizer">
+                            <div id="topBarSizerInterior">
+                              <div data-ctl-class="closeButtonWrapper">
+                                <div id="closeButtonL" data-ctl-class="closeButton"><img src="qla/images/closew.png" style="width:14px;height:14px;padding-bottom:2px;"/></div>
+                              </div>
+                              <div id="titleText"></div>
+                              <div data-ctl-class="closeButtonWrapper">
+                                <div id="closeButtonR" data-ctl-class="closeButton"><img src="qla/images/closew.png" style="width:14px;height:14px;padding-bottom:2px;"/></div>
+                              </div>
+                            </div>
+                      </div>
+                   </div>
                 </div>
                <div id="contentArea">
                     <ContentContainer id="contentContainer"/>

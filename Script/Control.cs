@@ -35,7 +35,7 @@ namespace BL.UI
         private List<Element> templateElements;
         private List<String> setElements;
         private Dictionary<String, Element> templateStandaloneElements;
-        private Dictionary<Element, IElementEventHandler> clickEventDelegates;
+        private List<ElementAndEvent> clickEventDelegates;
         private String templateId;
         private String template;
         private String tagName;
@@ -67,6 +67,7 @@ namespace BL.UI
         private Dictionary<String, String> prerequisiteScripts = null;
         private int prerequisiteScriptsRequested = 0;
         private bool hasRequestedPrerequisites = false;
+        private bool templateApplyRequested = false;
 
         private Action applyVisibleOnFrameAction;
 
@@ -80,6 +81,8 @@ namespace BL.UI
         private ElementEventListener touchStartHandler;
         private ElementEventListener touchEndHandler;
         private ElementEventListener clickHandler;
+
+        public event EventHandler TemplateApplied;
 
         protected bool DelayApplyTemplate
         {
@@ -887,18 +890,8 @@ namespace BL.UI
             this.childControlsCreated = true;
         }
 
-        private void ApplyTemplate()
+        public bool LoadPrerequisites()
         {
-            if (this.templateWasApplied)
-            {
-                return;
-            }
-
-            if (this.hasRequestedPrerequisites && this.prerequisiteScriptsRequested > 0)
-            {
-                return;
-            }
-
             if (this.prerequisiteScripts != null && !this.hasRequestedPrerequisites)
             {
                 this.hasRequestedPrerequisites = true;
@@ -926,14 +919,36 @@ namespace BL.UI
                     adjust += "?v=" + Context.Current.VersionToken;
 
                     String path = UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + adjust;
-                
-                    ControlManager.Current.LoadScript(path, script.Key, this.ScriptLoadedContinue, path);
+
+                    ControlManager.Current.LoadScript(script.Key, path, this.ScriptLoadedContinue, path);
                 }
 
                 if (!foundAllScripts)
                 {
-                    return;
+                    return false;
                 }
+            }
+
+            return true;
+        }
+
+        private void ApplyTemplate()
+        {
+            if (this.templateWasApplied)
+            {
+                return;
+            }
+
+            if (this.hasRequestedPrerequisites && this.prerequisiteScriptsRequested > 0)
+            {
+                return;
+            }
+
+            this.templateApplyRequested = true;
+
+            if (!this.LoadPrerequisites())
+            {
+                return;
             }
 
             if (this.Template != null)
@@ -989,6 +1004,7 @@ namespace BL.UI
             this.ConsiderScriptsAreLoaded();
         }
 
+        /*
         private void MonitorScripts()
         {
             if (!this.ConsiderScriptsAreLoaded())
@@ -999,7 +1015,7 @@ namespace BL.UI
             }
 
             Debug.Fail("Initialized scripts from monitoring");
-        }
+        }*/
 
         private bool ConsiderScriptsAreLoaded()
         {
@@ -1011,7 +1027,10 @@ namespace BL.UI
                 }
             }
 
-            this.ApplyTemplate();
+            if (!this.templateWasApplied && this.templateApplyRequested)
+            {
+                this.ApplyTemplate();
+            }
 
             return true;
         }
@@ -1111,7 +1130,7 @@ namespace BL.UI
                         // hook click functions if they exist in the form of functions called v_on<ElementId>Click
                         String clickFunctionName = "v_on" + elementId.Substring(0, 1).ToUpperCase() + elementId.Substring(1, elementId.Length) + "Click";
 
-                        Script.Literal("if ({0}[{1}] != null) {{ if ({3} == null) {{ {3} = {{}}; }} var del = ss.Delegate.create({0}, {0}[{1}]); {3}[{2}]=del; {2}.addEventListener('click', del, true); {2}.addEventListener('touchEnd', del, true); }}", this, clickFunctionName, element, this.clickEventDelegates);
+                        Script.Literal("if ({0}[{1}] != null) {{ if ({3} == null) {{ {3} = {{}}; }} var del = ss.Delegate.create({0}, {0}[{1}]); {3}[{3}.length-1]={{\"element\":{2},\"event\":del}}; {2}.addEventListener('click', del, true); {2}.addEventListener('touchEnd', del, true); }}", this, clickFunctionName, element, this.clickEventDelegates);
 
                         this.setElements.Add("e_" + elementId);
                     }
@@ -1143,6 +1162,11 @@ namespace BL.UI
                 this.fireUpdateOnTemplateComplete = false;
 
                 this.OnUpdate();
+            }
+
+            if (this.TemplateApplied != null)
+            {
+                this.TemplateApplied(this, EventArgs.Empty);
             }
         }
 
@@ -1276,12 +1300,22 @@ namespace BL.UI
         }
         public Control GetTemplateControlById(String id)
         {
+            if (this.templateControls == null)
+            {
+                return null;
+            }
+
             foreach (Control c in this.templateControls)
             {
                 if (this.GetControlShortId(c.Id) == id)
                 {
                     return c;
                 }
+            }
+
+            if (this.templateDescendentControls == null)
+            {
+                return null;
             }
 
             foreach (Control c in this.templateDescendentControls)
@@ -1358,10 +1392,10 @@ namespace BL.UI
 
             if (this.clickEventDelegates != null)
             {
-                foreach (KeyValuePair<Element, IElementEventHandler> del in this.clickEventDelegates)
+                foreach (ElementAndEvent del in this.clickEventDelegates)
                 {
-                    del.Key.RemoveEventListener("click", del.Value, true);
-                    del.Key.RemoveEventListener("touchend", del.Value, true);
+                    del.Element.RemoveEventListener("click", del.Event, true);
+                    del.Element.RemoveEventListener("touchend", del.Event, true);
                 }
             }
 

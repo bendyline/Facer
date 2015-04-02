@@ -198,8 +198,8 @@ namespace BL.UI.KendoControls
 
         public DropDownList()
         {
-            KendoControlFactory.EnsureKendoBaseUx(this);
-            KendoControlFactory.EnsureKendoData(this);
+            KendoUtilities.EnsureKendoBaseUx(this);
+            KendoUtilities.EnsureKendoData(this);
 
             this.EnsurePrerequisite("kendo.mobile.ui.Scroller", "js/kendo/kendo.mobile.scroller.min.js");
             this.EnsurePrerequisite("kendo.ui.List", "js/kendo/kendo.list.min.js");

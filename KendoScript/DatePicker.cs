@@ -68,8 +68,8 @@ namespace BL.UI.KendoControls
 
         public DatePicker()
         {
-            KendoControlFactory.EnsureKendoBaseUx(this);
-            KendoControlFactory.EnsureKendoEditable(this);
+            KendoUtilities.EnsureKendoBaseUx(this);
+            KendoUtilities.EnsureKendoEditable(this);
         }
 
         protected override void OnApplyTemplate()

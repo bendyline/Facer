@@ -18,13 +18,17 @@ namespace Kendo.UI
         public object Editable;
         public GridColumnMenuOptions ColumnMenu;
         public object DataSource;
+        public ExportFileOptions Excel;
         public object DetailTemplate;
         public object Filterable;
         public GridGroupableOptions Groupable;
         public object Height;
         public bool Navigatable;
         public bool Scrollable;
+        public ExportFileOptions Pdf;
         public object Pageable;
+        public object Selectable;
+        public object Resizable;
         public GridSortableOptions Sortable;
         public object Toolbar;
     }

@@ -513,7 +513,13 @@ namespace BL.UI.App
             {
                 double baseLeft = ElementUtilities.GetBoundingRect(this.Element).Left;
 
-                double elementLeft = ElementUtilities.GetBoundingRect(this.ItemControls[this.ActiveIndex].Element).Left;
+                Element activeElement = this.ItemControls[this.ActiveIndex].Element;
+                double elementLeft = 0;
+
+                if (activeElement != null)
+                {
+                    elementLeft = ElementUtilities.GetBoundingRect(activeElement).Left;
+                }
 
                 if (this.mode == SliderSwipeMode.WholePage)
                 {
@@ -722,48 +728,24 @@ namespace BL.UI.App
                     cssBase += " lastLinkSelected";
                 }
             }
-            else if (index == 0)
+
+            cssBase += " link" + this.activeIndex;
+
+            if (index == this.activeIndex)
             {
-                cssBase += " firstLink";
-
-                if (index == this.activeIndex)
-                {
-                    cssBase += " firstLinkSelected";
-                }
+                cssBase += " link" + this.activeIndex + "Selected";
             }
-            else if (index == 1)
-            {
-                cssBase += " secondLink";
-
-                if (index == this.activeIndex)
-                {
-                    cssBase += " secondLinkSelected";
-                }
-            }
-            else if (index == 2)
-            {
-                cssBase += " thirdLink";
-
-                if (index == this.activeIndex)
-                {
-                    cssBase += " thirdLinkSelected";
-                }
-            }
-            else
-            {
-                cssBase += " innerLink";
-
-                if (index == this.activeIndex)
-                {
-                    cssBase += " innerLinkSelected";
-                }
-            }
-
+            
             return cssBase;
         }
 
         private void UpdateLinkHighlights()
         {
+            if (this.containerLinkBin == null)
+            {
+                return;
+            }
+
             if (previousIndex >= 0)
             {
                 Element secondaryTab = this.containerLinkBin.ChildNodes[this.previousIndex];

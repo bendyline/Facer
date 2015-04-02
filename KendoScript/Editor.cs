@@ -123,8 +123,8 @@ namespace BL.UI.KendoControls
 
         public Editor()
         {
-            KendoControlFactory.EnsureKendoBaseUx(this);
-            KendoControlFactory.EnsureKendoData(this);
+            KendoUtilities.EnsureKendoBaseUx(this);
+            KendoUtilities.EnsureKendoData(this);
 
             this.EnsurePrerequisite("kendo.mobile.ui.Scroller", "js/kendo/kendo.mobile.scroller.min.js");
             this.EnsurePrerequisite("kendo.ui.List", "js/kendo/kendo.list.min.js");
@@ -132,7 +132,7 @@ namespace BL.UI.KendoControls
 
             this.EnsurePrerequisite("kendo.observable", "js/kendo/kendo.binder.min.js");
 
-            KendoControlFactory.EnsureKendoEditable(this);
+            KendoUtilities.EnsureKendoEditable(this);
 
             this.EnsurePrerequisite("kendo.ui.Slider", "js/kendo/kendo.slider.min.js");
             this.EnsurePrerequisite("kendo.ui.Resizable", "js/kendo/kendo.resizable.min.js");
@@ -194,8 +194,8 @@ namespace BL.UI.KendoControls
             {
                 String[] toolsToUse = new String[] 
                 {
-                "formatting",
                 "fontName",
+                "formatting",
                 "fontSize",
                 "bold",
                 "italic",
@@ -204,8 +204,6 @@ namespace BL.UI.KendoControls
                 "foreColor",
                 "backColor",
                 "cleanFormatting",
-                "subscript",
-                "superscript",
                 "createLink",
                 "unlink",
                 "insertImage",

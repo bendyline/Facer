@@ -58,7 +58,7 @@ namespace BL.UI
             this.tm = templateManager;
         }
 
-        public void EnsureRetrieving(String id, AsyncCallback callback, object state)
+        public void EnsureRetrieved(String id, AsyncCallback callback, object state)
         {
             bool isNew = false;
 
@@ -123,12 +123,15 @@ namespace BL.UI
 
                 foreach (CallbackState cs in o.CallbackStates)
                 {
-                    CallbackResult cr = new CallbackResult();
+                    if (cs.Callback != null)
+                    {
+                        CallbackResult cr = new CallbackResult();
 
-                    cr.Data = this.tm.Templates[(String)cs.Tag];
-                    cr.IsCompleted = true;
+                        cr.Data = this.tm.Templates[(String)cs.Tag];
+                        cr.IsCompleted = true;
 
-                    cs.Callback(cr);
+                        cs.Callback(cr);
+                    }
                 }
             }
         }

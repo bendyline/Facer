@@ -5,30 +5,64 @@
         
         BODY
         {
-          background: rgba(220,220,220,0.6);
+          background: rgba(204,204,204,0.4);
           width: 100%;  
           height:100%;
         }
-
-        #titleText
+        
+        #topBar
         {
-            color:#000000;
-            font-family: 'Lato', Helvetica, Arial, sansserif;
-            margin-top:5px;
-            margin-left:10px;
-            float:left;
-        }        
+            display:table-row;
+        }
+
+        #topBarSizer
+        {
+            display:table;
+            width:100%;
+        }
+
+        #topBarSizerInterior{
+            display:table-row;
+        }
+
+        #closeButtonWrapper
+        {
+            padding-left:4px;                        
+            padding-right:4px;
+            padding-top:2px;
+            display:table-cell;
+            width:32px;
+            min-width:32px;
+            font-size:1pt;
+            vertical-align:middle;
+            text-align:center;
+        }
 
         #closeButton
         {
             font-size:medium;
-            float:right;
             text-align: right;
             cursor:default;            
-            padding:4px;
-            padding-right:8px;
-            padding-bottom:6px;
-            vertical-align:middle;
+        }        
+  
+        #titleText
+        {
+            color:#FFFFFF;
+            font-family: 'Lato', Helvetica, Arial, sansserif;
+            font-size:14pt;
+            display:table-cell;
+            width:100%;
+            vertical-align:top;
+            padding:2px;
+            text-transform:uppercase;
+        }
+
+        @media (max-width: 767px)
+        {
+            #titleText
+            {
+                text-align:center;
+            }
         }
 
         #panel
@@ -36,58 +70,40 @@
             vertical-align:middle;
             align-content:center;
             background:white;
-            border: solid 1px #D0D0D0;
-            border-radius: 4px;
             display:table;
-            height:100%;
+            padding:0px;
+            margin:0px;
         }
-
-        #topBar
-        {
-            display:table-row;
-        }
-
+        
         #topInterior
         {
             display:table-cell;
-            background-color:#B3E3F3;
+            background-color:#6AC5E8;
+            padding:4px;
+            padding-bottom:7px;
+            padding-top:8px;
         }
-
+        
         #contentArea
         {
             display:table-row;
         }
-
+        
         #bottomBar
         {
             display:table-row;
         }
-
+        
         #bottomInterior
         {
             display:table-cell;
+            text-align:right;
         }
 
-        #doneButton
+        #content
         {
-            background-color: #6AC5E8;
-            font-size: small;
-            display:inline-block;
-            text-align: right;
-            padding: 4px;
-            padding-left:10px;
-            padding-right:10px;
-            margin-top:40px;
             margin-left:14px;
             margin-right:14px;
-            margin-bottom:14px;
-            border: solid 0px;
-            height:32px;
-            min-width:60px;
-            vertical-align:middle;
-            text-align:center;
-            color: white;
-            width:120px;
         }
 
         #contentContainer
@@ -95,15 +111,57 @@
             display:table-cell;
             height:100%;
         }
+
+        #doneButton
+        {
+            display:inline-block;
+            font-size: small;
+            text-align: right;
+            padding: 6px;
+            padding-left:10px;
+            padding-right:10px;
+            margin-top:6px;
+            margin-right:14px;
+            margin-bottom:14px;
+            margin-left:14px;
+            border: solid 0px;
+            height:32px;
+            min-width:60px;
+            vertical-align:middle;
+            text-align:center;
+            width:120px;
+            border-radius:3px;
+            cursor:default;
+            color:#A0A0A0;
+            border:solid 1px #A0A0A0;
+            cursor:default;
+        }
+
+        #doneButton:hover
+        {
+            background-color: #6AC5E8;
+            color: white;
+            border:solid 1px #6AC5E8;
+        }
+
         </style>
 	</head>
 	<body>
-           <div id="panel">
+           <div id='panel'>
                <div id="topBar">
-                   <div id="topInterior">
-                       <div id="titleText"></div>
-                        <div id="closeButton"><img src="qla/images/close.png" style="width:14px;height:14px;padding-bottom:2px;"/></div>
-                    </div>
+                   <div id="topInterior">  
+                       <div id="topBarSizer">
+                            <div id="topBarSizerInterior">
+                              <div data-ctl-class="closeButtonWrapper" id="leftCloseBin">
+                                <div id="closeButtonL" data-ctl-class="closeButton"><img src="qla/images/closew.png" style="width:17px;height:17px;padding-bottom:2px;"/></div>
+                              </div>
+                              <div id="titleText"></div>
+                              <div data-ctl-class="closeButtonWrapper">
+                                <div id="closeButtonR" data-ctl-class="closeButton"><img src="qla/images/closew.png" style="width:17px;height:17px;padding-bottom:2px;"/></div>
+                              </div>
+                            </div>
+                      </div>
+                   </div>
                 </div>
                <div id="contentArea">
                     <ContentContainer id="contentContainer"/>

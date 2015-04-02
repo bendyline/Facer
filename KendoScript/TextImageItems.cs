@@ -13,11 +13,10 @@ namespace BL.UI.KendoControls
     [Imported]
     [IgnoreNamespace]
     [ScriptName("Object")]    
-    public class TextImageItems
+    public class TextImageValue
     {
         public String Text;
-        public String ImageUrl;
+        public String Image;
         public object Value;
-        public IEnumerable<TextImageItems> Items;
     }
 }

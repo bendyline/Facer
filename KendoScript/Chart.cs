@@ -37,9 +37,9 @@ namespace BL.UI.KendoControls
 
         public Chart()
         {
-            KendoControlFactory.EnsureKendoBaseUx(this);
-            KendoControlFactory.EnsureKendoData(this);
-            KendoControlFactory.EnsureKendoDataViz(this);
+            KendoUtilities.EnsureKendoBaseUx(this);
+            KendoUtilities.EnsureKendoData(this);
+            KendoUtilities.EnsureKendoDataViz(this);
 
             this.EnsurePrerequisite("kendo.dataviz.ui.Chart", "js/kendo/kendo.dataviz.chart.min.js");
         }

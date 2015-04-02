@@ -142,7 +142,6 @@ namespace BL.UI.KendoControls
             }
 
             Dialog d = new Dialog();
-            d.TemplateId = "bl-ui-dialogfullscreen";
 
             d.VerticalPadding = 0;
             d.HorizontalPadding = 0;

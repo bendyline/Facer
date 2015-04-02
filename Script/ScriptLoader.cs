@@ -111,9 +111,22 @@ namespace BL.UI
 
             if (isNew)
             {
-                Debug.Assert(!this.isLoaded);
+//                Debug.Assert(!this.isLoaded);
+                if (this.isLoaded)
+                {
+                    if (callback != null)
+                    {
+                        CallbackResult cr = new CallbackResult();
+                        cr.IsCompleted = true;
+                        cr.AsyncState = state;
 
-                this.Load();
+                        callback(cr);
+                    }
+                }
+                else
+                {
+                    this.Load();
+                }
             }
         }
     }

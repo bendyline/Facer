@@ -7,6 +7,7 @@ using jQueryApi;
 using Kendo.UI;
 using System.Runtime.CompilerServices;
 using kendo.data;
+using kendo.ui;
 
 namespace BL.UI.KendoControls
 {
@@ -19,6 +20,7 @@ namespace BL.UI.KendoControls
         public event ModelEventHandler Save;
         public event ModelEventHandler Edit;
         public event ModelEventHandler Cancel;
+        public event SelectionEventHandler Change;
         public event ModelEventHandler Remove;
 
         
@@ -119,12 +121,12 @@ namespace BL.UI.KendoControls
 
         public Grid()
         {
-            KendoControlFactory.EnsureKendoBaseUx(this);
-            KendoControlFactory.EnsureKendoData(this);
+            KendoUtilities.EnsureKendoBaseUx(this);
+            KendoUtilities.EnsureKendoData(this);
 
             this.EnsurePrerequisite("kendo.ui.ColumnSorter", "js/kendo/kendo.columnsorter.min.js");
 
-            KendoControlFactory.EnsureKendoEditable(this);
+            KendoUtilities.EnsureKendoEditable(this);
             this.EnsurePrerequisite("kendo.observable", "js/kendo/kendo.binder.min.js");
 
             this.EnsurePrerequisite("kendo.ui.Window", "js/kendo/kendo.window.min.js");
@@ -180,6 +182,7 @@ namespace BL.UI.KendoControls
             Script.Literal("var j = {0}; j.kendoGrid({2}); {1} = j.data('kendoGrid')", this.J, this.grid, this.gridOptions);
 
             this.grid.Bind("save", this.HandleSave);
+            this.grid.Bind("change", this.HandleChange);
             this.grid.Bind("edit", this.HandleEdit);
             this.grid.Bind("remove", this.HandleRemove);
         }
@@ -196,6 +199,19 @@ namespace BL.UI.KendoControls
                 mea.Model = model;
 
                 this.Edit(mea);
+            }
+        }
+
+        private void HandleChange(object e)
+        {
+   
+            Script.Literal("{0}={0}.sender", e);
+
+            if (this.Change != null)
+            {
+                SelectionEventArgs sea = (SelectionEventArgs)e;
+
+                this.Change(sea);
             }
         }
 
@@ -216,7 +232,22 @@ namespace BL.UI.KendoControls
 
         public void SaveAsExcel()
         {
+            ControlManager.Current.LoadScript("JSZip", "js/jszip.min.js", this.ContinueSaveAsExcel, null);
+        }
+
+        private void ContinueSaveAsExcel(IAsyncResult result)
+        {
             this.grid.SaveAsExcel();
+        }
+
+        public void SaveAsPdf()
+        {
+            ControlManager.Current.LoadScript("kendo.ui.ProgressBar", "js/kendo/kendo.progressbar.min.js", this.ContinueSaveAsPdf, null);
+        }
+
+        private void ContinueSaveAsPdf(IAsyncResult result)
+        {
+            this.grid.SaveAsPdf();
         }
 
         public void CancelRow()
@@ -233,9 +264,19 @@ namespace BL.UI.KendoControls
             this.grid.ClearSelection();
         }
 
+        public object Select(object newSelection)
+        {
+            return this.grid.Select(newSelection);
+        }
+
         public void SaveRow()
         {
             this.grid.SaveRow();
+        }
+
+        public void RemoveRow(jQueryObject jQueryItemToBeRemoved)
+        {
+            this.grid.RemoveRow(jQueryItemToBeRemoved);
         }
 
         public void EditRow(jQueryObject row)
