@@ -36,11 +36,14 @@ namespace BL.UI
                 }
 
                 this.user = value;
+
                 this.user.PropertyChanged += user_PropertyChanged;
+
+                this.OnUserUpdated();
+
                 this.Update();
             }
         }
-
 
         public UserReference UserReference
         {
@@ -64,7 +67,7 @@ namespace BL.UI
             }
         }
 
-        public String EffectiveId
+        public String UserId
         {
             get
             {
@@ -80,7 +83,17 @@ namespace BL.UI
 
                 return null;
             }
+            set
+            {
+                UserReference ur = new UserReference();
+
+                ur.Id = value;
+                ur.NickName = String.Empty;
+
+                this.UserReference = ur;
+            }
         }
+
         public String EffectiveNickName
         {
             get

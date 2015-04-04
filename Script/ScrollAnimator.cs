@@ -15,12 +15,27 @@ namespace BL.UI
         private double? toY;
         private double? fromX;
         private double? toX;
+        private Element element;
 
         private Date start;
         private double length;
 
         private Operation scrollingOperation;
         public event EventHandler ScrollingComplete;
+
+
+        public Element Element
+        {
+            get
+            {
+                return this.element;
+            }
+            
+            set
+            {
+                this.element = value;
+            }
+        }
 
         public double? FromY
         {
@@ -107,7 +122,14 @@ namespace BL.UI
             {
                 if (this.fromY != null && this.toY != null)
                 {
-                    Window.Scroll(Window.PageXOffset, (int)(this.fromY + ((this.toY - this.fromY) * proportion)));
+                    if (this.Element != null)
+                    {
+                        this.Element.ScrollTop = (int)(this.fromY + ((this.toY - this.fromY) * proportion));
+                    }
+                    else
+                    {
+                        Window.Scroll(Window.PageXOffset, (int)(this.fromY + ((this.toY - this.fromY) * proportion)));
+                    }
                 }
 
                 ElementUtilities.AnimateOnNextFrame(this.AnimateTick);

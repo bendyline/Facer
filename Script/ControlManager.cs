@@ -41,7 +41,9 @@ namespace BL.UI
 
             cs.Tag = namespaceName + "." + typeName;
 
-            this.LoadScript(namespaceName, adjust, this.CreateControlAsyncContinue, cs);
+            String path = UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + adjust;
+
+            this.LoadScript(namespaceName, path, this.CreateControlAsyncContinue, cs);
         }
 
         private void CreateControlAsyncContinue(IAsyncResult result)
