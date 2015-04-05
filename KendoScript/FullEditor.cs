@@ -213,11 +213,11 @@ namespace BL.UI.KendoControls
             {
                 if (this.html != null)
                 {
-                    this.contentDisplay.InnerHTML = ElementUtilities.ToStaticHTML(this.html);
+                    ElementUtilities.SetHtml(this.contentDisplay, ElementUtilities.ToStaticHTML(this.html));
                 }
                 else
                 {
-                    this.contentDisplay.InnerHTML = "";
+                    ElementUtilities.SetHtml(this.contentDisplay, String.Empty);
                 }
             }
 

@@ -115,6 +115,17 @@ namespace BL.UI
             this.UpdateItem(this.item7, 7);
             this.UpdateItem(this.item8, 8);
             this.UpdateItem(this.item9, 9);
+            this.UpdateItem(this.item10, 10);
+            this.UpdateItem(this.item11, 11);
+            this.UpdateItem(this.item12, 12);
+            this.UpdateItem(this.item13, 13);
+            this.UpdateItem(this.item14, 14);
+            this.UpdateItem(this.item15, 15);
+            this.UpdateItem(this.item16, 16);
+            this.UpdateItem(this.item17, 17);
+            this.UpdateItem(this.item18, 18);
+            this.UpdateItem(this.item19, 19);
+            this.UpdateItem(this.item20, 20);
         }
 
         private void UpdateItem(Element e, int index)

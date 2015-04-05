@@ -14,6 +14,5 @@ namespace Kendo.DataViz.UI
         public String Position;
         public Number Rotation;
         public String Text;
-        public bool Visible;
     }
 }

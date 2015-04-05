@@ -23,22 +23,18 @@ namespace BL.UI.App
 
         private List<bool> visibilities;
 
-        public event ControlIntegerEventHandler ActiveControlChanged;
 
         private bool isMouseDown;
         private bool isDragging;
-        private bool isAnimatingToSlot;
 
         private bool displayPaddles = true;
 
-        private double panelWidth;
         private Date animationStart;
 
         private int scrollAnimationTime = 200;
         private int gapBetweenSections = 4;
 
         private double initialScrollX;
-        private double initialScrollY;
         private ElementEventListener windowSizeChanged;
         private Date lastScrollTime;
         private int visibleItemCount = 1;
@@ -479,7 +475,6 @@ namespace BL.UI.App
 
                 this.isDragging = false;
 
-                int left = 0;
                 int newIndex =  0;
                 bool isGoingRight = this.itemsBin.ScrollLeft > this.initialScrollX;
 

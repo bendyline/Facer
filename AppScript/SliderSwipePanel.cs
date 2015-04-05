@@ -788,7 +788,8 @@ namespace BL.UI.App
 
             if (Context.Current.IsTouchOnly)
             {
-                Debug.WriteLine("(SliderSwipePanel::OnApplyTemplate) - Registering touch events " + ElementUtilities.GetTouchStartEventName());
+                // Debug.WriteLine("(SliderSwipePanel::OnApplyTemplate) - Registering touch events " + ElementUtilities.GetTouchStartEventName());
+
                 this.Element.AddEventListener(ElementUtilities.GetTouchStartEventName(), this.HandleElementMouseDown, true);
 
                 Document.Body.AddEventListener(ElementUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
@@ -801,7 +802,7 @@ namespace BL.UI.App
             }
             else
             {
-                Debug.WriteLine("(SliderSwipePanel::OnApplyTemplate) - Registering mouse events ");
+                // Debug.WriteLine("(SliderSwipePanel::OnApplyTemplate) - Registering mouse events ");
 
                 this.Element.AddEventListener("mousedown", this.HandleElementMouseDown, true);
                 this.Element.AddEventListener("mousemove", this.HandleElementMouseMove, true);
@@ -863,7 +864,7 @@ namespace BL.UI.App
 
             if (this.allowSwiping && !this.isDragging && !this.isConsideringDrag)
             {
-                Debug.WriteLine("(SliderSwipePanel::HandleElementMouseDown) - Starting drag");
+                // Debug.WriteLine("(SliderSwipePanel::HandleElementMouseDown) - Starting drag");
 
            //     e.PreventDefault();
 
@@ -876,7 +877,7 @@ namespace BL.UI.App
             }
             else
             {
-                Debug.WriteLine("(SliderSwipePanel::HandleElementMouseDown) - Not starting drag");
+                // Debug.WriteLine("(SliderSwipePanel::HandleElementMouseDown) - Not starting drag");
             }
         }
 
@@ -908,7 +909,7 @@ namespace BL.UI.App
                 Window.SetTimeout(this.HandleDragMoveDeadTimeout, 100);
 
                 int newLeft = (int)Math.Floor(this.initialScrollX + (this.downEventPageX - ElementUtilities.GetPageX(e)));
-                Debug.WriteLine("(SliderSwipePanel::HandleElementMouseMove) - Mouse Move drag: " + newLeft);
+                // Debug.WriteLine("(SliderSwipePanel::HandleElementMouseMove) - Mouse Move drag: " + newLeft);
 
                 this.SetPanelLeft(newLeft);
 
@@ -934,7 +935,7 @@ namespace BL.UI.App
                     }
                 }
 
-                Debug.WriteLine("(SliderSwipePanel::HandleElementMouseMove) - Not dragging");
+                // Debug.WriteLine("(SliderSwipePanel::HandleElementMouseMove) - Not dragging");
             }
         }
 
@@ -952,13 +953,13 @@ namespace BL.UI.App
             {
                 this.isDragging = true;
 
-                Debug.WriteLine("(SliderSwipePanel::ConsiderStartDragging)");
+                // Debug.WriteLine("(SliderSwipePanel::ConsiderStartDragging)");
             }
             else
             {
                 this.isConsideringDrag = false;
 
-                Debug.WriteLine("(SliderSwipePanel::ConsiderStartDragging) - Failed CSD check" + diffX + diffY);
+                // Debug.WriteLine("(SliderSwipePanel::ConsiderStartDragging) - Failed CSD check" + diffX + diffY);
             }
         }
 

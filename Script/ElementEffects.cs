@@ -285,7 +285,6 @@ namespace BL.UI
 
         public ElementEffects()
         {
-            this.element = element;
             this.updateElementPositionAction = new Action(this.UpdateElementPosition);
             this.startMoveAction = new Action(this.StartMoveContinue);
             this.endMoveAction = new Action(this.EndMoveContinue);

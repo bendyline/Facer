@@ -21,8 +21,6 @@ namespace BL.UI.App
         private int rightIndex = -1;
 
         private bool allowSwiping = true;
-        private bool isAnimating;
-        private bool isAnimatingInFromRight;
 
         private int animationStepCount;
 

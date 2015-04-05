@@ -20,7 +20,7 @@
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>0028, 1591, 1684</NoWarn>
+    <NoWarn>0028, 1591, 1684, 0649, 0414</NoWarn>
     <DocumentationFile>
     </DocumentationFile>
   </PropertyGroup>

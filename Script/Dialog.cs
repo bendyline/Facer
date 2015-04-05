@@ -241,10 +241,10 @@ namespace BL.UI
         {
             base.OnResize();
 
-            this.DoResize();
+            this.ApplyResize();
         }
 
-        private void DoResize()
+        private void ApplyResize()
         {
             if (this.Element != null)
             {
@@ -352,7 +352,7 @@ namespace BL.UI
 
             Document.Body.AppendChild(this.Element);
 
-            this.DoResize();
+            this.ApplyResize();
         }
 
         private void UpdateTitle()

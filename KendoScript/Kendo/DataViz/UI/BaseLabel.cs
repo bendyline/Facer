@@ -19,6 +19,5 @@ namespace Kendo.DataViz.UI
         public String Template;
         public bool Visible;
         public Number Width;
-
     }
 }
