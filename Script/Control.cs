@@ -79,7 +79,6 @@ namespace BL.UI
         private ElementEventListener mouseEnterHandler;
         private ElementEventListener mouseLeaveHandler;
         private ElementEventListener mouseMoveHandler;
-        private ElementEventListener mouseDownHandler;
         private ElementEventListener touchStartHandler;
         private ElementEventListener touchEndHandler;
         private ElementEventListener clickHandler;

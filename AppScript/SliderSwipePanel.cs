@@ -28,12 +28,6 @@ namespace BL.UI.App
         [ScriptName("e_containerLinkBin")]
         private Element containerLinkBin;
 
-        [ScriptName("e_containerLinkLeft")]
-        private Element containerLinkLeft;
-
-        [ScriptName("e_containerLinkRight")]
-        private Element containerLinkRight;
-
         [ScriptName("e_swipeGuideRight")]
         private Element swipeGuideRight;
 
@@ -60,7 +54,6 @@ namespace BL.UI.App
 
         private bool isConsideringDrag;
         private bool isDragging;
-        private bool isAnimatingToSlot;
 
         private int lastFlashIndex = -1;
         private double panelWidth;
@@ -847,7 +840,7 @@ namespace BL.UI.App
 
             object contentEditable = e.Target.GetAttribute("contenteditable");
 
-            if (targetTagName == "input" || targetTagName == "select" || targetTagName == "textarea" || contentEditable == "true")
+            if (targetTagName == "input" || targetTagName == "select" || targetTagName == "textarea" || (String)contentEditable == "true")
             {
                 return true;
             }

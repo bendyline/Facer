@@ -325,7 +325,7 @@ namespace BL.UI.App
 
             object contentEditable = e.Target.GetAttribute("contenteditable");
 
-            if (targetTagName == "input" || targetTagName == "select" || targetTagName == "textarea" || contentEditable == "true")
+            if (targetTagName == "input" || targetTagName == "select" || targetTagName == "textarea" || (String)contentEditable == "true")
             {
                 return true;
             }
