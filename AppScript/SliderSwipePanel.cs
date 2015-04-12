@@ -92,7 +92,7 @@ namespace BL.UI.App
         public event IntegerEventHandler VerticalScrollChanged;
         public event EventHandler IndexChangeAnimationCompleted;
 
-        private const int SwipeNavigationDistanceFromBottom = 144;
+        private const int SwipeNavigationDistanceFromEdge = 104;
 
         public int PreviousIndex
         {
@@ -427,17 +427,29 @@ namespace BL.UI.App
             this.FlashSwipeNavigation();
         }
 
-        private bool HasAdditionalPageToRight(int index)
+        private int GetNextPage(int index)
         {
             for (int i = index + 1; i < this.ItemControls.Count; i++)
             {
                 if (this.visibilities.Count <= i || this.visibilities[i])
                 {
-                    return true;
+                    return i;
                 }
             }
 
-            return false;
+            return -1;
+        }
+        private int GetPreviousPage(int index)
+        {
+            for (int i = index -1; i >= 0; i--)
+            {
+                if (this.visibilities.Count <= i || this.visibilities[i])
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         private void ApplyVisibility()
@@ -451,7 +463,7 @@ namespace BL.UI.App
 
             if (this.allowSwiping)
             {
-                if (this.HasAdditionalPageToRight(maxIndexToShow))
+                if (this.GetNextPage(maxIndexToShow) >= 0)
                 {
                     maxIndexToShow++;
                 }
@@ -845,6 +857,16 @@ namespace BL.UI.App
                 return true;
             }
 
+            if (e.SrcElement != null)
+            {
+                String targetClass = e.SrcElement.ClassName;
+
+                if (!String.IsNullOrEmpty(targetClass) && targetClass.IndexOf("switch-") > 0)
+                {
+                    return true;
+                }
+            }
+
             return false;
         }
 
@@ -1000,14 +1022,16 @@ namespace BL.UI.App
                 this.isDragging = false;
                 double diffX = this.downEventPageX - ElementUtilities.GetPageX(this.lastMoveEvent);
 
+                int nextPage = this.GetNextPage(this.ActiveIndex);
+                int previousPage = this.GetPreviousPage(this.ActiveIndex);
 
-                if (diffX > 8 && this.ActiveIndex < this.ItemControls.Count - 1 && this.HasAdditionalPageToRight(this.ActiveIndex)) //this.itemsBin.ScrollLeft > (initialScrollX + (panelWidth / 4)) && this.ActiveIndex < this.ItemControls.Count - 1)
-                {
-                    this.ActiveIndex++;
+                if (diffX > 8 && this.ActiveIndex < this.ItemControls.Count - 1 && nextPage >= 0) //this.itemsBin.ScrollLeft > (initialScrollX + (panelWidth / 4)) && this.ActiveIndex < this.ItemControls.Count - 1)
+                {                    
+                    this.ActiveIndex = nextPage;
                 }
-                else if (diffX < -8 && this.ActiveIndex > 0) //this.itemsBin.ScrollLeft < (initialScrollX - (panelWidth / 4)) && this.ActiveIndex > 0)
+                else if (diffX < -8 && previousPage >= 0) //this.itemsBin.ScrollLeft < (initialScrollX - (panelWidth / 4)) && this.ActiveIndex > 0)
                 {
-                    this.ActiveIndex--;
+                    this.ActiveIndex = previousPage;
                 }
                 else
                 {
@@ -1115,7 +1139,7 @@ namespace BL.UI.App
             if (this.swipeNavigation != null && elementVisibleRight > 0)
             {
                 this.swipeNavigation.Style.Left = ((elementWidth - 160) / 2).ToString() + "px";
-                this.swipeNavigation.Style.Top = (elementVisibleBottom - SwipeNavigationDistanceFromBottom).ToString() + "px";
+                this.swipeNavigation.Style.Top = (cr.Top + SwipeNavigationDistanceFromEdge).ToString() + "px";
             }
 
             int index = 0;

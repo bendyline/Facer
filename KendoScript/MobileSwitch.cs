@@ -15,6 +15,7 @@ namespace BL.UI.KendoControls
 
         private MobileSwitchOptions options;
         private kendo.mobile.MobileSwitch mobileSwitch;
+        private bool? isChecked;
 
         public override string TagName
         {
@@ -28,12 +29,23 @@ namespace BL.UI.KendoControls
         {
             get
             {
+                if (this.mobileSwitch == null)
+                {
+                    return (bool)this.isChecked;
+                }
+
                 return this.mobileSwitch.Check();
             }
 
             set
             {
-                this.mobileSwitch.Check(value);
+                this.isChecked = value;
+
+                if (this.mobileSwitch != null)
+                {
+                    this.mobileSwitch.Check(value);
+
+                }
             }
         }
 
@@ -82,19 +94,32 @@ namespace BL.UI.KendoControls
 
         public MobileSwitch()
         {
+            KendoUtilities.EnsureKendoBaseUx(this);
+
+            this.EnsurePrerequisite("kendo.mobile.ui.Switch", "js/kendo/kendo.mobile.application.min.js");
+            this.EnsurePrerequisite("kendo.mobile.ui.Switch", "js/kendo/kendo.mobile.switch.min.js");
+
             this.options = new MobileSwitchOptions();
         }
 
-        protected override void OnEnsureElements()
+        protected override void OnApplyTemplate()
         {
-            this.Complete();
+            KendoUtilities.EnsureMobileApplication();
+
+            // this is a bit of a hack, but if we don't wait, the switch doesn't "slide".
+            Window.SetTimeout(this.ContinueAddSwitch, 10);
         }
 
-        private void Complete()
+        private void ContinueAddSwitch()
         {
             Script.Literal("var j = {0}; j.kendoMobileSwitch({2}); {1} = j.data('kendoMobileSwitch')", this.J, this.mobileSwitch, this.options);
 
             mobileSwitch.Bind("change", this.HandleDataChange);
+
+            if (this.isChecked != null)
+            {
+                this.mobileSwitch.Check((bool)this.isChecked);
+            }
         }
 
         private void HandleDataChange(object e)
@@ -107,8 +132,11 @@ namespace BL.UI.KendoControls
 
         public override void Dispose()
         {
-           this.mobileSwitch.Destroy();
-            
+            if (this.mobileSwitch != null)
+            {
+                this.mobileSwitch.Destroy();
+            }
+
             base.Dispose();
         }
     }

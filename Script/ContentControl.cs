@@ -47,7 +47,14 @@ namespace BL.UI
 
             set
             {
+                if (this.content == value)
+                {
+                    return;
+                }
+
                 this.content = value;
+
+                this.OnContentChanged(this.content);
 
                 this.SetControl(this.content);
 ;            }
@@ -57,6 +64,10 @@ namespace BL.UI
         {
         }
 
+        protected virtual void OnContentChanged(Control control)
+        {
+
+        }
 
         public override void Dispose()
         {

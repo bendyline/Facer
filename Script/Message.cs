@@ -239,12 +239,12 @@ namespace BL.UI
             if (Context.Current.IsSmallFormFactor || Window.InnerWidth < 420)
             {
                 d.MaxWidth = 310;
-                d.MaxHeight = 230;
+                d.MaxHeight = 260;
             }
             else
             {
                 d.MaxWidth = 400;
-                d.MaxHeight = 230;
+                d.MaxHeight = 260;
             }
             
             d.Show();

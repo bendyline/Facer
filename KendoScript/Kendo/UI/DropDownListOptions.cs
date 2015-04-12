@@ -27,7 +27,7 @@ namespace Kendo.UI
         public String ValueTemplate;
 
         public String Text;
-        public String Value;
+        public object Value;
 
     }
 }

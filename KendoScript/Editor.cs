@@ -22,6 +22,7 @@ namespace BL.UI.KendoControls
         private String tempValue = null;
         private bool calledImageBrowserCallback = false;
 
+        [ScriptName("b_displayInlineToolbar")]
         public bool DisplayInlineToolbar
         {
             get
@@ -118,11 +119,14 @@ namespace BL.UI.KendoControls
             set
             {
                 this.editorOptions = value;
+
+                this.DelayApplyTemplate = false;
             }
         }
 
         public Editor()
         {
+            this.DelayApplyTemplate = true;
             KendoUtilities.EnsureKendoBaseUx(this);
             KendoUtilities.EnsureKendoData(this);
 
@@ -147,6 +151,16 @@ namespace BL.UI.KendoControls
             this.EnsurePrerequisite("kendo.ui.Editor", "js/kendo/kendo.editor.min.js");
         }
 
+        protected override void OnEnsureElements()
+        {
+            base.OnEnsureElements();
+
+            if (this.Element != null)
+            {
+                this.Element.Style.Display = "none";
+            }
+        }
+
         protected override void OnApplyTemplate()
         {
             if (this.editorOptions != null && this.editorOptions.ImageBrowser != null && this.editorOptions.ImageBrowser.BeforeLaunch != null && !this.calledImageBrowserCallback)
@@ -155,7 +169,7 @@ namespace BL.UI.KendoControls
             }
             else
             {
-                this.EnsureElementsContinue();
+                Window.SetTimeout(this.ApplyTemplateContinue, 10);
             }
         }
 
@@ -164,11 +178,12 @@ namespace BL.UI.KendoControls
             if (result.IsCompleted)
             {
                 this.calledImageBrowserCallback = true;
-                this.EnsureElementsContinue();
+
+                Window.SetTimeout(this.ApplyTemplateContinue, 10);
             }
         }
 
-        private void EnsureElementsContinue()
+        private void ApplyTemplateContinue()
         {
             if (this.editorHeight != null)
             {
@@ -192,38 +207,61 @@ namespace BL.UI.KendoControls
 
             if (this.editorOptions.Tools == null)
             {
-                String[] toolsToUse = new String[] 
+                String[] toolsToUse = null;
+                
+                if (Context.Current.IsSmallFormFactor)
                 {
-                "fontName",
-                "formatting",
-                "fontSize",
-                "bold",
-                "italic",
-                "underline",
-                "strikethrough",
-                "foreColor",
-                "backColor",
-                "cleanFormatting",
-                "createLink",
-                "unlink",
-                "insertImage",
-                "insertFile",
-                "insertUnorderedList",
-                "insertOrderedList",
-                "indent",
-                "outdent",
-                "justifyLeft",
-                "justifyCenter",
-                "justifyRight",
-                "justifyFull",
-                "createTable",
-                "addRowAbove",
-                "addRowBelow",
-                "addColumnLeft",
-                "addColumnRight",
-                "deleteRow",
-                "deleteColumn"
-                };
+                    toolsToUse = new String[] 
+                    {
+                        "fontName",
+                        "fontSize",
+                        "bold",
+                        "italic",
+                        "underline",
+                        "foreColor",
+                        "cleanFormatting",
+                        "createLink",
+                        "unlink",
+                        "insertImage",
+                        "insertUnorderedList",
+                        "insertOrderedList",
+                        "indent",
+                        "outdent"
+                    };
+                }
+                else
+                {
+                     toolsToUse = new String[] 
+                    {
+                        "fontName",
+                        "fontSize",
+                        "bold",
+                        "italic",
+                        "underline",
+                        "strikethrough",
+                        "foreColor",
+                        "backColor",
+                        "cleanFormatting",
+                        "createLink",
+                        "unlink",
+                        "insertImage",
+                        "insertUnorderedList",
+                        "insertOrderedList",
+                        "indent",
+                        "outdent",
+                        "justifyLeft",
+                        "justifyCenter",
+                        "justifyRight",
+                        "justifyFull",
+                        "createTable",
+                        "addRowAbove",
+                        "addRowBelow",
+                        "addColumnLeft",
+                        "addColumnRight",
+                        "deleteRow",
+                        "deleteColumn"
+                    };
+                }
 
                 this.editorOptions.Tools = toolsToUse;
             }
@@ -254,6 +292,8 @@ namespace BL.UI.KendoControls
                     this.editor.Value(this.tempValue);
                 }
             }
+
+            this.Element.Style.Display = "";
         }
 
         public void Blur()

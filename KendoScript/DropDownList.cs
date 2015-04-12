@@ -20,6 +20,8 @@ namespace BL.UI.KendoControls
 
         private bool isInitialized = false;
         private bool delayLoad = false;
+        private Nullable<int> dropdownWidth = null;
+        private object pendingSelection = null;
         private object dropdownValue = null;
 
         public bool DelayLoad
@@ -53,6 +55,11 @@ namespace BL.UI.KendoControls
                 if (this.dropDownList != null)
                 {
                     this.dropDownList.Value(value);
+                }
+
+                if (this.dropDownListOptions != null)
+                {
+                    this.dropDownListOptions.Value = value;
                 }
                 
                 this.dropdownValue = value;
@@ -220,6 +227,26 @@ namespace BL.UI.KendoControls
             }
         }
 
+        public void Select(object selection)
+        {
+            this.pendingSelection = selection;
+
+            if (this.dropDownList != null)
+            {
+                this.dropDownList.Select(selection);
+            }
+        }
+
+        public void SetDropdownWidth(int width)
+        {
+            this.dropdownWidth = width;
+
+            if (this.dropDownList != null)
+            {
+                this.dropDownList.List.Width((int)width);
+            }
+        }
+
         private void InitControl()
         {
             if (!this.isInitialized && this.DataSource != null && this.ElementsEnsured)
@@ -241,7 +268,17 @@ namespace BL.UI.KendoControls
                     this.dropDownList.Value(this.dropdownValue);
                 }
 
+                if (this.pendingSelection != null)
+                {
+                    this.dropDownList.Select(this.pendingSelection);
+                }
+
                 this.dropDownList.Bind("change", this.HandleDataChange);
+
+                if (this.dropdownWidth != null)
+                {
+                    this.dropDownList.List.Width((int)this.dropdownWidth);
+                }
 
                 this.isInitialized = true;
             }

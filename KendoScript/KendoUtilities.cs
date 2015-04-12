@@ -8,6 +8,15 @@ namespace BL.UI.KendoControls
 {
     public static class KendoUtilities 
     {
+        private static object mobileApp;
+
+        public static void EnsureMobileApplication()
+        {
+            if (mobileApp == null)
+            {
+        //       Script.Literal("{0}=new kendo.mobile.Application(document.body);", mobileApp);
+            }
+        }
 
         public static String SafeifyFileName(String fileName)
         {

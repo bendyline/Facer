@@ -26,6 +26,9 @@ namespace BL.UI
         [ScriptName("e_closeButtonR")]
         public Element closeButtonR;
 
+        [ScriptName("e_contentContainer")]
+        public Element contentContainer;
+
         [ScriptName("e_closeButtonL")]
         public Element closeButtonL;
 
@@ -274,7 +277,7 @@ namespace BL.UI
                 double width = (Window.InnerWidth - (effectiveHorizontalPadding * 2));
                 double height = (Window.InnerHeight - (effectiveVerticalPadding * 2));
 
-                if (this.maxWidth != null)
+                if (this.maxWidth != null && this.maxWidth < Window.InnerWidth - 20)
                 {
                     width = (int)this.maxWidth;
 
@@ -284,7 +287,7 @@ namespace BL.UI
                     }
                 }
 
-                if (this.maxHeight != null)
+                if (this.maxHeight != null && this.maxHeight < Window.InnerHeight - 20)
                 {
                     height = (int)this.maxHeight;
 
@@ -300,9 +303,25 @@ namespace BL.UI
                 panelStyle.Top = ((Window.InnerHeight - height) / 2) + "px";
                 panelStyle.Width = width + "px";
                 panelStyle.Height = height + "px";
+
+
+                Style contentContainerStyle = this.contentContainer.Style;
+
+                contentContainerStyle.Width = width + "px";
+
+                if (this.DisplayDoneButton)
+                {
+                    contentContainerStyle.Height = (height - 100) + "px";
+                }
+                else
+                {
+                    contentContainerStyle.Height = (height - 40) + "px";
+                }
             }
         }
 
+
+        // NOTE NOTE NOTE: Some controls (e.g., Kendo) need Dialog.Content to be set AFTER AFTER you have called dialog.Show
         public void Show()
         {
             if (this.Element == null)
@@ -310,15 +329,7 @@ namespace BL.UI
                 this.EnsureElements();
             }
 
-            if (this.Content != null)
-            {
-                this.Content.EnsureElements();
-
-                if (this.Content is IDialogManager)
-                {
-                    ((IDialogManager)this.Content).ParentDialog = this;
-                }
-            }
+            this.OnContentChanged(this.Content);
 
             this.isShowing = true;
 
@@ -353,6 +364,21 @@ namespace BL.UI
             Document.Body.AppendChild(this.Element);
 
             this.ApplyResize();
+        }
+
+        protected override void OnContentChanged(Control control)
+        {
+            base.OnContentChanged(control);
+
+            if (this.Content != null)
+            {
+                this.Content.EnsureElements();
+
+                if (this.Content is IDialogManager)
+                {
+                    ((IDialogManager)this.Content).ParentDialog = this;
+                }
+            }
         }
 
         private void UpdateTitle()

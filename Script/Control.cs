@@ -68,6 +68,8 @@ namespace BL.UI
         private int prerequisiteScriptsRequested = 0;
         private bool hasRequestedPrerequisites = false;
         private bool templateApplyRequested = false;
+        private bool enqueueUpdates = false;
+        private bool updatePending = false;
 
         private Action applyVisibleOnFrameAction;
 
@@ -85,6 +87,19 @@ namespace BL.UI
         private ElementEventListener windowScrollHandler;
 
         public event EventHandler TemplateApplied;
+
+        protected bool EnqueueUpdates
+        {
+            get
+            {
+                return this.enqueueUpdates;
+            }
+
+            set
+            {
+                this.enqueueUpdates = value;
+            }
+        }
 
         protected bool DelayApplyTemplate
         {
@@ -1166,13 +1181,36 @@ namespace BL.UI
             {
                 this.fireUpdateOnTemplateComplete = false;
 
-                this.OnUpdate();
+                this.ApplyOnUpdate();
             }
 
             if (this.TemplateApplied != null)
             {
                 this.TemplateApplied(this, EventArgs.Empty);
             }
+        }
+
+        private void ApplyOnUpdate()
+        {
+            if (!this.enqueueUpdates)
+            {
+                this.OnUpdate();
+                return;
+            }
+
+            if (this.updatePending)
+            {
+                return;
+            }
+
+            this.updatePending = true;
+            Window.SetTimeout(this.ApplyOnUpdateContinue, 5);
+        }
+
+        private void ApplyOnUpdateContinue()
+        {
+            this.updatePending = false;
+            this.OnUpdate();
         }
 
         private Element GetElementFromPath(Element element, List<int> path)
@@ -1266,7 +1304,7 @@ namespace BL.UI
                         thisElement.Style.PosWidth = (int)this.Width;
                     }
 
-                    this.OnUpdate();
+                    this.ApplyOnUpdate();
                 }
 
                 if (this.trackResizeEvents)
@@ -1552,7 +1590,7 @@ namespace BL.UI
                 return;
             }
 
-            this.OnUpdate();
+            this.ApplyOnUpdate();
         }
 
         protected virtual void OnInit()
