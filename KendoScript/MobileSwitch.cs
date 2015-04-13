@@ -25,6 +25,7 @@ namespace BL.UI.KendoControls
             }
         }
 
+        [ScriptName("b_checked")]
         public bool Checked
         {
             get
@@ -49,6 +50,7 @@ namespace BL.UI.KendoControls
             }
         }
 
+        [ScriptName("b_enabled")]
         public bool Enabled
         {
             get
