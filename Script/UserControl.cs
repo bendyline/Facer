@@ -73,12 +73,12 @@ namespace BL.UI
             {
                 if (this.user != null)
                 {
-                    return this.user.Id;
+                    return this.user.UniqueKey;
                 }
 
                 if (this.userReference != null)
                 {
-                    return this.userReference.Id;
+                    return this.userReference.UniqueKey;
                 }
 
                 return null;
@@ -87,7 +87,7 @@ namespace BL.UI
             {
                 UserReference ur = new UserReference();
 
-                ur.Id = value;
+                ur.UniqueKey = value;
                 ur.NickName = String.Empty;
 
                 this.UserReference = ur;
@@ -119,9 +119,9 @@ namespace BL.UI
 
         protected void OnUserReferenceUpdated()
         {
-            if (this.userReference != null && this.userReference.Id != null)
+            if (this.userReference != null && this.userReference.UniqueKey != null)
             {
-                User user = UserManager.Current.EnsureUser(this.userReference.Id);
+                User user = UserManager.Current.EnsureUser(this.userReference.UniqueKey);
 
                 user.LoadUser(this.UserLoaded, null);
             }

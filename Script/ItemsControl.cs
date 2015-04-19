@@ -134,7 +134,7 @@ namespace BL.UI
             }
 
             Debug.Assert(!this.itemControls.Contains(c));
-
+            c.ParentControl = this;
             this.itemControls.Add(c);
             this.itemControlsById[c.Id] = c;
 

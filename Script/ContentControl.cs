@@ -106,6 +106,8 @@ namespace BL.UI
             bool isNew = false;
             Element elt = null;
 
+            c.ParentControl = this;
+
             if (c.Element == null)
             {
                 String tagName = c.TagName;

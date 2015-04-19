@@ -98,7 +98,7 @@ namespace BL.UI.KendoControls
         {
             KendoUtilities.EnsureKendoBaseUx(this);
 
-            this.EnsurePrerequisite("kendo.mobile.ui.Switch", "js/kendo/kendo.mobile.application.min.js");
+            this.EnsurePrerequisite("kendo.mobile.Application", "js/kendo/kendo.mobile.application.min.js");
             this.EnsurePrerequisite("kendo.mobile.ui.Switch", "js/kendo/kendo.mobile.switch.min.js");
 
             this.options = new MobileSwitchOptions();

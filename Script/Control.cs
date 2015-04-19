@@ -30,6 +30,7 @@ namespace BL.UI
     {
         private Element element;
         private Element contentElement;
+        private Control parentControl;
         private List<Control> templateControls;
         private List<Control> templateDescendentControls;
         private List<Element> templateElements;
@@ -87,6 +88,19 @@ namespace BL.UI
         private ElementEventListener windowScrollHandler;
 
         public event EventHandler TemplateApplied;
+
+        public Control ParentControl
+        {
+            get
+            {
+                return this.parentControl;
+            }
+
+            set
+            {
+                this.parentControl = value;
+            }
+        }
 
         protected bool EnqueueUpdates
         {
@@ -1111,6 +1125,7 @@ namespace BL.UI
                     // note Path will be null in cases where you have a ContentControl or ItemControl child with an ID
                     if (path != null)
                     {
+                        c.ParentControl = this;
                         this.templateControls.Add(c);
 
                         Element element = this.GetElementFromPath(this.Element, path);
@@ -1433,6 +1448,8 @@ namespace BL.UI
             this.DisposeInteractionEventing();
             this.DisposeResizeEventing();
 
+            this.parentControl = null;
+
             if (this.clickEventDelegates != null)
             {
                 foreach (ElementAndEvent del in this.clickEventDelegates)
@@ -1510,7 +1527,7 @@ namespace BL.UI
             }
 
             Debug.Assert(!this.templateControls.Contains(child));
-
+            child.ParentControl = this;
             this.templateControls.Add(child);
 
             if (this.ElementsEnsured)
