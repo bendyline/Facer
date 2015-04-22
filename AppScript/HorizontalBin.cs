@@ -538,17 +538,24 @@ namespace BL.UI.App
                 height = (double)this.Height;
             }
 
+            int adjust = 48;
+
+            if (displayPaddles)
+            {
+                adjust = 78;
+            }
+
             int width = 0; 
 
             if (this.Width != null)
             {
-                width = ((int)this.Width - 48);
+                width = ((int)this.Width - adjust);
             }
             else if (this.Element.ParentNode != null)
             {
                 ClientRect cr = ElementUtilities.GetBoundingRect(this.Element.ParentNode);
 
-                width = (int)((cr.Right - cr.Left) - 48);
+                width = (int)((cr.Right - cr.Left) - adjust);
             }
 
             int itemWidth= 0;

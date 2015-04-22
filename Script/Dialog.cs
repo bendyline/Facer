@@ -23,6 +23,9 @@ namespace BL.UI
         [ScriptName("e_topBar")]
         public Element topBar;
 
+        [ScriptName("e_bottomBar")]
+        public Element bottomBar;
+
         [ScriptName("e_closeButtonR")]
         public Element closeButtonR;
 
@@ -54,6 +57,8 @@ namespace BL.UI
 
         public event EventHandler Closing;
 
+        private bool sizeContents = true;
+
         public bool DisplayDoneButton
         {
             get
@@ -66,6 +71,21 @@ namespace BL.UI
                 this.displayDoneButton = value;
 
                 this.UpdateDoneButton();
+            }
+        }
+
+        public bool SizeContents
+        {
+            get
+            {
+                return this.sizeContents;
+            }
+
+            set
+            {
+                this.sizeContents = value;
+
+                this.ApplyResize();
             }
         }
 
@@ -231,12 +251,12 @@ namespace BL.UI
             }
 
             if (this.displayDoneButton)
-            {
-                this.doneButton.Style.Display = String.Empty;
+            {                
+                this.bottomBar.Style.Display = String.Empty;
             }
             else
             {
-                this.doneButton.Style.Display = "none";
+                this.bottomBar.Style.Display = "none";
             }
         }
 
@@ -309,13 +329,23 @@ namespace BL.UI
 
                 contentContainerStyle.Width = width + "px";
 
-                if (this.DisplayDoneButton)
+                if (this.sizeContents)
                 {
-                    contentContainerStyle.Height = (height - 100) + "px";
+                    this.contentContainer.Style.OverflowY = "auto";
+                    this.contentContainer.Style.OverflowX = "hidden";
+                    if (this.DisplayDoneButton)
+                    {
+                        contentContainerStyle.Height = (height - 100) + "px";
+                    }
+                    else
+                    {
+                        contentContainerStyle.Height = (height - 38) + "px";
+                    }
                 }
                 else
                 {
-                    contentContainerStyle.Height = (height - 40) + "px";
+                    this.contentContainer.Style.OverflowY = "hidden";
+                    this.contentContainer.Style.OverflowX = "hidden";
                 }
             }
         }
