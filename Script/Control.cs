@@ -48,6 +48,7 @@ namespace BL.UI
         private String className;
         private jQueryObject jqueryObject;
         private String id;
+        private object tag;
         private bool visible = true;
         protected bool trackResizeEvents = false;
         private bool hookedResize = false;
@@ -230,6 +231,19 @@ namespace BL.UI
             }
         }
 
+        public object Tag
+        {
+            get
+            {
+                return this.tag;
+            }
+
+            set
+            {
+                this.tag = value;
+            }
+        }
+
         public virtual String TagName
         {
             get
@@ -244,7 +258,7 @@ namespace BL.UI
         }
 
         [ScriptName("i_height")]
-        public int? Height
+        public virtual int? Height
         {
             get
             {
@@ -1669,7 +1683,7 @@ namespace BL.UI
             this.DoResize();
         }
 
-        protected virtual void DoResize()
+        private void DoResize()
         {
             Window.SetTimeout(this.OnResize, 1);
         }

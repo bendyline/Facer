@@ -62,7 +62,10 @@
     <None Include="Properties\FxCop.ruleset" />
     <None Include="Properties\Script.template" />
     <Compile Include="ColorPicker.cs" />
+    <Compile Include="DateTimePicker.cs" />
     <Compile Include="KendoUtilities.cs" />
+    <Compile Include="Kendo\UI\DateTimePicker.cs" />
+    <Compile Include="Kendo\UI\DateTimePickerOptions.cs" />
     <Compile Include="Kendo\UI\ExportFileOptions.cs" />
     <Compile Include="Kendo\UI\Menu.cs" />
     <Compile Include="Kendo\UI\MenuOptions.cs" />

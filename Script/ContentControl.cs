@@ -54,6 +54,13 @@ namespace BL.UI
 
                 this.content = value;
 
+                Element e = this.ContentContainerElement;
+
+                if (e != null)
+                {
+                    ElementUtilities.ClearChildElements(e);
+                }
+
                 this.OnContentChanged(this.content);
 
                 this.SetControl(this.content);

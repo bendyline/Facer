@@ -124,7 +124,10 @@ namespace BL.UI
 
         private void SetToStartValues()
         {
-            this.Element.Style.Opacity = this.from.ToString();
+            if (this.Element != null)
+            {
+                this.Element.Style.Opacity = this.from.ToString();
+            }
 
             if (this.elements != null)
             {

@@ -533,11 +533,14 @@ namespace BL.UI.App
                     for (int i = 0; i < this.ActiveIndex; i++)
                     {
                         Element previousElement = this.ItemControls[i].Element;
-                        ClientRect previousRect = ElementUtilities.GetBoundingRect(previousElement);
-
-                        if ((this.visibilities.Count <= i || this.visibilities[i]) && this.ItemControls[i].Visible)
+                        if (previousElement != null)
                         {
-                            left += ((previousRect.Right - previousRect.Left) + (this.gapBetweenSections));
+                            ClientRect previousRect = ElementUtilities.GetBoundingRect(previousElement);
+
+                            if ((this.visibilities.Count <= i || this.visibilities[i]) && this.ItemControls[i].Visible)
+                            {
+                                left += ((previousRect.Right - previousRect.Left) + (this.gapBetweenSections));
+                            }
                         }
                     }
 

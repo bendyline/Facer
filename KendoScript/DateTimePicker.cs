@@ -10,12 +10,12 @@ using System.Runtime.CompilerServices;
 namespace BL.UI.KendoControls
 {
 
-    public class DatePicker : Control
+    public class DateTimePicker : Control
     {
         public event EventHandler Changed;
 
         private Date pendingValue;
-        private Kendo.UI.DatePicker datePicker;
+        private Kendo.UI.DateTimePicker dateTimePicker;
 
         public override string TagName
         {
@@ -30,23 +30,23 @@ namespace BL.UI.KendoControls
         {
             get
             {
-                if (this.datePicker == null)
+                if (this.dateTimePicker == null)
                 {
                     return this.pendingValue;
                 }
 
-                return this.datePicker.Value();
+                return this.dateTimePicker.Value();
             }
 
             set
             {
-                if (this.datePicker == null)
+                if (this.dateTimePicker == null)
                 {
                     pendingValue = value;
                     return;
                 }
 
-                this.datePicker.Value(value);
+                this.dateTimePicker.Value(value);
             }
         }
 
@@ -55,12 +55,12 @@ namespace BL.UI.KendoControls
         {
             get
             {
-                return this.datePicker.Min();
+                return this.dateTimePicker.Min();
             }
 
             set
             {
-                this.datePicker.Min(value);
+                this.dateTimePicker.Min(value);
             }
         }
 
@@ -69,31 +69,34 @@ namespace BL.UI.KendoControls
         {
             get
             {
-                return this.datePicker.Max();
+                return this.dateTimePicker.Max();
             }
 
             set
             {
-                this.datePicker.Max(value);
+                this.dateTimePicker.Max(value);
             }
         }
 
-        public DatePicker()
+        public DateTimePicker()
         {
             KendoUtilities.EnsureKendoBaseUx(this);
             KendoUtilities.EnsureKendoEditable(this);
+
+            this.EnsurePrerequisite("kendo.ui.TimePicker", "js/kendo/kendo.timepicker.min.js");
+            this.EnsurePrerequisite("kendo.ui.DateTimePicker", "js/kendo/kendo.datetimepicker.min.js");
         }
 
         protected override void OnApplyTemplate()
         {
-            Script.Literal("var j = {0}; j.kendoDatePicker(); {1} = j.data('kendoDatePicker')", this.J, datePicker);
+            Script.Literal("var j = {0}; j.kendoDateTimePicker(); {1} = j.data('kendoDateTimePicker')", this.J, dateTimePicker);
 
             if (this.pendingValue != null)
             {
-                this.datePicker.Value(this.pendingValue);
+                this.dateTimePicker.Value(this.pendingValue);
             }
 
-            datePicker.Bind("change", this.HandleDateChange);
+            dateTimePicker.Bind("change", this.HandleDateChange);
         }
 
         private void HandleDateChange(object e)
@@ -106,9 +109,9 @@ namespace BL.UI.KendoControls
 
         public override void Dispose()
         {
-            if (this.datePicker != null)
+            if (this.dateTimePicker != null)
             {
-                this.datePicker.Destroy();
+                this.dateTimePicker.Destroy();
             }
 
             base.Dispose();

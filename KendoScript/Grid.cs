@@ -56,11 +56,11 @@ namespace BL.UI.KendoControls
             }
         }
 
-        public double Height
+        public override int? Height
         {
             get
             {
-                return (double)this.Options.Height;
+                return (int?)this.Options.Height;
             }
 
             set

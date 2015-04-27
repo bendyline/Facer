@@ -156,7 +156,17 @@ namespace BL.UI.KendoControls
 
         protected override void OnApplyTemplate()
         {
-            Script.Literal("var j = {0}; j.kendoColorPicker({2}); {1} = j.data('kendoColorPicker')", this.J, colorPicker, this.options);
+            ElementUtilities.ClearChildElements(this.Element);
+
+            Element e = Document.CreateElement("DIV");
+
+            e.Style.Width = "100%";
+
+            jQueryObject jqueryObject = jQuery.FromObject(e);
+
+            this.Element.AppendChild(e);
+
+            Script.Literal("var j = {0}; j.kendoColorPicker({2}); {1} = j.data('kendoColorPicker')", jqueryObject, colorPicker, this.options);
 
             if (this.colorValue != null)
             {
