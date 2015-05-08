@@ -62,6 +62,9 @@
     <None Include="Properties\FxCop.ruleset" />
     <None Include="Properties\Script.template" />
     <Compile Include="ColorPicker.cs" />
+    <Compile Include="Kendo\UI\MaskedTextBoxOptions.cs" />
+    <Compile Include="Kendo\UI\MaskedTextBox.cs" />
+    <Compile Include="MaskedTextBox.cs" />
     <Compile Include="DateTimePicker.cs" />
     <Compile Include="KendoUtilities.cs" />
     <Compile Include="Kendo\UI\DateTimePicker.cs" />

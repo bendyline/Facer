@@ -17,14 +17,6 @@ namespace BL.UI.KendoControls
         private Date pendingValue;
         private Kendo.UI.DatePicker datePicker;
 
-        public override string TagName
-        {
-            get
-            {
-                return "INPUT";
-            }
-        }
-
         [ScriptName("d_value")]
         public Date Value
         {
@@ -86,7 +78,19 @@ namespace BL.UI.KendoControls
 
         protected override void OnApplyTemplate()
         {
-            Script.Literal("var j = {0}; j.kendoDatePicker(); {1} = j.data('kendoDatePicker')", this.J, datePicker);
+            ElementUtilities.ClearChildElements(this.Element);
+
+            InputElement ie = (InputElement)Document.CreateElement("INPUT");
+
+            ie.Style.Height = "31px";
+            ie.Style.Border = "solid 0px";
+            ie.Style.Width = "220px";
+
+            jQueryObject jqueryObject = jQuery.FromObject(ie);
+
+            this.Element.AppendChild(ie);
+
+            Script.Literal("var j = {0}; j.kendoDatePicker(); {1} = j.data('kendoDatePicker')", jqueryObject, datePicker);
 
             if (this.pendingValue != null)
             {

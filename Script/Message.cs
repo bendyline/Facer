@@ -238,8 +238,18 @@ namespace BL.UI
             
             if (Context.Current.IsSmallFormFactor || Window.InnerWidth < 420)
             {
-                d.MaxWidth = 310;
-                d.MaxHeight = 260;
+                if (content.Length > 80)
+                {
+                    d.MaxWidth = Window.InnerWidth;
+                    d.HorizontalPadding = 0;
+                    d.VerticalPadding = 0;
+                    d.MaxHeight = Window.InnerHeight;
+                }
+                else
+                {
+                    d.MaxWidth = 310;
+                    d.MaxHeight = 260;
+                }
             }
             else
             {

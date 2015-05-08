@@ -186,22 +186,14 @@ namespace BL.UI.KendoControls
 
         public NumericTextBox()
         {
+            KendoUtilities.EnsureKendoBaseUx(this);
+
+            this.EnsurePrerequisite("kendo.ui.NumericTextBox", "js/kendo/kendo.numerictextbox.min.js");
+
             this.options = new NumericTextBoxOptions();
         }
 
-        protected override void OnEnsureElements()
-        {
-            if (this.delayLoad)
-            {
-                Window.SetTimeout(this.Complete, 1);
-            }
-            else
-            {
-                this.Complete();
-            }
-        }
-
-        private void Complete()
+        private void OnApplyTemplate()
         {
             Script.Literal("var j = {0}; j.kendoNumericTextBox({2}); {1} = j.data('kendoNumericTextBox')", this.J, this.numericTextBox, this.options);
 

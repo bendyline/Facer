@@ -294,7 +294,7 @@ namespace BL.UI.App
 
         public void ConsiderShowingSwipeGuidelines()
         {
-            if (this.allowSwiping && Context.Current.IsTouchOnly && !displayedSwipeGuides)
+            if (this.allowSwiping && Context.Current.IsTouchOnly && !displayedSwipeGuides && this.swipeGuideRight != null)
             {
                 this.swipeGuideRight.Style.Display = "block";
                 
@@ -868,6 +868,18 @@ namespace BL.UI.App
                 {
                     return true;
                 }
+
+                Style style = e.SrcElement.CurrentStyle;
+
+                if (    style.Overflow == "auto" ||
+                        style.Overflow == "scroll" ||
+                        style.OverflowY == "auto" ||
+                        style.OverflowY == "scroll" ||
+                        style.OverflowX == "auto" ||
+                        style.OverflowX == "scroll")
+                {
+                    return true;
+                }
             }
 
             return false;
@@ -915,8 +927,8 @@ namespace BL.UI.App
             {
                 return;
             }
-            this.lastMoveEvent = e;
 
+            this.lastMoveEvent = e;
 
             if (this.isDragging)
             {
