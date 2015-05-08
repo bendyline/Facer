@@ -860,7 +860,7 @@ namespace BL.UI.App
                 return true;
             }
 
-            if (e.SrcElement != null)
+            if (!Script.IsNullOrUndefined(e.SrcElement))
             {
                 String targetClass = e.SrcElement.ClassName;
 
@@ -869,16 +869,31 @@ namespace BL.UI.App
                     return true;
                 }
 
-                Style style = e.SrcElement.CurrentStyle;
 
-                if (    style.Overflow == "auto" ||
-                        style.Overflow == "scroll" ||
-                        style.OverflowY == "auto" ||
-                        style.OverflowY == "scroll" ||
-                        style.OverflowX == "auto" ||
-                        style.OverflowX == "scroll")
+                Style style = null;
+
+                Script.Literal(@"
+if ({0}.currentStyle)
+{{
+    {1} = {0}.currentStyle;
+}}
+else if (window.getComputedStyle)
+{{
+    {1} = document.defaultView.getComputedStyle({0}, null);
+}}
+        ", e.SrcElement, style);
+                
+                if (!Script.IsNullOrUndefined(style))
                 {
-                    return true;
+                    if (style.Overflow == "auto" ||
+                            style.Overflow == "scroll" ||
+                            style.OverflowY == "auto" ||
+                            style.OverflowY == "scroll" ||
+                            style.OverflowX == "auto" ||
+                            style.OverflowX == "scroll")
+                    {
+                        return true;
+                    }
                 }
             }
 
