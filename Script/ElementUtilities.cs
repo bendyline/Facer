@@ -129,6 +129,11 @@ namespace BL.UI
             element.InnerHTML = ToStaticHTML(html);
         }
 
+        public static void SetEmptyContent(Element element)
+        {
+            element.InnerHTML = "&#160;";
+        }
+
         public static string ToStaticHTML(String html)
         {
             Script.Literal("if (typeof window.toStaticHTML !== \"undefined\") {{ {0}=window.toStaticHTML({0}); }}", html);

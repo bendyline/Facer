@@ -75,8 +75,8 @@ namespace BL.UI
         {
             base.OnResize();
 
-            this.logList.Element.Style.Height = Window.InnerHeight + "px";
-            this.collapse.Style.PosLeft = Window.InnerWidth - 30;
+            this.logList.Element.Style.Height = Context.Current.BrowserInnerHeight + "px";
+            this.collapse.Style.PosLeft = Context.Current.BrowserInnerWidth - 30;
         }
 
         private void Log_ItemAdded(object sender, LogItemEventArgs e)

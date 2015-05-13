@@ -278,8 +278,8 @@ namespace BL.UI
                 elementStyle.Top = "0px";
                 elementStyle.Left = "0px";
 
-                elementStyle.Width = Window.InnerWidth + "px";
-                elementStyle.Height = Window.InnerHeight + "px";
+                elementStyle.Width = Context.Current.BrowserInnerWidth + "px";
+                elementStyle.Height = Context.Current.BrowserInnerHeight + "px";
             }
 
 
@@ -294,8 +294,8 @@ namespace BL.UI
 
             if (this.panel != null)
             {
-                double width = (Window.InnerWidth - (effectiveHorizontalPadding * 2));
-                double height = (Window.InnerHeight - (effectiveVerticalPadding * 2));
+                double width = (Context.Current.BrowserInnerWidth - (effectiveHorizontalPadding * 2));
+                double height = (Context.Current.BrowserInnerHeight - (effectiveVerticalPadding * 2));
 
                 if (this.maxWidth != null && this.maxWidth < Window.InnerWidth - 20)
                 {
@@ -311,16 +311,16 @@ namespace BL.UI
                 {
                     height = (int)this.maxHeight;
 
-                    if (height > Window.InnerHeight)
+                    if (height > Context.Current.BrowserInnerHeight)
                     {
-                        height = Window.InnerHeight - 20;
+                        height = Context.Current.BrowserInnerHeight - 20;
                     }
                 }
 
                 Style panelStyle = this.panel.Style;
 
-                panelStyle.Left = ((Window.InnerWidth - width) / 2) + "px";
-                panelStyle.Top = ((Window.InnerHeight - height) / 2) + "px";
+                panelStyle.Left = ((Context.Current.BrowserInnerWidth - width) / 2) + "px";
+                panelStyle.Top = ((Context.Current.BrowserInnerHeight - height) / 2) + "px";
                 panelStyle.Width = width + "px";
                 panelStyle.Height = height + "px";
 

@@ -240,10 +240,10 @@ namespace BL.UI
             {
                 if (content.Length > 80)
                 {
-                    d.MaxWidth = Window.InnerWidth;
+                    d.MaxWidth = Context.Current.BrowserInnerWidth;
                     d.HorizontalPadding = 0;
                     d.VerticalPadding = 0;
-                    d.MaxHeight = Window.InnerHeight;
+                    d.MaxHeight = Context.Current.BrowserInnerHeight;
                 }
                 else
                 {
