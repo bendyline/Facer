@@ -232,7 +232,7 @@ namespace BL.UI.KendoControls
 
         public void SaveAsExcel()
         {
-            ControlManager.Current.LoadScript("JSZip", "js/jszip.min.js", this.ContinueSaveAsExcel, null);
+            ControlManager.Current.LoadScript("JSZip", UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + "js/jszip.min.js", this.ContinueSaveAsExcel, null);
         }
 
         private void ContinueSaveAsExcel(IAsyncResult result)
@@ -242,7 +242,7 @@ namespace BL.UI.KendoControls
 
         public void SaveAsPdf()
         {
-            ControlManager.Current.LoadScript("kendo.ui.ProgressBar", "js/kendo/kendo.progressbar.min.js", this.ContinueSaveAsPdf, null);
+            ControlManager.Current.LoadScript("kendo.ui.ProgressBar", UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + "js/kendo/kendo.progressbar.min.js", this.ContinueSaveAsPdf, null);
         }
 
         private void ContinueSaveAsPdf(IAsyncResult result)

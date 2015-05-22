@@ -2,6 +2,7 @@
     You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. */
 
 using BL.Extern;
+using jQueryApi;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -194,8 +195,8 @@ namespace BL.UI.App
                 for (int i = 0; i < this.ItemControls.Count && i <= this.StartIndex; i++)
                 {
                     ClientRect cr = ElementUtilities.GetBoundingRect(this.ItemControls[i].Element);
-
                     this.toX += (cr.Right - cr.Left);
+                    Log.Message("Setting sizing for item " + i + " to " + cr.Right + "|" + cr.Left + " TOX:" + this.toX + " SI: " +this.StartIndex);
                 }
             }
         }
@@ -214,7 +215,7 @@ namespace BL.UI.App
 
             this.fromX = this.itemsBin.ScrollLeft;
 
-            Window.SetTimeout(this.AnimateTick, 10);
+            Window.SetTimeout(this.AnimateTick, 15);
         }
 
         private void AnimateTick()
@@ -227,11 +228,13 @@ namespace BL.UI.App
 
             if (proportion < 1)
             {
-                this.itemsBin.ScrollLeft = (int)(this.fromX + ((this.toX - this.fromX) * proportion));
+                int valu = (int)(this.fromX + ((this.toX - this.fromX) * proportion));
+
+                jQuery.FromObject(this.itemsBin).ScrollLeft(valu);
 
                 this.lastScrollTime = Date.Now;
-
-                Window.SetTimeout(this.AnimateTick, 10);
+                Log.Message("Setting bin left to " + this.itemsBin.ScrollLeft + " TOX:" + this.toX + " FROMX:" + this.fromX + " PROP" + proportion + " VAL" + valu);
+                Window.SetTimeout(this.AnimateTick, 15);
             }
             else
             {

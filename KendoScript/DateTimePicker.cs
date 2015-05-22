@@ -88,7 +88,7 @@ namespace BL.UI.KendoControls
 
             ie.Style.Height = "31px";
             ie.Style.Border = "solid 0px";
-            ie.Style.Width = "220px";
+            ie.Style.Width = "260px";
 
             jQueryObject jqueryObject = jQuery.FromObject(ie);
 

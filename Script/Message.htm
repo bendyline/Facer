@@ -13,7 +13,11 @@
             body
             {
                 padding:20px;
+                padding-bottom:16px;
                 height:100%;
+                display:table;
+                width:100%;
+
             }
             
             #closeButton
@@ -33,9 +37,6 @@
 
             #outerTable
             {
-                display:table;
-                width:100%;
-                height:100%;
             }
 
             #contentRow
@@ -55,12 +56,13 @@
                 height:40px;
                 padding-top:60px;
                 text-align:right;
+                vertical-align:bottom;
             }           
             
             
             #button
             {
-                margin:3px;
+                margin-left:3px;
                 border: solid 1px  #6AC5E8;
                 background-color:#6AC5E8;
                 font-size:medium;
@@ -80,11 +82,11 @@
         </style>
 	</head>
 	<body>        
-        <div id="outerTable">
             <div id="contentRow">
                 <div id="contentArea">
                     <div class="appH2" id="heading">&#160;</div>
-                    <div id="message">&#160;</div>
+                    <div id="message"></div>
+                    <div id="htmlMessage"></div>
                 </div>
             </div>
             <div data-ctl-class="contentRow">
@@ -93,6 +95,6 @@
                     <input type="button" id="cancel" value="Cancel" data-ctl-class="button"/>
                 </div>
             </div>
-        </div>
+
     </body>
 </html>

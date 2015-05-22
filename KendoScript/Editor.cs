@@ -22,6 +22,8 @@ namespace BL.UI.KendoControls
         private String tempValue = null;
         private bool calledImageBrowserCallback = false;
 
+        private Element editorElement = null;
+
         [ScriptName("b_displayInlineToolbar")]
         public bool DisplayInlineToolbar
         {
@@ -33,21 +35,6 @@ namespace BL.UI.KendoControls
             set
             {
                 this.displayInlineToolbar=  value;
-            }
-        }
-
-        public override string TagName
-        {
-            get
-            {
-                if (this.displayInlineToolbar)
-                {
-                    return "TEXTAREA";
-                }
-                else
-                {
-                    return base.TagName;
-                }
             }
         }
 
@@ -63,9 +50,10 @@ namespace BL.UI.KendoControls
             {
                 this.editorHeight = value;
 
-                if (this.editorHeight != null && this.Element != null)
+                if (this.editorHeight != null && this.Element != null && this.editorElement != null)
                 {
                     this.Element.Style.Height = this.editorHeight;
+                    this.editorElement.Style.Height = this.editorHeight;
                 }
             }
         }
@@ -82,9 +70,9 @@ namespace BL.UI.KendoControls
             {
                 this.rows = value;
 
-                if (this.Element != null)
+                if (this.editorElement != null)
                 {
-                    this.Element.SetAttribute("rows", this.rows);
+                    this.editorElement.SetAttribute("rows", this.rows);
                 }
             }
         }
@@ -127,6 +115,7 @@ namespace BL.UI.KendoControls
         public Editor()
         {
             this.DelayApplyTemplate = true;
+
             KendoUtilities.EnsureKendoBaseUx(this);
             KendoUtilities.EnsureKendoData(this);
 
@@ -149,16 +138,6 @@ namespace BL.UI.KendoControls
             this.EnsurePrerequisite("kendo.ui.FileBrowser", "js/kendo/kendo.filebrowser.min.js");
             this.EnsurePrerequisite("kendo.ui.ImageBrowser", "js/kendo/kendo.imagebrowser.min.js");
             this.EnsurePrerequisite("kendo.ui.Editor", "js/kendo/kendo.editor.min.js");
-        }
-
-        protected override void OnEnsureElements()
-        {
-            base.OnEnsureElements();
-
-            if (this.Element != null)
-            {
-                this.Element.Style.Display = "none";
-            }
         }
 
         protected override void OnApplyTemplate()
@@ -185,20 +164,37 @@ namespace BL.UI.KendoControls
 
         private void ApplyTemplateContinue()
         {
-            if (this.editorHeight != null)
+            ElementUtilities.ClearChildElements(this.Element);
+
+            if (this.displayInlineToolbar)
             {
-                this.Element.Style.Height = this.editorHeight;
+                this.editorElement = Document.CreateElement("TEXTAREA");
             }
+            else
+            {
+                this.editorElement = Document.CreateElement("DIV");
+            }
+
+            this.Element.AppendChild(this.editorElement);
 
             if (this.rows != null)
             {
-                this.Element.SetAttribute("rows", this.rows);
+                this.editorElement.SetAttribute("rows", this.rows);
             }
 
-            // kendo would hide our TEXTAREA, so we should set our visibility to false.
-            this.Visible = false;
+            if (this.editorHeight != null)
+            {
+                this.editorElement.Style.Height = this.editorHeight;
+                this.Element.Style.Height = this.editorHeight;
+            }
+            else
+            {
+                this.Element.Style.Height = "100%";
+            }
             
             this.Element.Style.Width = "100%";
+            
+            this.editorElement.Style.Width = "100%";
 
             if (this.editorOptions == null)
             {
@@ -213,8 +209,6 @@ namespace BL.UI.KendoControls
                 {
                     toolsToUse = new String[] 
                     {
-                        "fontName",
-                        "fontSize",
                         "bold",
                         "italic",
                         "underline",
@@ -278,10 +272,12 @@ namespace BL.UI.KendoControls
                 this.editorOptions.Stylesheets = new String[] { Context.Current.ResourceBasePath + "qla/css/qla.css?v=" + Context.Current.VersionToken };
             }
 
-            // note we are try catching to work around an exception issue in IE
-            Script.Literal("var j={0};j.kendoEditor({2});{1}=j.data('kendoEditor')", this.J, this.editor, this.editorOptions);
+            jQueryObject jqo = jQuery.FromObject(this.editorElement);
 
-            this.Element.Style.BorderWidth = "0px";
+            // note we are try catching to work around an exception issue in IE
+            Script.Literal("var j={0};j.kendoEditor({2});{1}=j.data('kendoEditor')", jqo, this.editor, this.editorOptions);
+
+            this.editorElement.Style.BorderWidth = "0px";
 
             if (this.editor != null)
             {
@@ -292,13 +288,16 @@ namespace BL.UI.KendoControls
                     this.editor.Value(this.tempValue);
                 }
             }
-
-            this.Element.Style.Display = "";
         }
 
         public void Blur()
         {
             this.Element.Blur();
+
+            if (this.editorElement != null)
+            {
+                this.editorElement.Blur();
+            }
         }
 
         private void HandleDateChange(object e)

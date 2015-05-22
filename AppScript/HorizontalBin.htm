@@ -12,16 +12,22 @@
                 height:100%;
             }
 
-            #itemsBin
+            #itemsBinOuter
             {
                 height:100%;
                 display:table-cell;
+                width:100%;
+                text-align:center;
+            }
+
+            #itemsBin
+            {
+                height:100%;
                 width:100%;
                 overflow-x:hidden;
                 overflow-y:hidden;
                 text-align:center;
                 -webkit-overflow-scrolling:touch;
-
             }
 
             
@@ -85,10 +91,12 @@
         <div id="outer">
             <div id="outerrow">
                 <div id="leftPaddle"><span class="glyphicon glyphicon-chevron-left" id="backIcon"></span></div>
-                <div id="itemsBin">
-                    <div id="itemsSpacer">
-                        <div id="itemsTable">
-                            <ItemsContainer id='items'/>
+                <div id="itemsBinOuter">
+                    <div id="itemsBin">
+                        <div id="itemsSpacer">
+                            <div id="itemsTable">
+                                <ItemsContainer id='items'/>
+                            </div>
                         </div>
                     </div>
                 </div>

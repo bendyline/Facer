@@ -23,7 +23,10 @@ namespace BL.UI
         private InputElement cancelButton;
 
         [ScriptName("e_message")]
-        private InputElement messageArea;
+        private Element messageArea;
+
+        [ScriptName("e_htmlMessage")]
+        private Element htmlMessageArea;
 
         [ScriptName("e_heading")]
         private InputElement headingArea;
@@ -33,6 +36,7 @@ namespace BL.UI
         private bool isAffirm = false;
         private String content;
         private String heading;
+        private String htmlBody;
 
         private Action affirmAction;
         private Action closeAction;
@@ -67,7 +71,24 @@ namespace BL.UI
                 this.Update();
             }
         }
+
+        public String HtmlBody
+        {
+            get
+            {
+                return this.htmlBody;
+            }
+
+            set
+            {
+                this.htmlBody = value;
+
+
+                this.Update();
+            }
+        }
         
+
         public String Heading
         {
             get
@@ -155,6 +176,19 @@ namespace BL.UI
                 }
             }
             
+            if (this.htmlBody != null)
+            {
+                if (String.IsNullOrEmpty(this.htmlBody))
+                {
+                    this.htmlMessageArea.Style.Display = "none";
+                }
+                else
+                {
+                    ElementUtilities.SetHtml(this.htmlMessageArea, this.htmlBody);
+                    this.htmlMessageArea.Style.Display = "";
+                }
+            }
+            
             if (this.headingArea != null)
             {
                 if (String.IsNullOrEmpty(this.heading))
@@ -199,6 +233,11 @@ namespace BL.UI
             }
         }
 
+        public void FocusOnAffirmButton()
+        {
+            this.okButton.Focus();
+        }
+
         private void HandleOkButton(ElementEvent ee)
         {
             if (this.parentDialog != null)
@@ -216,15 +255,20 @@ namespace BL.UI
             }
         }
 
-        public static void ShowMessage(String heading, String content, Action closeAction)
+        public static void ShowMessage(String heading, String textOnlyContent, Action closeAction)
         {
-            Show(heading, content, MessageType.OKOnly, null, closeAction);
+            Show(heading, textOnlyContent, null, MessageType.OKOnly, null, closeAction);
+        }
+        public static void ShowTextAndHtmlMessage(String heading, String textOnlyContent, String htmlContent, Action closeAction)
+        {
+            Show(heading, textOnlyContent, htmlContent, MessageType.OKOnly, null, closeAction);
         }
 
-        public static void Show(String heading, String content, MessageType messageType, Action affirmAction, Action closeAction)
+        public static void Show(String heading, String textOnlyContent, String htmlBody, MessageType messageType, Action affirmAction, Action closeAction)
         {
             Message m = new Message();
-            m.Content = content;
+            m.Content = textOnlyContent;
+            m.HtmlBody = htmlBody;
             m.Heading = heading;
             m.Type = messageType;
 
@@ -238,7 +282,7 @@ namespace BL.UI
             
             if (Context.Current.IsSmallFormFactor || Window.InnerWidth < 420)
             {
-                if (content.Length > 80)
+                if (textOnlyContent.Length > 80)
                 {
                     d.MaxWidth = Context.Current.BrowserInnerWidth;
                     d.HorizontalPadding = 0;
@@ -253,11 +297,13 @@ namespace BL.UI
             }
             else
             {
-                d.MaxWidth = 400;
-                d.MaxHeight = 260;
+                d.MaxWidth = 440;
+                d.MaxHeight = 280;
             }
             
             d.Show();
+
+            m.FocusOnAffirmButton();
         }
     }
 }

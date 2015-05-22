@@ -76,6 +76,7 @@ namespace BL.UI
         private Action applyVisibleOnFrameAction;
 
         private Date lastScrollTime = Date.Now;
+        private bool isDelayHidden = false;
 
         private ElementEventListener resizeHandler;
         private ElementEventListener mouseOverHandler;
@@ -996,6 +997,9 @@ namespace BL.UI
 
             if (!this.LoadPrerequisites())
             {
+                // this.Element.Style.Display = "none";
+                // this.isDelayHidden = true;
+
                 return;
             }
 
@@ -1010,6 +1014,9 @@ namespace BL.UI
 
             if (templateId != null)
             {
+                // this.Element.Style.Display = "none";
+                // this.isDelayHidden = true;
+
                 TemplateManager.Current.GetTemplateAsync(templateId, this.HandleApplyTemplateContinue, null);
                 return;
             }
@@ -1202,6 +1209,13 @@ namespace BL.UI
         private void CompleteApplyTemplate()
         {
             this.templateWasApplied = true;
+
+            if (this.Visible && this.isDelayHidden)
+            {
+                this.isDelayHidden = false;
+                this.MakeElementVisible();
+            }
+
             this.OnApplyTemplate();
 
             this.OnBaseControlsElementsPostInit();
@@ -1285,9 +1299,13 @@ namespace BL.UI
 
                 thisElement = this.Element;
 
-                if (!this.Visible)
+                if (!this.Visible || this.delayApplyTemplate)
                 {
                     thisElement.Style.Display = "none";
+                }
+                else
+                {
+                    thisElement.Style.Display = "";
                 }
             }
 
@@ -1406,23 +1424,45 @@ namespace BL.UI
             Script.Literal("if (window.requestAnimationFrame) {{window.requestAnimationFrame({0});}}else{{window.setTimeout({0}, 1);}}", this.applyVisibleOnFrameAction);
         }
 
+        private void MakeElementVisible()
+        {
+            if (!this.isDelayHidden)
+            {
+                if (this.oldDisplayMode != null)
+                {
+                    this.Element.Style.Display = this.oldDisplayMode;
+                    this.oldDisplayMode = null;
+                }
+                else
+                {
+                    this.Element.Style.Display = "";
+                }
+            }
+        }
+
+        private void MakeElementHidden()
+        {
+            String displayMode = this.Element.Style.Display;
+
+            if (displayMode != "none" && !String.IsNullOrEmpty(displayMode))
+            {
+                this.oldDisplayMode = displayMode;
+            }
+            else
+            {
+                this.oldDisplayMode = null;
+            }
+
+            this.Element.Style.Display = "none";
+        }
+
         private void ApplyVisibleOnAnimationFrame()
         {
-            Element thisElement = this.Element;
-
-            if (thisElement != null)
+            if (this.Element != null)
             {
                 if (this.visible)
                 {
-                    if (this.oldDisplayMode != null)
-                    {
-                        thisElement.Style.Display = this.oldDisplayMode;
-                        this.oldDisplayMode = null;
-                    }
-                    else
-                    {
-                        thisElement.Style.Display = "";
-                    }
+                    this.MakeElementVisible();
 
                     this.OnVisibilityChanged();
 
@@ -1434,18 +1474,7 @@ namespace BL.UI
                 }
                 else
                 {
-                    String displayMode = thisElement.Style.Display;
-
-                    if (displayMode != "none" && !String.IsNullOrEmpty(displayMode))
-                    {
-                        this.oldDisplayMode = displayMode;
-                    }
-                    else
-                    {
-                        this.oldDisplayMode = null;
-                    }
-
-                    thisElement.Style.Display = "none";
+                    this.MakeElementHidden();
 
                     this.OnVisibilityChanged();
                 }

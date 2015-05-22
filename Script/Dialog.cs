@@ -333,14 +333,20 @@ namespace BL.UI
                 {
                     this.contentContainer.Style.OverflowY = "auto";
                     this.contentContainer.Style.OverflowX = "hidden";
+
+                    int offset = 16;
+
+                    if (!String.IsNullOrEmpty(this.Title))
+                    {
+                        offset += 22;
+                    }
+
                     if (this.DisplayDoneButton)
                     {
-                        contentContainerStyle.Height = (height - 100) + "px";
+                        offset += 78;
                     }
-                    else
-                    {
-                        contentContainerStyle.Height = (height - 38) + "px";
-                    }
+
+                    contentContainerStyle.Height = (height - offset) + "px";
                 }
                 else
                 {
