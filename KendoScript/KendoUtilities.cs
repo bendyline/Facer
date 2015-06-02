@@ -1,6 +1,7 @@
 // IControlFactory.cs
 //
 
+using Kendo.UI;
 using System;
 using System.Collections.Generic;
 
@@ -16,6 +17,25 @@ namespace BL.UI.KendoControls
             {
         //       Script.Literal("{0}=new kendo.mobile.Application(document.body);", mobileApp);
             }
+        }
+
+
+        public static Kendo.UI.Draggable CreateDraggable(Control c, DraggableOptions options)
+        {
+            Draggable draggable = null;
+
+            Script.Literal("{2}={0}.kendoDraggable({1})", c.J, options, draggable);
+
+            return draggable;
+        }
+
+        public static Kendo.UI.DropTarget CreateDropTarget(Control c, DropTargetOptions options)
+        {
+            DropTarget dropTarget = null;
+
+            Script.Literal("{2}={0}.kendoDropTarget({1})", c.J, options, dropTarget);
+
+            return dropTarget;
         }
 
         public static String SafeifyFileName(String fileName)

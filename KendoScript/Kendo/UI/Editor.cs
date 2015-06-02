@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-    using jQueryApi;
+using jQueryApi;
 using System.Html;
 using kendo.data;
 

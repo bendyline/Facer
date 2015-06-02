@@ -41,6 +41,7 @@
     <Compile Include="SliderSwipePanel.cs" />
     <Compile Include="TemplateImageArea.cs" />
     <Compile Include="SwipePanel.cs" />
+    <Compile Include="DropZoneTarget.cs" />
     <Compile Include="ToolBar.cs" />
     <Compile Include="TemplateImageButton.cs" />
     <Compile Include="PaneSettings.cs" />
@@ -65,6 +66,7 @@
     <Content Include="HorizontalBin.htm" />
     <Content Include="SliderSwipePanel.htm" />
     <Content Include="SwipePanel.htm" />
+    <Content Include="DropZoneTarget.htm" />
     <Content Include="ToolBar.htm" />
     <Content Include="TemplateImageButton.htm" />
     <Content Include="ToolBarPopoutButton.htm" />
@@ -75,6 +77,10 @@
     <ProjectReference Include="..\..\Baser\Script\Baser.script.csproj">
       <Project>{674D49A1-23AD-45C2-A93E-B637418B772F}</Project>
       <Name>Baser.script</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KendoScript\Facer.Kendo.script.csproj">
+      <Project>{f14e3b79-f2af-4cb8-9ffb-3052675f64e2}</Project>
+      <Name>Facer.Kendo.script</Name>
     </ProjectReference>
     <ProjectReference Include="..\Script\Facer.script.csproj">
       <Project>{527CAA8A-9E4C-4E54-955C-DC5CB58EA062}</Project>
