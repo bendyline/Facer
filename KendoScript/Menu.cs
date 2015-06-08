@@ -61,6 +61,49 @@ namespace BL.UI.KendoControls
                 this.Options.OpenOnClick = value;
             }
         }
+
+        [ScriptName("s_popupCollision")]
+        public String  PopupCollision
+        {
+            get
+            {
+                return this.Options.PopupCollision;
+            }
+
+            set
+            {
+                this.Options.PopupCollision = value;
+            }
+        }
+
+        [ScriptName("s_orientation")]
+        public String Orientation
+        {
+            get
+            {
+                return this.Options.Orientation;
+            }
+
+            set
+            {
+                this.Options.Orientation = value;
+            }
+        }
+
+        [ScriptName("s_direction")]
+        public String Direction
+        {
+            get
+            {
+                return this.Options.Direction;
+            }
+
+            set
+            {
+                this.Options.Direction = value;
+            }
+        }
+
         public MenuOptions Options
         {
             get

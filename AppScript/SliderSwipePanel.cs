@@ -869,6 +869,10 @@ namespace BL.UI.App
                     return true;
                 }
 
+                if (!String.IsNullOrEmpty(targetClass) && targetClass.IndexOf("grip") > 0)
+                {
+                    return true;
+                }
 
                 Style style = null;
 

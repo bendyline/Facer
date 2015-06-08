@@ -12,5 +12,9 @@ namespace Kendo.UI
     {
         public bool CloseOnClick;
         public bool OpenOnClick;
+        public String PopupCollision;
+
+        public String Direction;
+        public String Orientation;
     }
 }

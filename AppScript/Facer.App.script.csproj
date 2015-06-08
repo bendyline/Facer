@@ -41,7 +41,6 @@
     <Compile Include="SliderSwipePanel.cs" />
     <Compile Include="TemplateImageArea.cs" />
     <Compile Include="SwipePanel.cs" />
-    <Compile Include="DropZoneTarget.cs" />
     <Compile Include="ToolBar.cs" />
     <Compile Include="TemplateImageButton.cs" />
     <Compile Include="PaneSettings.cs" />
@@ -66,7 +65,6 @@
     <Content Include="HorizontalBin.htm" />
     <Content Include="SliderSwipePanel.htm" />
     <Content Include="SwipePanel.htm" />
-    <Content Include="DropZoneTarget.htm" />
     <Content Include="ToolBar.htm" />
     <Content Include="TemplateImageButton.htm" />
     <Content Include="ToolBarPopoutButton.htm" />

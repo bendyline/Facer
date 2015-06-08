@@ -1,9 +1,11 @@
 // IControlFactory.cs
 //
 
+using jQueryApi;
 using Kendo.UI;
 using System;
 using System.Collections.Generic;
+using System.Html;
 
 namespace BL.UI.KendoControls
 {
@@ -20,11 +22,13 @@ namespace BL.UI.KendoControls
         }
 
 
-        public static Kendo.UI.Draggable CreateDraggable(Control c, DraggableOptions options)
+        public static Kendo.UI.Draggable CreateDraggable(Element e, DraggableOptions options)
         {
             Draggable draggable = null;
 
-            Script.Literal("{2}={0}.kendoDraggable({1})", c.J, options, draggable);
+            jQueryObject jqueryObject = jQuery.FromObject(e);
+
+            Script.Literal("{2}={0}.kendoDraggable({1})", jqueryObject, options, draggable);
 
             return draggable;
         }

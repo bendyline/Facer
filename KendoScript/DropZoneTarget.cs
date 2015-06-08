@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 using Kendo.UI;
 using BL.UI.KendoControls;
 
-namespace BL.UI.App
+namespace BL.UI.KendoControls
 {
     public class DropZoneTarget : Control
     {
@@ -18,8 +18,12 @@ namespace BL.UI.App
         [ScriptName("e_dropTop")]
         private Element dropTop;
 
+        private Control nextControl;
+        private Control currentControl;
+        private Control previousControl;
 
         private DropTarget dropTarget;
+        private int expandedHeight = 120;
 
         private bool isActive = false;
         private bool isHoveredOver = false;
@@ -27,6 +31,58 @@ namespace BL.UI.App
         private HeightAnimator activeHeightAnimator;
 
         public event EventHandler DroppedOn;
+
+        public int ExpandedHeight
+        {
+            get
+            {
+                return this.expandedHeight;
+            }
+
+            set
+            {
+                this.expandedHeight = value;
+            }
+        }
+
+        public Control CurrentControl
+        {
+            get
+            {
+                return this.currentControl;
+            }
+
+            set
+            {
+                this.currentControl = value;
+            }
+        }
+
+        public Control NextControl
+        {
+            get
+            {
+                return this.nextControl;
+            }
+
+            set
+            {
+                this.nextControl = value;
+            }
+        }
+
+        public Control PreviousControl
+        {
+            get
+            {
+                return this.previousControl;
+            }
+
+            set
+            {
+                this.previousControl = value;
+            }
+        }
 
         public bool IsActive
         {
@@ -56,6 +112,11 @@ namespace BL.UI.App
                 {
                     oa.From = 1;
                     oa.To = 0;
+
+                    if (this.isHoveredOver)
+                    {
+                        this.UnHover();
+                    }
                 }
 
                 oa.Start(400, null, null);
@@ -77,7 +138,7 @@ namespace BL.UI.App
                     return;
                 }
 
-                this.isHoveredOver= value;
+                this.isHoveredOver = value;
 
                 this.Update();
             }
@@ -85,6 +146,7 @@ namespace BL.UI.App
 
         public DropZoneTarget()
         {
+            KendoUtilities.EnsureKendoBaseUx(this);
         }
 
         protected override void OnApplyTemplate()
@@ -117,7 +179,7 @@ namespace BL.UI.App
 
             this.activeHeightAnimator = new HeightAnimator();
             this.activeHeightAnimator.From = 20;
-            this.activeHeightAnimator.To  = 120;
+            this.activeHeightAnimator.To  = this.expandedHeight;
 
             this.activeHeightAnimator.Element = this.Element;
 
@@ -131,10 +193,16 @@ namespace BL.UI.App
                 return;
             }
 
+            this.UnHover();
+        }
+
+        private void UnHover()
+        {
+
             this.IsHoveredOver = false;
 
             this.activeHeightAnimator = new HeightAnimator();
-            this.activeHeightAnimator.From = 120;
+            this.activeHeightAnimator.From = this.expandedHeight;
             this.activeHeightAnimator.To = 20;
 
             this.activeHeightAnimator.Element = this.Element;
