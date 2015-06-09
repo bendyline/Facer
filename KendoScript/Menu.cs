@@ -128,7 +128,7 @@ namespace BL.UI.KendoControls
 
         protected override void OnApplyTemplate()
         {
-            if (!this.isInitialized && this.ElementsEnsured)
+            if (!this.isInitialized)
             {
                 ElementUtilities.ClearChildElements(this.Element);
 

@@ -63,6 +63,7 @@
     <None Include="Properties\Script.template" />
     <Compile Include="ColorPicker.cs" />
     <Compile Include="DropZoneTarget.cs" />
+    <Compile Include="Kendo\Data\ModelFieldValidation.cs" />
     <Compile Include="Kendo\UI\DropTarget.cs" />
     <Compile Include="Kendo\UI\DropEventArgs.cs" />
     <Compile Include="Kendo\UI\DropTargetOptions.cs" />

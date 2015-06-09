@@ -249,7 +249,7 @@ namespace BL.UI.KendoControls
 
         private void InitControl()
         {
-            if (!this.isInitialized && this.DataSource != null && this.ElementsEnsured)
+            if (!this.isInitialized && this.DataSource != null)
             {
                 ElementUtilities.ClearChildElements(this.Element);
 

@@ -8,12 +8,8 @@ namespace kendo.data
     [IgnoreNamespace]
     [ScriptName("Object")]
     [Imported]
-    public class ModelField
+    public class ModelFieldValidation
     {
-        public bool Editable;
-        public bool Nullable;
-        public String Type;
-        public String From;
-        public ModelFieldValidation Validation;
+        public bool Required;
     }
 }
