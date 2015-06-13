@@ -149,16 +149,6 @@ namespace BL.UI
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-
-            if (this.okButton != null)
-            {
-                this.okButton.AddEventListener("click", this.HandleOkButton, true);
-            }
-
-            if (this.cancelButton != null)
-            {
-                this.cancelButton.AddEventListener("click", this.HandleCancelButton, true);
-            }
         }
 
         protected override void OnUpdate()
@@ -238,6 +228,7 @@ namespace BL.UI
             this.okButton.Focus();
         }
 
+        [ScriptName("v_onOkClick")]
         private void HandleOkButton(ElementEvent ee)
         {
             if (this.parentDialog != null)
@@ -247,6 +238,7 @@ namespace BL.UI
             }
         }
 
+        [ScriptName("v_onCancelClick")]
         private void HandleCancelButton(ElementEvent ee)
         {
             if (this.parentDialog != null)

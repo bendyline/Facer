@@ -93,6 +93,27 @@ namespace BL.UI.App
         public event EventHandler IndexChangeAnimationCompleted;
 
         private const int SwipeNavigationDistanceFromEdge = 104;
+        private String accentColor;
+
+        public String AccentColor
+        {
+            get
+            {
+                return this.accentColor;
+            }
+
+            set
+            {
+                if (this.accentColor == value)
+                {
+                    return;
+                }
+
+                this.accentColor = value;
+
+                this.UpdateAccentColor();
+            }
+        }
 
         public int PreviousIndex
         {
@@ -566,6 +587,16 @@ namespace BL.UI.App
             }
         }
 
+        private void UpdateAccentColor()
+        {
+            if (this.topAreaOuter == null)
+            {
+                return;
+            }
+
+            this.topAreaOuter.Style.BackgroundColor = this.accentColor;
+        }
+
 
         public int GetSlideoutWidth()
         {
@@ -819,7 +850,7 @@ namespace BL.UI.App
             }
             
             this.UpdateLinkBin();
-
+            this.UpdateAccentColor();
             this.ApplyVisibility();
 
             this.UpdateSizingsOverTime();
@@ -864,14 +895,12 @@ namespace BL.UI.App
             {
                 String targetClass = e.SrcElement.ClassName;
 
-                if (!String.IsNullOrEmpty(targetClass) && targetClass.IndexOf("switch-") > 0)
+                if (!String.IsNullOrEmpty(targetClass))
                 {
-                    return true;
-                }
-
-                if (!String.IsNullOrEmpty(targetClass) && targetClass.IndexOf("grip") > 0)
-                {
-                    return true;
+                    if (targetClass.IndexOf("switch-") > 0 || targetClass.IndexOf("grip") > 0 || targetClass.IndexOf("handle") > 0)
+                    {
+                        return true;
+                    }
                 }
 
                 Style style = null;

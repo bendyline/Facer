@@ -297,24 +297,11 @@ namespace BL.UI
                 double width = (Context.Current.BrowserInnerWidth - (effectiveHorizontalPadding * 2));
                 double height = (Context.Current.BrowserInnerHeight - (effectiveVerticalPadding * 2));
 
-                if (this.maxWidth != null && this.maxWidth < Window.InnerWidth - 20)
+                // if the max width and height are substantially less than the "whole window" general size, use that size instead
+                if (this.maxWidth != null && this.maxHeight != null && this.maxWidth < (width - 40) && this.maxHeight < (height - 40))
                 {
                     width = (int)this.maxWidth;
-
-                    if (width > Window.InnerWidth)
-                    {
-                        width = Window.InnerWidth - 20;
-                    }
-                }
-
-                if (this.maxHeight != null && this.maxHeight < Window.InnerHeight - 20)
-                {
                     height = (int)this.maxHeight;
-
-                    if (height > Context.Current.BrowserInnerHeight)
-                    {
-                        height = Context.Current.BrowserInnerHeight - 20;
-                    }
                 }
 
                 Style panelStyle = this.panel.Style;
