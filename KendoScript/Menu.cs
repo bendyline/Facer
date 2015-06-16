@@ -121,7 +121,7 @@ namespace BL.UI.KendoControls
         {
             KendoUtilities.EnsureKendoBaseUx(this);
 
-            this.EnsurePrerequisite("kendo.ui.Menu", "js/kendo/kendo.menu.min.js");
+            this.EnsureScript("kendo.ui.Menu", "js/kendo/kendo.menu.min.js");
 
             this.menuOptions = new MenuOptions();
         }

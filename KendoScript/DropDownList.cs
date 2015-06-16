@@ -208,9 +208,9 @@ namespace BL.UI.KendoControls
             KendoUtilities.EnsureKendoBaseUx(this);
             KendoUtilities.EnsureKendoData(this);
 
-            this.EnsurePrerequisite("kendo.mobile.ui.Scroller", "js/kendo/kendo.mobile.scroller.min.js");
-            this.EnsurePrerequisite("kendo.ui.List", "js/kendo/kendo.list.min.js");
-            this.EnsurePrerequisite("kendo.ui.DropDownList", "js/kendo/kendo.dropdownlist.min.js");
+            this.EnsureScript("kendo.mobile.ui.Scroller", "js/kendo/kendo.mobile.scroller.min.js");
+            this.EnsureScript("kendo.ui.List", "js/kendo/kendo.list.min.js");
+            this.EnsureScript("kendo.ui.DropDownList", "js/kendo/kendo.dropdownlist.min.js");
 
             this.dropDownListOptions = new DropDownListOptions();
         }

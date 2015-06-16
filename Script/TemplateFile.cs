@@ -72,10 +72,14 @@ namespace BL.UI
 
             if (isNew)
             {
-                ElementCollection ec = Document.GetElementsByTagName("LINK");
                 String cssPath = UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + rootCssPath + this.fileName + ".t.css?v=" + Context.Current.VersionToken;
-                bool foundCss = false;
+                ControlManager.Current.EnsureStylesheet(cssPath);
 
+                /*
+                ElementCollection ec = Document.GetElementsByTagName("LINK");
+                 
+                bool foundCss = false;
+                
                 for (int i = 0; i < ec.Length; i++ )
                 {
                     Element e = ec[i];
@@ -96,7 +100,7 @@ namespace BL.UI
                     e.SetAttribute("href", cssPath);
 
                     Document.GetElementsByTagName("head")[0].AppendChild(e);
-                }
+                }*/
 
                 jQuery.GetJson(UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + rootTemplatePath + this.fileName + ".t.json?v=" + Context.Current.VersionToken, new AjaxCallback<object>(this.TemplatesRetrieved));
             }

@@ -11,22 +11,22 @@ namespace BL
 {
     public class ContentItemControl : Control
     {
-        private String title;
+        private String text;
 
-        [ScriptName("e_title")]
-        private Element titleElement;
+        [ScriptName("e_text")]
+        private Element textElement;
 
-        [ScriptName("s_title")]
-        public String Title
+        [ScriptName("s_text")]
+        public String Text
         {
             get
             {
-                return this.title;
+                return this.text;
             }
 
             set
             {
-                this.title = value
+                this.text = value
 ;
                 this.OnUpdate();
             }
@@ -36,9 +36,9 @@ namespace BL
         {
             base.OnUpdate();
 
-            if (this.titleElement != null)
+            if (this.textElement != null)
             {
-                ElementUtilities.SetText(this.titleElement, this.title);
+                ElementUtilities.SetText(this.textElement, this.text);
             }
         }
     }

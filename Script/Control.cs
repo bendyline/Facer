@@ -67,8 +67,10 @@ namespace BL.UI
         private TemplateParser controlLoader = null;
 
         private Dictionary<String, String> prerequisiteScripts = null;
+        private List<String> prerequisiteStylesheets = null;
         private int prerequisiteScriptsRequested = 0;
-        private bool hasRequestedPrerequisites = false;
+        private bool hasRequestedPrerequisiteScripts = false;
+        private bool hasRequestedPrerequisiteStyleSheets = false;
         private bool templateApplyRequested = false;
         private bool enqueueUpdates = false;
         private bool updatePending = false;
@@ -914,7 +916,7 @@ namespace BL.UI
 
         }
         
-        public void EnsurePrerequisite(String scriptItem, String scriptPath)
+        public void EnsureScript(String scriptItem, String scriptPath)
         {
             if (this.prerequisiteScripts == null)
             {
@@ -922,6 +924,16 @@ namespace BL.UI
             }
 
             this.prerequisiteScripts[scriptItem] = scriptPath;
+        }
+
+        public void EnsureStylesheet(String stylesheetPath)
+        {
+            if (this.prerequisiteStylesheets == null)
+            {
+                this.prerequisiteStylesheets = new List<string>();
+            }
+
+            this.prerequisiteStylesheets.Add(stylesheetPath);
         }
 
         public void CreateChildControls()
@@ -941,9 +953,19 @@ namespace BL.UI
 
         public bool LoadPrerequisites()
         {
-            if (this.prerequisiteScripts != null && !this.hasRequestedPrerequisites)
+            if (this.prerequisiteStylesheets != null && !this.hasRequestedPrerequisiteStyleSheets)
             {
-                this.hasRequestedPrerequisites = true;
+                this.hasRequestedPrerequisiteStyleSheets = true;
+                
+                foreach (String sheet in this.prerequisiteStylesheets)
+                {
+                    ControlManager.Current.EnsureStylesheet(sheet);
+                }
+            }
+
+            if (this.prerequisiteScripts != null && !this.hasRequestedPrerequisiteScripts)
+            {
+                this.hasRequestedPrerequisiteScripts = true;
                 bool foundAllScripts = true;
 
                 this.prerequisiteScriptsRequested = 0;
@@ -967,7 +989,12 @@ namespace BL.UI
 
                     adjust += "?v=" + Context.Current.VersionToken;
 
-                    String path = UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + adjust;
+                    String path = adjust;
+
+                    if (!UrlUtilities.IsPathAbsolute(path))
+                    {
+                        path = UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + adjust;
+                    }
 
                     ControlManager.Current.LoadScript(script.Key, path, this.ScriptLoadedContinue, path);
                 }
@@ -988,7 +1015,7 @@ namespace BL.UI
                 return;
             }
 
-            if (this.hasRequestedPrerequisites && this.prerequisiteScriptsRequested > 0)
+            if (this.hasRequestedPrerequisiteScripts && this.prerequisiteScriptsRequested > 0)
             {
                 return;
             }
@@ -1079,6 +1106,17 @@ namespace BL.UI
                 if (!ControlManager.Current.IsLoadedScriptItem(script.Key))
                 {
                     return false;
+                }
+            }
+
+            if (this.prerequisiteStylesheets != null)
+            {
+                foreach (String s in this.prerequisiteStylesheets)
+                {
+                    if (!ControlManager.Current.HasStylesheet(s))
+                    {Debug.Fail("Stylesheet not loaded");
+                        return false;
+                    }
                 }
             }
 

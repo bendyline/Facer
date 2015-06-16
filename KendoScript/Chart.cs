@@ -41,7 +41,7 @@ namespace BL.UI.KendoControls
             KendoUtilities.EnsureKendoData(this);
             KendoUtilities.EnsureKendoDataViz(this);
 
-            this.EnsurePrerequisite("kendo.dataviz.ui.Chart", "js/kendo/kendo.dataviz.chart.min.js");
+            this.EnsureScript("kendo.dataviz.ui.Chart", "js/kendo/kendo.dataviz.chart.min.js");
         }
 
         protected override void OnApplyTemplate()

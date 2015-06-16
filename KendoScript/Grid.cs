@@ -124,42 +124,42 @@ namespace BL.UI.KendoControls
             KendoUtilities.EnsureKendoBaseUx(this);
             KendoUtilities.EnsureKendoData(this);
 
-            this.EnsurePrerequisite("kendo.ui.ColumnSorter", "js/kendo/kendo.columnsorter.min.js");
+            this.EnsureScript("kendo.ui.ColumnSorter", "js/kendo/kendo.columnsorter.min.js");
 
             KendoUtilities.EnsureKendoEditable(this);
-            this.EnsurePrerequisite("kendo.observable", "js/kendo/kendo.binder.min.js");
+            this.EnsureScript("kendo.observable", "js/kendo/kendo.binder.min.js");
 
-            this.EnsurePrerequisite("kendo.ui.Window", "js/kendo/kendo.window.min.js");
+            this.EnsureScript("kendo.ui.Window", "js/kendo/kendo.window.min.js");
 
-            this.EnsurePrerequisite("kendo.mobile.ui.Scroller", "js/kendo/kendo.mobile.scroller.min.js");
-            this.EnsurePrerequisite("kendo.ui.List", "js/kendo/kendo.list.min.js");
-            this.EnsurePrerequisite("kendo.View", "js/kendo/kendo.view.min.js");
-            this.EnsurePrerequisite("kendo.ui.DropDownList", "js/kendo/kendo.dropdownlist.min.js");
-            this.EnsurePrerequisite("kendo.mobile.ui.Scroller", "js/kendo/kendo.mobile.scroller.min.js");
-            this.EnsurePrerequisite("kendo.drawing.Surface", "js/kendo/kendo.drawing.min.js");
+            this.EnsureScript("kendo.mobile.ui.Scroller", "js/kendo/kendo.mobile.scroller.min.js");
+            this.EnsureScript("kendo.ui.List", "js/kendo/kendo.list.min.js");
+            this.EnsureScript("kendo.View", "js/kendo/kendo.view.min.js");
+            this.EnsureScript("kendo.ui.DropDownList", "js/kendo/kendo.dropdownlist.min.js");
+            this.EnsureScript("kendo.mobile.ui.Scroller", "js/kendo/kendo.mobile.scroller.min.js");
+            this.EnsureScript("kendo.drawing.Surface", "js/kendo/kendo.drawing.min.js");
 
-            this.EnsurePrerequisite("kendo.ui.Selectable", "js/kendo/kendo.selectable.min.js");
-            this.EnsurePrerequisite("kendo.ui.Menu", "js/kendo/kendo.menu.min.js");
-            this.EnsurePrerequisite("kendo.ui.FilterMenu", "js/kendo/kendo.filtermenu.min.js");
-            this.EnsurePrerequisite("kendo.ui.ColumnMenu", "js/kendo/kendo.columnmenu.min.js");
-            this.EnsurePrerequisite("kendo.ui.Groupable", "js/kendo/kendo.groupable.min.js");
-            this.EnsurePrerequisite("kendo.ui.Pager", "js/kendo/kendo.pager.min.js");
-            this.EnsurePrerequisite("kendo.ui.Sortable", "js/kendo/kendo.sortable.min.js");
-            this.EnsurePrerequisite("kendo.ui.Reorderable", "js/kendo/kendo.reorderable.min.js");
-            this.EnsurePrerequisite("kendo.ui.Resizable", "js/kendo/kendo.resizable.min.js");
+            this.EnsureScript("kendo.ui.Selectable", "js/kendo/kendo.selectable.min.js");
+            this.EnsureScript("kendo.ui.Menu", "js/kendo/kendo.menu.min.js");
+            this.EnsureScript("kendo.ui.FilterMenu", "js/kendo/kendo.filtermenu.min.js");
+            this.EnsureScript("kendo.ui.ColumnMenu", "js/kendo/kendo.columnmenu.min.js");
+            this.EnsureScript("kendo.ui.Groupable", "js/kendo/kendo.groupable.min.js");
+            this.EnsureScript("kendo.ui.Pager", "js/kendo/kendo.pager.min.js");
+            this.EnsureScript("kendo.ui.Sortable", "js/kendo/kendo.sortable.min.js");
+            this.EnsureScript("kendo.ui.Reorderable", "js/kendo/kendo.reorderable.min.js");
+            this.EnsureScript("kendo.ui.Resizable", "js/kendo/kendo.resizable.min.js");
 
-            this.EnsurePrerequisite("kendo.mobile.ui.Loader", "js/kendo/kendo.mobile.loader.min.js");
-            this.EnsurePrerequisite("kendo.mobile.ui.View", "js/kendo/kendo.mobile.view.min.js");
-            this.EnsurePrerequisite("kendo.mobile.ui.Pane", "js/kendo/kendo.mobile.pane.min.js");
-            this.EnsurePrerequisite("kendo.mobile.ui.Shim", "js/kendo/kendo.mobile.shim.min.js");
-            this.EnsurePrerequisite("kendo.mobile.ui.PopOver", "js/kendo/kendo.mobile.popover.min.js");
-            this.EnsurePrerequisite("kendo.mobile.ui.ActionSheet", "js/kendo/kendo.mobile.actionsheet.min.js");
+            this.EnsureScript("kendo.mobile.ui.Loader", "js/kendo/kendo.mobile.loader.min.js");
+            this.EnsureScript("kendo.mobile.ui.View", "js/kendo/kendo.mobile.view.min.js");
+            this.EnsureScript("kendo.mobile.ui.Pane", "js/kendo/kendo.mobile.pane.min.js");
+            this.EnsureScript("kendo.mobile.ui.Shim", "js/kendo/kendo.mobile.shim.min.js");
+            this.EnsureScript("kendo.mobile.ui.PopOver", "js/kendo/kendo.mobile.popover.min.js");
+            this.EnsureScript("kendo.mobile.ui.ActionSheet", "js/kendo/kendo.mobile.actionsheet.min.js");
 
-            this.EnsurePrerequisite("kendo.ooxml.Worksheet", "js/kendo/kendo.ooxml.min.js");
-            this.EnsurePrerequisite("kendo.pdf.Document", "js/kendo/kendo.pdf.min.js");
-            this.EnsurePrerequisite("kendo.ExcelMixin", "js/kendo/kendo.excel.min.js");
+            this.EnsureScript("kendo.ooxml.Worksheet", "js/kendo/kendo.ooxml.min.js");
+            this.EnsureScript("kendo.pdf.Document", "js/kendo/kendo.pdf.min.js");
+            this.EnsureScript("kendo.ExcelMixin", "js/kendo/kendo.excel.min.js");
 
-            this.EnsurePrerequisite("kendo.ui.Grid", "js/kendo/kendo.grid.min.js");
+            this.EnsureScript("kendo.ui.Grid", "js/kendo/kendo.grid.min.js");
 
         }
 

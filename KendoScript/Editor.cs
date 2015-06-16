@@ -119,25 +119,25 @@ namespace BL.UI.KendoControls
             KendoUtilities.EnsureKendoBaseUx(this);
             KendoUtilities.EnsureKendoData(this);
 
-            this.EnsurePrerequisite("kendo.mobile.ui.Scroller", "js/kendo/kendo.mobile.scroller.min.js");
-            this.EnsurePrerequisite("kendo.ui.List", "js/kendo/kendo.list.min.js");
-            this.EnsurePrerequisite("kendo.ui.Selectable", "js/kendo/kendo.selectable.min.js");
+            this.EnsureScript("kendo.mobile.ui.Scroller", "js/kendo/kendo.mobile.scroller.min.js");
+            this.EnsureScript("kendo.ui.List", "js/kendo/kendo.list.min.js");
+            this.EnsureScript("kendo.ui.Selectable", "js/kendo/kendo.selectable.min.js");
 
-            this.EnsurePrerequisite("kendo.observable", "js/kendo/kendo.binder.min.js");
+            this.EnsureScript("kendo.observable", "js/kendo/kendo.binder.min.js");
 
             KendoUtilities.EnsureKendoEditable(this);
 
-            this.EnsurePrerequisite("kendo.ui.Slider", "js/kendo/kendo.slider.min.js");
-            this.EnsurePrerequisite("kendo.ui.Resizable", "js/kendo/kendo.resizable.min.js");
-            this.EnsurePrerequisite("kendo.ui.Upload", "js/kendo/kendo.upload.min.js");
-            this.EnsurePrerequisite("kendo.ui.Window", "js/kendo/kendo.window.min.js");
-            this.EnsurePrerequisite("kendo.ui.DropDownList", "js/kendo/kendo.dropdownlist.min.js");
-            this.EnsurePrerequisite("kendo.ui.ComboBox", "js/kendo/kendo.combobox.min.js");
-            this.EnsurePrerequisite("kendo.ui.ColorPicker", "js/kendo/kendo.colorpicker.min.js");
-            this.EnsurePrerequisite("kendo.ui.ListView", "js/kendo/kendo.listview.min.js");
-            this.EnsurePrerequisite("kendo.ui.FileBrowser", "js/kendo/kendo.filebrowser.min.js");
-            this.EnsurePrerequisite("kendo.ui.ImageBrowser", "js/kendo/kendo.imagebrowser.min.js");
-            this.EnsurePrerequisite("kendo.ui.Editor", "js/kendo/kendo.editor.min.js");
+            this.EnsureScript("kendo.ui.Slider", "js/kendo/kendo.slider.min.js");
+            this.EnsureScript("kendo.ui.Resizable", "js/kendo/kendo.resizable.min.js");
+            this.EnsureScript("kendo.ui.Upload", "js/kendo/kendo.upload.min.js");
+            this.EnsureScript("kendo.ui.Window", "js/kendo/kendo.window.min.js");
+            this.EnsureScript("kendo.ui.DropDownList", "js/kendo/kendo.dropdownlist.min.js");
+            this.EnsureScript("kendo.ui.ComboBox", "js/kendo/kendo.combobox.min.js");
+            this.EnsureScript("kendo.ui.ColorPicker", "js/kendo/kendo.colorpicker.min.js");
+            this.EnsureScript("kendo.ui.ListView", "js/kendo/kendo.listview.min.js");
+            this.EnsureScript("kendo.ui.FileBrowser", "js/kendo/kendo.filebrowser.min.js");
+            this.EnsureScript("kendo.ui.ImageBrowser", "js/kendo/kendo.imagebrowser.min.js");
+            this.EnsureScript("kendo.ui.Editor", "js/kendo/kendo.editor.min.js");
         }
 
         protected override void OnApplyTemplate()

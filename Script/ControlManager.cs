@@ -4,6 +4,7 @@
 using jQueryApi;
 using System;
 using System.Collections.Generic;
+using System.Html;
 
 namespace BL.UI
 {
@@ -28,6 +29,44 @@ namespace BL.UI
             this.loadersByScript = new Dictionary<string, ScriptLoader>();
             this.factoriesByShortNamespace = new Dictionary<string, IControlFactory>();
             this.scriptItemStatuses = new Dictionary<string, bool>();
+        }
+
+        public bool HasStylesheet(String stylesheetPath)
+        {
+            ElementCollection ec = Document.GetElementsByTagName("LINK");
+            String cssPath = stylesheetPath.ToLowerCase().Trim();
+
+            for (int i = 0; i < ec.Length; i++ )
+            {
+                Element e = ec[i];
+
+                String href = (String)e.GetAttribute("href");
+
+                if (href != null)
+                {
+                    href = href.ToLowerCase().Trim();
+
+                    if (href == cssPath)
+                    {
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+        }
+
+        public void EnsureStylesheet(String stylesheetPath)
+        {
+            if (!HasStylesheet(stylesheetPath))
+            {
+                Element e = Document.CreateElement("LINK");
+                e.SetAttribute("rel", "stylesheet");
+                e.SetAttribute("type", "text/css");
+                e.SetAttribute("href", stylesheetPath);
+
+                Document.GetElementsByTagName("head")[0].AppendChild(e);
+            }
         }
 
         public void CreateControlAsync(String namespaceName, String typeName, AsyncCallback callback, object state)

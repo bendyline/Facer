@@ -886,7 +886,7 @@ namespace BL.UI.App
 
             object contentEditable = e.Target.GetAttribute("contenteditable");
 
-            if (targetTagName == "input" || targetTagName == "select" || targetTagName == "textarea" || (String)contentEditable == "true")
+            if (targetTagName == "input"||  targetTagName == "img" || targetTagName == "select" || targetTagName == "textarea" || (String)contentEditable == "true")
             {
                 return true;
             }
@@ -897,7 +897,7 @@ namespace BL.UI.App
 
                 if (!String.IsNullOrEmpty(targetClass))
                 {
-                    if (targetClass.IndexOf("switch-") > 0 || targetClass.IndexOf("grip") > 0 || targetClass.IndexOf("handle") > 0)
+                    if (targetClass.IndexOf("switch-") > 0 || targetClass.IndexOf("grip") > 0 || targetClass.IndexOf("leaflet") > 0 || targetClass.IndexOf("handle") > 0)
                     {
                         return true;
                     }

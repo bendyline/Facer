@@ -61,7 +61,7 @@ namespace BL.UI.KendoControls
             KendoUtilities.EnsureKendoBaseUx(this);
             KendoUtilities.EnsureKendoDataViz(this);
 
-            this.EnsurePrerequisite("kendo.dataviz.ui.QRCode", "js/kendo/kendo.dataviz.qrcode.min.js");
+            this.EnsureScript("kendo.dataviz.ui.QRCode", "js/kendo/kendo.dataviz.qrcode.min.js");
         }
 
         protected override void OnApplyTemplate()

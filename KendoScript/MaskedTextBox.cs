@@ -68,7 +68,7 @@ namespace BL.UI.KendoControls
 
         public MaskedTextBox()
         {
-            this.EnsurePrerequisite("kendo.ui.MaskedTextBox", "js/kendo/kendo.maskedtextbox.min.js");
+            this.EnsureScript("kendo.ui.MaskedTextBox", "js/kendo/kendo.maskedtextbox.min.js");
 
             this.options = new MaskedTextBoxOptions();
         }

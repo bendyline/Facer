@@ -76,8 +76,8 @@ namespace BL.UI.KendoControls
             KendoUtilities.EnsureKendoBaseUx(this);
             KendoUtilities.EnsureKendoEditable(this);
 
-            this.EnsurePrerequisite("kendo.ui.TimePicker", "js/kendo/kendo.timepicker.min.js");
-            this.EnsurePrerequisite("kendo.ui.DateTimePicker", "js/kendo/kendo.datetimepicker.min.js");
+            this.EnsureScript("kendo.ui.TimePicker", "js/kendo/kendo.timepicker.min.js");
+            this.EnsureScript("kendo.ui.DateTimePicker", "js/kendo/kendo.datetimepicker.min.js");
         }
 
         protected override void OnApplyTemplate()

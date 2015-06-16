@@ -280,7 +280,14 @@ namespace BL.UI
 
                                 if (id != null)
                                 {
-                                    c.Id = parentId + "-" + id;
+                                    if (!String.IsNullOrEmpty(parentId))
+                                    {
+                                        c.Id = parentId + "-" + id;
+                                    }
+                                    else
+                                    {
+                                        c.Id = id;
+                                    }
                                 }
 
                                 // if we're within a <Content> or <Items> section, save the control

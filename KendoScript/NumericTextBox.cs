@@ -188,7 +188,7 @@ namespace BL.UI.KendoControls
         {
             KendoUtilities.EnsureKendoBaseUx(this);
 
-            this.EnsurePrerequisite("kendo.ui.NumericTextBox", "js/kendo/kendo.numerictextbox.min.js");
+            this.EnsureScript("kendo.ui.NumericTextBox", "js/kendo/kendo.numerictextbox.min.js");
 
             this.options = new NumericTextBoxOptions();
         }

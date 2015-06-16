@@ -148,8 +148,8 @@ namespace BL.UI.KendoControls
         {
             KendoUtilities.EnsureKendoBaseUx(this);
 
-            this.EnsurePrerequisite("kendo.ui.Slider", "js/kendo/kendo.slider.min.js");
-            this.EnsurePrerequisite("kendo.ui.ColorPicker", "js/kendo/kendo.colorpicker.min.js");
+            this.EnsureScript("kendo.ui.Slider", "js/kendo/kendo.slider.min.js");
+            this.EnsureScript("kendo.ui.ColorPicker", "js/kendo/kendo.colorpicker.min.js");
 
             this.options = new ColorPickerOptions();
         }
