@@ -79,6 +79,7 @@ namespace BL.UI
 
         private Date lastScrollTime = Date.Now;
         private bool isDelayHidden = false;
+        private bool isRetrievingTemplate = false;
 
         private ElementEventListener resizeHandler;
         private ElementEventListener mouseOverHandler;
@@ -170,6 +171,7 @@ namespace BL.UI
 
                 if (templateWasAppliedBefore)
                 {
+                    this.isRetrievingTemplate = false;
                     this.ApplyTemplate();
                 }
 
@@ -1044,7 +1046,11 @@ namespace BL.UI
                 // this.Element.Style.Display = "none";
                 // this.isDelayHidden = true;
 
-                TemplateManager.Current.GetTemplateAsync(templateId, this.HandleApplyTemplateContinue, null);
+                if (!this.isRetrievingTemplate)
+                {
+                    isRetrievingTemplate = true;
+                    TemplateManager.Current.GetTemplateAsync(templateId, this.HandleApplyTemplateContinue, null);
+                }
                 return;
             }
 
@@ -1054,6 +1060,7 @@ namespace BL.UI
 
         private void HandleApplyTemplateContinue(IAsyncResult result)
         {
+            this.isRetrievingTemplate = false;
             Template t = (Template)result.Data;
 
             if (t != null)

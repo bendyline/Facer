@@ -97,6 +97,8 @@ namespace BL.UI
 
                     callback(cr);
                 }
+
+                return;
             }
 
             bool isNew = false;

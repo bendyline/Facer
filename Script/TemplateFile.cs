@@ -52,7 +52,6 @@ namespace BL.UI
             }
         }
 
-
         public TemplateFile(TemplateManager templateManager)
         {
             this.tm = templateManager;
@@ -60,6 +59,16 @@ namespace BL.UI
 
         public void EnsureRetrieved(String id, AsyncCallback callback, object state)
         {
+            if (this.isLoaded)
+            {
+                if (callback != null)
+                {
+                    CallbackResult.NotifySynchronousSuccess(callback, state, this);
+                }
+
+                return;
+            }
+
             bool isNew = false;
 
             if (this.operation == null)
@@ -73,34 +82,8 @@ namespace BL.UI
             if (isNew)
             {
                 String cssPath = UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + rootCssPath + this.fileName + ".t.css?v=" + Context.Current.VersionToken;
-                ControlManager.Current.EnsureStylesheet(cssPath);
-
-                /*
-                ElementCollection ec = Document.GetElementsByTagName("LINK");
-                 
-                bool foundCss = false;
                 
-                for (int i = 0; i < ec.Length; i++ )
-                {
-                    Element e = ec[i];
-
-                    String href = (String)e.GetAttribute("href");
-
-                    if (href == cssPath)
-                    {
-                        foundCss = true;
-                    }
-                }
-
-                if (!foundCss)
-                {
-                    Element e = Document.CreateElement("LINK");
-                    e.SetAttribute("rel", "stylesheet");
-                    e.SetAttribute("type", "text/css");
-                    e.SetAttribute("href", cssPath);
-
-                    Document.GetElementsByTagName("head")[0].AppendChild(e);
-                }*/
+                ControlManager.Current.EnsureStylesheet(cssPath);
 
                 jQuery.GetJson(UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + rootTemplatePath + this.fileName + ".t.json?v=" + Context.Current.VersionToken, new AjaxCallback<object>(this.TemplatesRetrieved));
             }
@@ -116,7 +99,7 @@ namespace BL.UI
             {
                 List<Template> templates = (List<Template>)data;
                 this.tm.AddTemplates(templates);
-                this.IsLoaded = true;
+                this.isLoaded = true;
             }
 
             Operation o = this.operation;

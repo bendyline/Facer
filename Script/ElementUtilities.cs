@@ -121,7 +121,10 @@ namespace BL.UI
                 element.RemoveChild(element.FirstChild);
             }
 
-            element.AppendChild(Document.CreateTextNode(text));
+            if (text != null)
+            {
+                element.AppendChild(Document.CreateTextNode(text));
+            }
         }
 
         public static void SetHtml(Element element, String html)
