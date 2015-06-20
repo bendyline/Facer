@@ -10,6 +10,7 @@ namespace BL.UI.App
     public class TabBarButton : ContentItemControl
     {
         public event EventHandler Clicked;
+
         private bool toggled;
 
         [ScriptName("b_toggled")]
