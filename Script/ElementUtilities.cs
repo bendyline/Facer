@@ -13,6 +13,11 @@ namespace BL.UI
     {
         public static void ClearChildElements(Element e)
         {
+            if (e == null)
+            {
+                return;
+            }
+
             while (e.ChildNodes.Length > 0)
             {
                 e.RemoveChild(e.ChildNodes[0]);

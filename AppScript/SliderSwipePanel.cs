@@ -1201,8 +1201,8 @@ else if (window.getComputedStyle)
 
             if (this.swipeNavigation != null && elementVisibleRight > 0)
             {
-                this.swipeNavigation.Style.Left = ((elementWidth - 160) / 2).ToString() + "px";
-                this.swipeNavigation.Style.Top = (cr.Top + SwipeNavigationDistanceFromEdge).ToString() + "px";
+                this.swipeNavigation.Style.Left = ((elementWidth - 200) / 2).ToString() + "px";
+                this.swipeNavigation.Style.Top = (elementVisibleBottom - SwipeNavigationDistanceFromEdge).ToString() + "px";
             }
 
             int index = 0;
