@@ -32,8 +32,21 @@ namespace BL.UI.KendoControls
         private EditorOptions editorOptions;
 
         private EventHandler popupChanged;
-
+        private String editCta;
         private bool readOnly = false;
+
+        public String EditCta
+        {
+            get
+            {
+                return this.editCta;
+            }
+
+            set
+            {
+                this.editCta = value;
+            }
+        }
 
         public bool ReadOnly
         {
@@ -184,7 +197,14 @@ namespace BL.UI.KendoControls
             }
             else
             {
-                ElementUtilities.SetText(this.cta, "(click to edit)");
+                if (String.IsNullOrEmpty(this.editCta))
+                {
+                    ElementUtilities.SetText(this.cta, "(tap to edit)");
+                }
+                else
+                {
+                    ElementUtilities.SetText(this.cta, this.editCta);
+                }
             }
         }
 

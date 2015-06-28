@@ -23,6 +23,9 @@ namespace BL.UI
         [ScriptName("e_topBar")]
         public Element topBar;
 
+        [ScriptName("e_topInterior")]
+        public Element topInterior;
+
         [ScriptName("e_bottomBar")]
         public Element bottomBar;
 
@@ -285,6 +288,8 @@ namespace BL.UI
 
             int effectiveHorizontalPadding = this.horizontalPadding;
             int effectiveVerticalPadding = this.verticalPadding;
+
+            this.topInterior.Style.Height = (40 + Context.Current.FullScreenTopBufferHeight).ToString() + "px";
 
             if (Context.Current.IsSmallFormFactor)
             {
