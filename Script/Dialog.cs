@@ -289,7 +289,10 @@ namespace BL.UI
             int effectiveHorizontalPadding = this.horizontalPadding;
             int effectiveVerticalPadding = this.verticalPadding;
 
-            this.topInterior.Style.Height = (40 + Context.Current.FullScreenTopBufferHeight).ToString() + "px";
+            if (this.topInterior != null)
+            {
+                this.topInterior.Style.Height = (40 + Context.Current.FullScreenTopBufferHeight).ToString() + "px";
+            }
 
             if (Context.Current.IsSmallFormFactor)
             {

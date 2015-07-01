@@ -127,6 +127,8 @@ namespace BL.UI
             if (this.Element != null)
             {
                 this.Element.Style.Height = Math.Floor(this.from) + "px";
+                this.Element.Style.MinHeight = this.Element.Style.Height;
+                this.Element.Style.MaxHeight = this.Element.Style.Height;
             }
 
             if (this.elements != null)
@@ -134,6 +136,8 @@ namespace BL.UI
                 foreach (Element e in this.elements)
                 {
                     e.Style.Height = Math.Floor(this.from) + "px";
+                    e.Style.MinHeight = this.Element.Style.Height;
+                    e.Style.MaxHeight = this.Element.Style.Height;
                 }
             }
 
@@ -183,13 +187,17 @@ namespace BL.UI
                     if (this.Element != null)
                     {
                         this.Element.Style.Height = Math.Floor(this.from + ((this.to - this.from) * proportion)) + "px";
+                        this.Element.Style.MinHeight = this.Element.Style.Height;
+                        this.Element.Style.MaxHeight = this.Element.Style.Height;
                     }
 
                     if (this.elements != null)
                     {
                         foreach (Element e in this.elements)
                         {
-                            e.Style.Height = Math.Floor(this.from + ((this.to - this.from) * proportion)) + "px";                            
+                            e.Style.Height = Math.Floor(this.from + ((this.to - this.from) * proportion)) + "px";
+                            e.Style.MinHeight = e.Style.Height;
+                            e.Style.MaxHeight = e.Style.Height;
                         }
                     }
                 }

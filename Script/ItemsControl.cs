@@ -182,9 +182,12 @@ namespace BL.UI
 
         public override void Dispose()
         {
-            foreach (Control c in this.itemControls)
+            if (this.itemControls != null)
             {
-                c.Dispose();
+                foreach (Control c in this.itemControls)
+                {
+                    c.Dispose();
+                }
             }
 
             base.Dispose();

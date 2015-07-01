@@ -132,13 +132,43 @@ namespace BL.UI
 
             object o = null;
 
-            try
+            // check one namespace up to see if this exists.
+            String precursor = scriptItem.Substring(0, scriptItem.LastIndexOf("."));
+
+            if (!String.IsNullOrEmpty(precursor))
             {
-                o = Script.Eval(scriptItem);
+                if (this.scriptItemStatuses.ContainsKey(precursor))
+                {
+                    o = this.scriptItemStatuses[precursor];
+                }
+                else
+                {
+                    try
+                    {
+                        o = Script.Eval(precursor);
+                    }
+                    catch
+                    {
+                        o = null;
+                    }
+
+                    if (o != null)
+                    {
+                        this.scriptItemStatuses[precursor] = true;
+                    }
+                }
             }
-            catch 
+
+            if (String.IsNullOrEmpty(precursor) || o != null)
             {
-                o = null;
+                try
+                {  
+                    o = Script.Eval(scriptItem);
+                }
+                catch
+                {
+                    o = null;
+                }
             }
 
             if (Script.IsNullOrUndefined(o))

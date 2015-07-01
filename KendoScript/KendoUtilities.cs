@@ -61,9 +61,9 @@ namespace BL.UI.KendoControls
 
         public static void EnsureKendoData(Control c)
         {
+            c.EnsureScript("kendo.data.DataSource", "js/kendo/kendo.data.min.js");
             c.EnsureScript("kendo.data.transports.odata", "js/kendo/kendo.data.odata.min.js");
             c.EnsureScript("kendo.data.XmlDataReader", "js/kendo/kendo.data.xml.min.js");
-            c.EnsureScript("kendo.data.DataSource", "js/kendo/kendo.data.min.js");
         }
 
         public static void EnsureKendoEditable(Control c)
