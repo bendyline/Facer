@@ -323,12 +323,26 @@ namespace BL.UI.App
                 oa.Element = this.swipeGuideRight;
                 oa.From = 1;
                 oa.To = 0;
-                oa.StartAfter(3000, 500, null, null);
+                oa.StartAfter(3000, 500, this.HideSwipeGuide, null);
 
                 this.UpdateSizingsOverTime();
 
                 this.displayedSwipeGuides = true;
             }
+        }
+
+        private void HideSwipeGuide(IAsyncResult result)
+        {
+            if (this.swipeGuideRight != null)
+            {
+                this.swipeGuideRight.Style.Display = "none";
+            }
+        }
+
+        public void HideSwipePanels()
+        {
+            this.HideSwipeNavigation(null);
+            this.HideSwipeGuide(null);
         }
 
         private void FlashSwipeNavigation()
@@ -349,11 +363,19 @@ namespace BL.UI.App
                 this.swipeNavigationOpacityAnimator.Element = this.swipeNavigation;
                 this.swipeNavigationOpacityAnimator.From = 1;
                 this.swipeNavigationOpacityAnimator.To = 0;
-                this.swipeNavigationOpacityAnimator.StartAfter(3000, 500, null, null);
+                this.swipeNavigationOpacityAnimator.StartAfter(3000, 500, this.HideSwipeNavigation, null);
                 
                 this.UpdateSizingsOverTime();
 
                 this.displayingSwipeNavigation = true;
+            }
+        }
+        private void HideSwipeNavigation(IAsyncResult result)
+        {
+
+            if (this.swipeNavigation != null)
+            {
+                this.swipeNavigation.Style.Display = "none";
             }
         }
 

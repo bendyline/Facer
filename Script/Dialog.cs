@@ -277,7 +277,7 @@ namespace BL.UI
                 Style elementStyle = this.Element.Style;
 
                 elementStyle.Position = "fixed";
-                elementStyle.ZIndex = 254;
+                elementStyle.ZIndex = 4000;
                 elementStyle.Top = "0px";
                 elementStyle.Left = "0px";
 
@@ -374,7 +374,7 @@ namespace BL.UI
             Style panelStyle = this.panel.Style;
 
             panelStyle.Position = "fixed";
-            panelStyle.ZIndex = 255;
+            panelStyle.ZIndex = 5000;
 
             this.UpdateTitle();
             this.UpdateDoneButton();

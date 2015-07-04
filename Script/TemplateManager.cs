@@ -83,7 +83,7 @@ namespace BL.UI
             }
         }
 
-        public void GetTemplateAsync(String id, AsyncCallback ac, object state)
+        public bool GetTemplateAsync(String id, AsyncCallback ac, object state)
         {
             id = id.ToLowerCase();
 
@@ -105,7 +105,7 @@ namespace BL.UI
               
                 ac(cr);
 
-                return;
+                return true;
             }
 
             id = id.Replace(".", "-");
@@ -131,12 +131,12 @@ namespace BL.UI
                             cr.IsCompleted = true;
                             ac(cr);
                         }
-                        return;
+                        return true;
                     }
                     else
                     {
                         tf.EnsureRetrieved(id, ac, state);
-                        return;
+                        return false;
                     }
                 }
                 else
@@ -147,7 +147,7 @@ namespace BL.UI
                     this.templateFilesById[fileName] = newTemplateFile;
 
                     newTemplateFile.EnsureRetrieved(id, ac, state);
-                    return;
+                    return false;
                 }
             }
 
@@ -157,6 +157,7 @@ namespace BL.UI
             notfoundcr.CompletedSynchronously = true;
             notfoundcr.IsCompleted = false;
             ac(notfoundcr);
+            return true;
         }
     }
 }

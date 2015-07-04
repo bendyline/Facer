@@ -44,6 +44,11 @@ namespace BL.UI
             Script.Literal("{0}.style.backgroundSize={1}", element, value);
         }
 
+        public static void SetTransform(Element element, String value)
+        {
+            Script.Literal("{0}.style.transform={1}", element, value);
+        }
+
         public static void SetIsChecked(InputElement ie, bool isChecked)
         {
             Script.Literal("{0}.checked={1}", ie, isChecked);

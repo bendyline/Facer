@@ -21,8 +21,21 @@ namespace BL.UI.KendoControls
         private String editorHeight = null;
         private String tempValue = null;
         private bool calledImageBrowserCallback = false;
-
+        private bool grabFocusOnLoad = false;
         private Element editorElement = null;
+
+        public bool GrabFocusOnLoad
+        {
+            get
+            {
+                return this.grabFocusOnLoad;
+            }
+
+            set
+            {
+                this.grabFocusOnLoad = value;
+            }
+        }
 
         [ScriptName("b_displayInlineToolbar")]
         public bool DisplayInlineToolbar
@@ -287,6 +300,8 @@ namespace BL.UI.KendoControls
                 {
                     this.editor.Value(this.tempValue);
                 }
+
+                this.editor.Focus();
             }
         }
 

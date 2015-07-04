@@ -40,6 +40,7 @@ namespace BL.UI
         private String templateId;
         private String template;
         private String tagName;
+        private Element spinnerElement;
         private bool initted = false;
         private bool childControlsCreated = false;
         private bool elementsEnsured = false;
@@ -1026,8 +1027,7 @@ namespace BL.UI
 
             if (!this.LoadPrerequisites())
             {
-                // this.Element.Style.Display = "none";
-                // this.isDelayHidden = true;
+                this.EnsureLoadingSpinner();
 
                 return;
             }
@@ -1043,13 +1043,14 @@ namespace BL.UI
 
             if (templateId != null)
             {
-                // this.Element.Style.Display = "none";
-                // this.isDelayHidden = true;
-
                 if (!this.isRetrievingTemplate)
                 {
                     isRetrievingTemplate = true;
-                    TemplateManager.Current.GetTemplateAsync(templateId, this.HandleApplyTemplateContinue, null);
+
+                    if (!TemplateManager.Current.GetTemplateAsync(templateId, this.HandleApplyTemplateContinue, null))
+                    {
+                        this.EnsureLoadingSpinner();
+                    }
                 }
                 return;
             }
@@ -1058,6 +1059,39 @@ namespace BL.UI
             this.CompleteApplyTemplate();
         }
 
+        private void EnsureLoadingSpinner()
+        {
+            if (this.Element != null && this.Element.ChildNodes.Length == 0)
+            {
+                ImageElement imageElement = (ImageElement)Document.CreateElement("img");
+
+                imageElement.Src = Context.Current.ResourceBasePath + Context.Current.ImageResourceSubPath + "loadingspinner.gif";
+
+                imageElement.Style.VerticalAlign = "middle";
+                imageElement.Style.TextAlign = "center";
+                imageElement.Style.Opacity = "0";
+                imageElement.Style.Position = "fixed";
+
+                imageElement.Style.Left = ((Context.Current.BrowserInnerWidth / 2) - 22) + "px";
+                imageElement.Style.Top = ((Context.Current.BrowserInnerHeight / 2) - 22) + "px";
+
+                ElementUtilities.SetTransform(element, "all .4s");
+
+                this.Element.AppendChild(imageElement);
+
+                this.spinnerElement = imageElement;
+
+                Window.SetTimeout(this.StartLoadingSpinnerAnimation, 100);
+            }
+        }
+
+        private void StartLoadingSpinnerAnimation()
+        {
+            if (this.spinnerElement != null)
+            {
+                this.spinnerElement.Style.Opacity = ".8";
+            }
+        }
         private void HandleApplyTemplateContinue(IAsyncResult result)
         {
             this.isRetrievingTemplate = false;
@@ -1074,6 +1108,10 @@ namespace BL.UI
                 if (this.controlLoader.EnsureScriptsLoaded(this.template))
                 {
                     this.ApplyTemplateContinue();
+                }
+                else
+                {
+                    this.EnsureLoadingSpinner();
                 }
             }
             else
@@ -1121,7 +1159,9 @@ namespace BL.UI
                 foreach (String s in this.prerequisiteStylesheets)
                 {
                     if (!ControlManager.Current.HasStylesheet(s))
-                    {Debug.Fail("Stylesheet not loaded");
+                    {
+                        Debug.Fail("Stylesheet not loaded");
+                        
                         return false;
                     }
                 }
@@ -1155,6 +1195,7 @@ namespace BL.UI
 
                 TemplateParserResult tpr = tp.Parse(this.Id, this.TemplateId, template);
 
+                this.spinnerElement = null;
                 HtmlUtilities.SetInnerHtml(this.Element, tpr.Markup);
 
                 if (tpr.ItemsContainer != null)
@@ -1237,6 +1278,10 @@ namespace BL.UI
                     }
                 }
             }
+            else
+            {
+                this.RemoveSpinner();
+            }
 
             for (int i = 0; i < this.templateControls.Count; i++ )
             {
@@ -1251,9 +1296,20 @@ namespace BL.UI
             this.CompleteApplyTemplate();
         }
 
+        private void RemoveSpinner()
+        {
+            if (this.spinnerElement != null)
+            {
+                ElementUtilities.RemoveIfChildOf(this.spinnerElement, this.Element);
+                this.spinnerElement = null;
+            }
+        }
+
         private void CompleteApplyTemplate()
         {
             this.templateWasApplied = true;
+
+            this.RemoveSpinner();
 
             if (this.Visible && this.isDelayHidden)
             {
@@ -1374,6 +1430,7 @@ namespace BL.UI
                     if (this.innerHtml != null)
                     {
                         HtmlUtilities.SetInnerHtml(this.ContentElement, this.innerHtml);
+                        this.spinnerElement = null;
                     }
 
                     if (this.templateControls != null)
@@ -1533,6 +1590,11 @@ namespace BL.UI
 
         public virtual void Dispose()
         {
+            if (this.spinnerElement != null)
+            {
+                ElementUtilities.RemoveIfChildOf(this.Element, this.spinnerElement);
+            }
+
             this.DisposeInteractionEventing();
             this.DisposeResizeEventing();
 

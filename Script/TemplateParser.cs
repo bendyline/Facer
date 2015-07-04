@@ -414,7 +414,14 @@ namespace BL.UI
                                 {
                                     if (kvp.Key == "src")
                                     {
-                                        resultingMarkup.Append(String.Format(" {0}=\"{1}\"", kvp.Key, Context.Current.ResourceBasePath + kvp.Value + "?v=" + Context.Current.VersionToken));
+                                        String sourcePath = kvp.Value;
+
+                                        if (sourcePath.IndexOf("/") <= 0)
+                                        {
+                                            sourcePath = Context.Current.ImageResourceSubPath + sourcePath;
+                                        }
+
+                                        resultingMarkup.Append(String.Format(" {0}=\"{1}\"", kvp.Key, Context.Current.ResourceBasePath + sourcePath + "?v=" + Context.Current.VersionToken));
                                     }
                                     else
                                     {

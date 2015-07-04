@@ -173,6 +173,7 @@ namespace BL.UI.KendoControls
             this.popupEditor.Rows = 0;
             this.popupEditor.EditorHeight = "100%";
             this.popupEditor.DisplayInlineToolbar = true;
+            this.popupEditor.GrabFocusOnLoad = true;
 
             if (this.html != null)
             {
