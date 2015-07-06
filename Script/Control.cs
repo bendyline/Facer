@@ -159,7 +159,7 @@ namespace BL.UI
 
             set
             { 
-                if (this.templateId == value || (value == null && this.templateId == this.GetDefaultTemplateId()))
+                if (this.templateId == value || (value == null && (this.templateId == this.GetDefaultTemplateId() || this.templateId == null)))
                 {
                     return;
                 }
