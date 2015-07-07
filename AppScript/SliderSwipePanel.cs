@@ -1237,7 +1237,7 @@ else if (window.getComputedStyle)
                 {
                     Style style = c.Element.Style;
 
-                    double width = (elementWidth - this.gapBetweenSections) + 3;
+                    double width = (elementWidth - this.gapBetweenSections);// +3;
 
                     if (ps.FitToWidth && width > 100)
                     {
