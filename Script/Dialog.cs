@@ -380,21 +380,27 @@ namespace BL.UI
             this.UpdateDoneButton();
             this.UpdateCloseButton();
 
-            OpacityAnimator oa = new OpacityAnimator();
-            oa.Element = this.Element;
-            oa.From = 0;
-            oa.To = 1;
-            oa.Start(200, null, null);
-            
-            oa = new OpacityAnimator();
-            oa.Element = this.panel;
-            oa.From = 0;
-            oa.To = 1;
-            oa.StartAfter(200, 200, null, null);
+            this.Element.Style.Opacity = "0";
+            string transform = "scale(0.2,0.2)";
+            Script.Literal("{0}.transform={1}", this.panel.Style, transform);
 
+
+
+            Window.SetTimeout(this.StartAnimation, 50);
             Document.Body.AppendChild(this.Element);
 
             this.ApplyResize();
+        }
+
+        private void StartAnimation()
+        {
+            String transition = "all " + ".35s ease-in-out";
+            Script.Literal("{0}.transition={1};{2}.transition={1};{0}.transform=\"scale(1,1)\";{2}.opacity=\"1\"", this.panel.Style, transition, this.Element.Style);
+        }
+
+        private void CloseAnimation()
+        {
+            Script.Literal("{0}.transform=\"scale(0.2,0.2)\";{1}.opacity=\"0\"", this.panel.Style, this.Element.Style);
         }
 
         protected override void OnContentChanged(Control control)
@@ -431,8 +437,17 @@ namespace BL.UI
 
         public void Hide()
         {
-            this.isShowing = false;
+            if (this.isShowing)
+            {
+                this.isShowing = false;
 
+                Window.SetTimeout(this.HideContinue, 350);
+                this.CloseAnimation();
+            }
+        }
+
+        private void HideContinue()
+        {
             if (this.Closing != null)
             {
                 this.Closing(this, EventArgs.Empty);
