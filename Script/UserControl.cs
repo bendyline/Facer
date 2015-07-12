@@ -18,8 +18,34 @@ namespace BL.UI
     {        
         private User user;
         private UserReference userReference;
-
+        private bool connectToCurrentUser = false;
         private PropertyChangedEventHandler userPropertyChangedEventHandler;
+        private PropertyChangedEventHandler userChangedEventHandler;
+
+        protected bool ConnectToCurrentUser
+        {
+            get
+            {
+                return this.connectToCurrentUser;
+            }
+
+            set
+            {
+                if (this.connectToCurrentUser == value)
+                {
+                    return;
+                }
+
+                this.connectToCurrentUser = value;
+
+                if (this.connectToCurrentUser)
+                {
+                    this.User = Context.Current.User;
+
+                    Context.Current.UserChanged += Current_UserChanged;
+                }
+            }
+        }
 
         public User User
         {
@@ -114,7 +140,13 @@ namespace BL.UI
 
         public UserControl()
         {
+            this.userChangedEventHandler = Current_UserChanged;
             this.userPropertyChangedEventHandler = user_PropertyChanged;
+        }
+
+        private void Current_UserChanged(object sender, PropertyChangedEventArgs e)
+        {
+            this.User = Context.Current.User;
         }
 
         protected void OnUserReferenceUpdated()
