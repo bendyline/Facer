@@ -70,6 +70,7 @@ namespace BL.UI.KendoControls
                 if (this.TemplateWasApplied)
                 {
                     this.Element.Style.Height = value + "px";
+                    this.Element.Style.MinHeight = value + "px";
 
                     if (this.Element.ChildNodes.Length >= 2)
                     {

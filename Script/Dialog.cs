@@ -310,6 +310,19 @@ namespace BL.UI
                 {
                     width = (int)this.maxWidth;
                     height = (int)this.maxHeight;
+
+                    this.panel.Style.BorderWidth = "";
+                }
+                else
+                {
+                    if (effectiveHorizontalPadding == 0 && effectiveVerticalPadding == 0)
+                    {
+                        this.panel.Style.BorderWidth = "0px";
+                    }
+                    else
+                    {
+                        this.panel.Style.BorderWidth = "";
+                    }
                 }
 
                 Style panelStyle = this.panel.Style;
