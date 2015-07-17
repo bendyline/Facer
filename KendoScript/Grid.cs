@@ -28,7 +28,7 @@ namespace BL.UI.KendoControls
         {
             get
             {
-                return this.grid.DataItem();
+                return this.grid.DataItem(null);
             }
         }
 
@@ -164,6 +164,38 @@ namespace BL.UI.KendoControls
 
         }
 
+        public Element GetRowById(String id)
+        {
+            Element tbody = this.grid.Tbody.GetElement(0);
+
+            for (int i=0; i<tbody.ChildNodes.Length; i++)
+            {
+                Element row = tbody.ChildNodes[i];
+
+                ObservableObject model = this.grid.DataItem(row);
+
+                if (model != null)
+                {
+                    String idCandidate = null;
+
+                    Script.Literal("{0}={1}[\"id\"]", idCandidate, model);
+
+                    if (id == idCandidate)
+                    {
+                        return row;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public Element GetRow(int index)
+        {
+            //                          content node  .table.     .tbody     .tr
+            return this.grid.Tbody.GetElement(0).ChildNodes[index];
+        }
+
         public void AddRow()
         {
             this.grid.AddRow();
@@ -185,6 +217,7 @@ namespace BL.UI.KendoControls
             this.grid.Bind("save", this.HandleSave);
             this.grid.Bind("change", this.HandleChange);
             this.grid.Bind("edit", this.HandleEdit);
+            this.grid.Bind("cancel", this.HandleCancel);
             this.grid.Bind("remove", this.HandleRemove);
         }
 
@@ -203,9 +236,24 @@ namespace BL.UI.KendoControls
             }
         }
 
-        private void HandleChange(object e)
+        private void HandleCancel(object e)
         {
-   
+            Model model = null;
+
+            Script.Literal("{0}={1}.model", model, e);
+
+            if (this.Cancel != null)
+            {
+                ModelEventArgs mea = new ModelEventArgs();
+
+                mea.Model = model;
+
+                this.Cancel(mea);
+            }
+        }
+
+        private void HandleChange(object e)
+        {   
             Script.Literal("{0}={0}.sender", e);
 
             if (this.Change != null)
