@@ -23,6 +23,9 @@ namespace BL.UI
         [ScriptName("e_topBar")]
         public Element topBar;
 
+        [ScriptName("e_topBarSizer")]
+        public Element topBarSizer;
+
         [ScriptName("e_topInterior")]
         public Element topInterior;
 
@@ -59,6 +62,18 @@ namespace BL.UI
         private int verticalPadding = 30;
 
         public event EventHandler Closing;
+
+        private static int dialogsShown = 0;
+        public static event EventHandler DialogShown;
+        public static event EventHandler DialogHidden;
+
+        public static int DialogVisibleCount
+        {
+            get
+            {
+                return dialogsShown;
+            }
+        }
 
         private bool sizeContents = true;
 
@@ -193,7 +208,7 @@ namespace BL.UI
         {
             base.OnApplyTemplate();
 
-            this.topBar.Style.PaddingTop = Context.Current.FullScreenTopBufferHeight + "px";
+            this.topBarSizer.Style.MarginTop = Context.Current.FullScreenTopBufferHeight + "px";
 
             this.UpdateCloseButton();
         }
@@ -375,6 +390,16 @@ namespace BL.UI
 
             this.OnContentChanged(this.Content);
 
+            dialogsShown++;
+
+            if (dialogsShown == 1)
+            {
+                if (DialogShown != null)
+                {
+                    DialogShown(this, EventArgs.Empty);
+                }
+            }
+
             this.isShowing = true;
 
             this.overflow = Document.Body.Style.Overflow;
@@ -453,6 +478,16 @@ namespace BL.UI
             if (this.isShowing)
             {
                 this.isShowing = false;
+
+                dialogsShown--;
+
+                if (dialogsShown == 0)
+                {
+                    if (DialogHidden != null)
+                    {
+                        DialogHidden(this, EventArgs.Empty);
+                    }
+                }
 
                 Window.SetTimeout(this.HideContinue, 350);
                 this.CloseAnimation();

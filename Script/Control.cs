@@ -651,7 +651,16 @@ namespace BL.UI
         {
             Date now = Date.Now;
 
-            if (now.GetTime() - this.touchStartTime < 100 && now.GetTime() - this.lastClickTime > 200 && now.GetTime() > this.lastScrollTime.GetTime() + 200)
+            int delayTime = 100;
+
+            if (Context.Current.IsTouchOnly)
+            {
+                delayTime = 500;
+            }
+
+            if (now.GetTime() - this.touchStartTime < 100 && 
+                now.GetTime() - this.lastClickTime > 200 && 
+                now.GetTime() > this.lastScrollTime.GetTime() + delayTime)
             {
                 this.lastClickTime = now.GetTime();
                 this.OnClick(e);
@@ -662,7 +671,15 @@ namespace BL.UI
         {
             Date now = Date.Now;
 
-            if (now.GetTime() - lastClickTime > 200 && now.GetTime() > this.lastScrollTime.GetTime() + 200)
+            int delayTime = 100;
+
+            if (Context.Current.IsTouchOnly)
+            {
+                delayTime = 500;
+            }
+
+            if (now.GetTime() - lastClickTime > 200 && 
+                now.GetTime() > this.lastScrollTime.GetTime() + delayTime)
             {
                 this.lastClickTime = now.GetTime();
                 this.OnClick(e);
