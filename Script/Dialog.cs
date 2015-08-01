@@ -50,6 +50,7 @@ namespace BL.UI
         private bool isShowing = false;
         private int dialogWidth = 0;
         private int dialogHeight = 0;
+        private int dialogIndexAtTimeOfCreation = -1;
         private String overflow = null;
         private String overflowX = null;
         private String overflowY = null;
@@ -66,6 +67,16 @@ namespace BL.UI
         private static int dialogsShown = 0;
         public static event EventHandler DialogShown;
         public static event EventHandler DialogHidden;
+
+        private ElementEventListener keyboardEventHandler;
+
+        public static bool DialogIsShowing
+        {
+            get
+            {
+                return dialogsShown > 0;
+            }
+        }
 
         public static int DialogVisibleCount
         {
@@ -202,6 +213,8 @@ namespace BL.UI
         public Dialog()
         {
             this.TrackResizeEvents = true;
+
+            this.keyboardEventHandler = this.HandleKeyPress;
         }
 
         protected override void OnApplyTemplate()
@@ -379,6 +392,13 @@ namespace BL.UI
             }
         }
 
+        private void HandleKeyPress(ElementEvent eventArgs)
+        {
+            if (eventArgs.KeyCode == 27 /* Escape */ && (this.dialogIndexAtTimeOfCreation + 1) == dialogsShown)
+            {
+                this.Hide();
+            }
+        }
 
         // NOTE NOTE NOTE: Some controls (e.g., Kendo) need Dialog.Content to be set AFTER AFTER you have called dialog.Show
         public void Show()
@@ -390,6 +410,9 @@ namespace BL.UI
 
             this.OnContentChanged(this.Content);
 
+            Document.Body.AddEventListener("keydown", this.keyboardEventHandler, false);
+
+            this.dialogIndexAtTimeOfCreation = dialogsShown;
             dialogsShown++;
 
             if (dialogsShown == 1)
@@ -479,6 +502,8 @@ namespace BL.UI
             {
                 this.isShowing = false;
 
+                Document.Body.RemoveEventListener("keypress", this.keyboardEventHandler, false);
+
                 dialogsShown--;
 
                 if (dialogsShown == 0)
@@ -489,8 +514,8 @@ namespace BL.UI
                     }
                 }
 
-                Window.SetTimeout(this.HideContinue, 350);
                 this.CloseAnimation();
+                Window.SetTimeout(this.HideContinue, 350);
             }
         }
 

@@ -159,14 +159,36 @@ namespace BL.UI
                 {
                     if (c.Element != null && this.ItemsContainerElement.Contains(c.Element))
                     {
+                        bool removed = true;
+
                         try
                         {
                             this.ItemsContainerElement.RemoveChild(c.Element);
                         }
                         catch (Exception)
                         {
-                            ;
+                            removed = false;
                         }
+
+                        if (!removed)
+                        {
+                            Element parent = c.Element.ParentNode;
+
+                            if (parent != null && parent != this.ItemsContainerElement && this.ItemsContainerElement.Contains(parent))
+                            {
+                                removed = true;
+
+                                try
+                                {
+                                    this.ItemsContainerElement.RemoveChild(parent);
+                                }
+                                catch (Exception)
+                                {
+                                    removed = false;
+                                }
+                            }
+                        }
+
                     }
                 }
             }
