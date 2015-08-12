@@ -48,6 +48,7 @@ namespace BL.UI.App
 
         private int activeIndex;
         private int previousIndex;
+        private bool useFullWindow = false;
 
         private PaneSettingsCollection paneSettingsCollection;
         private List<String> linkTitles;
@@ -64,7 +65,9 @@ namespace BL.UI.App
         private double downEventPageX;
         private bool displayedSwipeGuides = false;
         private bool displayingSwipeNavigation = false;
+        private bool displayLinkBar = false;
         private double downEventPageY;
+        private bool alwaysDisplaySwipeNavigation = false;
 
         private OpacityAnimator swipeNavigationOpacityAnimator;
 
@@ -81,6 +84,7 @@ namespace BL.UI.App
         private double fromX;
         private double toX;
         private bool isAnimating = false;
+        private bool displaySwipeNavigationTitle = true;
 
         private bool allowSwiping = true;
         private String interiorItemHeight;
@@ -92,8 +96,57 @@ namespace BL.UI.App
         public event IntegerEventHandler VerticalScrollChanged;
         public event EventHandler IndexChangeAnimationCompleted;
 
-        private const int SwipeNavigationDistanceFromEdge = 104;
+        private const int SwipeNavigationDistanceFromEdge = 114;
         private String accentColor;
+
+        [ScriptName("b_displaySwipeNavigationTitle")]
+        public bool DisplaySwipeNavigationTitle
+        {
+            get
+            {
+                return this.displaySwipeNavigationTitle;
+            }
+
+            set
+            {
+                this.displaySwipeNavigationTitle = value;
+            }
+        }
+
+        [ScriptName("b_alwaysDisplaySwipeNavigation")]
+        public bool AlwaysDisplaySwipeNavigation
+        {
+            get
+            {
+                return this.alwaysDisplaySwipeNavigation;
+            }
+
+            set
+            {
+                if (this.alwaysDisplaySwipeNavigation == value)
+                {
+                    return;
+                }
+
+                this.alwaysDisplaySwipeNavigation = value;
+
+                this.FlashSwipeNavigation();
+            }
+        }
+
+        [ScriptName("b_useFullWindow")]
+        public bool UseFullWindow
+        {
+            get
+            {
+                return this.useFullWindow;
+            }
+
+            set
+            {
+                this.useFullWindow = value;
+            }
+        }
 
         public String AccentColor
         {
@@ -112,6 +165,20 @@ namespace BL.UI.App
                 this.accentColor = value;
 
                 this.UpdateAccentColor();
+            }
+        }
+
+        [ScriptName("b_displayLinkBar")]
+        public bool DisplayLinkBar
+        {
+            get
+            {
+                return this.displayLinkBar;
+            }
+
+            set
+            {
+                this.displayLinkBar = value;
             }
         }
 
@@ -315,10 +382,13 @@ namespace BL.UI.App
 
         public void ConsiderShowingSwipeGuidelines()
         {
-            if (this.allowSwiping && Context.Current.IsTouchOnly && !displayedSwipeGuides && this.swipeGuideRight != null)
+            if (  ( this.allowSwiping && 
+                    Context.Current.IsTouchOnly && 
+                    !displayedSwipeGuides )
+                  && this.swipeGuideRight != null)
             {
                 this.swipeGuideRight.Style.Display = "block";
-                
+
                 OpacityAnimator oa = new OpacityAnimator();
                 oa.Element = this.swipeGuideRight;
                 oa.From = 1;
@@ -347,7 +417,14 @@ namespace BL.UI.App
 
         private void FlashSwipeNavigation()
         {
-            if (this.allowSwiping && this.swipeNavigation != null && this.swipeNavigationTitle != null && Context.Current.IsTouchOnly && this.lastFlashIndex != this.ActiveIndex)
+            if (    (  this.alwaysDisplaySwipeNavigation || 
+                        (   this.allowSwiping &&
+                            Context.Current.IsTouchOnly &&
+                            this.lastFlashIndex != this.ActiveIndex
+                        )
+                    ) &&
+                    this.swipeNavigation != null && 
+                    this.swipeNavigationTitle != null)
             {
                 this.swipeNavigation.Style.Display = "block";
 
@@ -360,11 +437,14 @@ namespace BL.UI.App
 
                 this.lastFlashIndex = this.ActiveIndex;
 
-                this.swipeNavigationOpacityAnimator.Element = this.swipeNavigation;
-                this.swipeNavigationOpacityAnimator.From = 1;
-                this.swipeNavigationOpacityAnimator.To = 0;
-                this.swipeNavigationOpacityAnimator.StartAfter(3000, 500, this.HideSwipeNavigation, null);
-                
+                if (!this.alwaysDisplaySwipeNavigation)
+                {
+                    this.swipeNavigationOpacityAnimator.Element = this.swipeNavigation;
+                    this.swipeNavigationOpacityAnimator.From = 1;
+                    this.swipeNavigationOpacityAnimator.To = 0;
+                    this.swipeNavigationOpacityAnimator.StartAfter(3000, 500, this.HideSwipeNavigation, null);
+                }
+
                 this.UpdateSizingsOverTime();
 
                 this.displayingSwipeNavigation = true;
@@ -381,7 +461,15 @@ namespace BL.UI.App
 
         private void UpdateSwipeNavigationLinkState()
         {
-            this.swipeNavigationTitle.InnerText = this.LinkTitles[this.ActiveIndex];
+            if (this.displaySwipeNavigationTitle)
+            {
+                this.swipeNavigationTitle.InnerText = this.LinkTitles[this.ActiveIndex];
+                this.swipeNavigationTitle.Style.Display = "";
+            }
+            else
+            {
+                this.swipeNavigationTitle.Style.Display = "none";
+            }
 
             ElementUtilities.ClearChildElements(this.swipeNavigationDotBin);
 
@@ -730,7 +818,7 @@ namespace BL.UI.App
                 this.containerLinkBin.RemoveChild(this.containerLinkBin.ChildNodes[0]);
             }
 
-            if (this.linkTitles == null || this.linkTitles.Count == 0)
+            if (this.linkTitles == null || this.linkTitles.Count == 0 || !this.displayLinkBar)
             {
                 this.topAreaOuter.Style.Display = "none";
                 return;
@@ -874,6 +962,8 @@ namespace BL.UI.App
             this.UpdateLinkBin();
             this.UpdateAccentColor();
             this.ApplyVisibility();
+
+            this.FlashSwipeNavigation();
 
             this.UpdateSizingsOverTime();
         }
@@ -1160,7 +1250,7 @@ else if (window.getComputedStyle)
             this.UpdateSizings();
 
             Window.SetTimeout(new Action(this.UpdateSizings), 1);
-            Window.SetTimeout(new Action(this.UpdateSizings), 100);
+            Window.SetTimeout(new Action(this.UpdateSizings), 400);
         }
 
         public void UpdateSizings()
@@ -1171,6 +1261,7 @@ else if (window.getComputedStyle)
             }
 
             ClientRect cr = ElementUtilities.GetBoundingRect(this.Element);
+
             double elementVisibleRight = cr.Right;
             double elementVisibleLeft = cr.Left;
             double elementVisibleBottom = cr.Bottom;
@@ -1239,7 +1330,13 @@ else if (window.getComputedStyle)
 
                     double width = (elementWidth - this.gapBetweenSections);// +3;
 
-                    if (ps.FitToWidth && width > 100)
+                    if (this.useFullWindow)
+                    {
+                        style.MaxWidth = Context.Current.BrowserInnerWidth + "px";
+                        style.MinWidth = Context.Current.BrowserInnerWidth + "px";
+                        style.Width = Context.Current.BrowserInnerWidth + "px";
+                    }
+                    else if (ps.FitToWidth && width > 100)
                     {
                         style.MinWidth = width.ToString() + "px";
                         style.Width = width.ToString() + "px";
@@ -1252,7 +1349,13 @@ else if (window.getComputedStyle)
                       
                     style.MarginRight = this.gapBetweenSections + "px";
 
-                    if (this.InteriorItemHeight != null)
+                    if (this.useFullWindow)
+                    {
+                        style.MaxHeight = Context.Current.BrowserInnerHeight + "px";
+                        style.MinHeight = Context.Current.BrowserInnerHeight + "px";
+                        style.Height = Context.Current.BrowserInnerHeight + "px";
+                    }
+                    else if (this.InteriorItemHeight != null)
                     {
                         style.MaxHeight = this.InteriorItemHeight;
                         style.MinHeight = this.InteriorItemHeight;
@@ -1264,7 +1367,7 @@ else if (window.getComputedStyle)
                     }
                     else
                     {
-                        style.Height = (height - 4).ToString() + "px";
+                        style.Height = (height).ToString() + "px";
                     }
 
                     c.Element.ParentNode.Style.Height = "100%";

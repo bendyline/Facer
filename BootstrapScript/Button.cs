@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Html;
 using jQueryApi;
+using BL.UI;
 
 namespace BL.BS
 {

@@ -4,7 +4,7 @@
 using System;
 using BL.UI;
 
-namespace BL
+namespace BL.UI
 {
     public delegate void ControlEventHandler(object sender, ControlEventArgs e);
 

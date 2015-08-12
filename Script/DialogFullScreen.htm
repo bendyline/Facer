@@ -5,16 +5,31 @@
         
         BODY
         {
-          background: rgba(204,204,204,0.4);
+          background: rgba(204,204,204,0.6);
           width: 100%;  
           height:100%;
         }
         
         #topBar
         {
-            padding:6px;
-            padding-bottom:40px;
-            display:table-row;
+            display:block;
+            position:fixed;
+            z-index:6000;
+            width:100vw;
+            top:0px;
+            left:0px;
+            height:44px;
+        }
+ 
+        #bottomBar
+        {
+            display:block;
+            position:fixed;
+            z-index:6000;
+            width:100vw;
+            top:calc(100vh - 69px);
+            left:0px;
+            height:44px;
         }
 
         #topBarSizer
@@ -24,14 +39,13 @@
         }
 
         #topBarSizerInterior{
-            display:table-row;
+            display:block;
         }
 
         #closeButtonWrapper
         {
             padding-left:4px;                        
             padding-right:4px;
-            padding-top:2px;
             display:table-cell;
             width:32px;
             min-width:32px;
@@ -51,12 +65,12 @@
         {
             color:#FFFFFF;
             font-family: 'Lato', Helvetica, Arial, sansserif;
-            margin-left:10px;
             font-size:14pt;
             display:table-cell;
             width:100%;
+            cursor:default;
             vertical-align:top;
-            padding-top:2px;
+            padding:2px;
             text-transform:uppercase;
         }
 
@@ -73,6 +87,7 @@
             vertical-align:middle;
             align-content:center;
             background:white;
+            border: solid 1px #C0C0C0;
             display:table;
             padding:0px;
             margin:0px;
@@ -80,11 +95,10 @@
         
         #topInterior
         {
-            display:table-cell;
             vertical-align:middle;
-            background-color:#6AC5E8;
             padding:4px;
-            padding-bottom:6px;
+            padding-bottom:7px;
+            padding-top:8px;
         }
         
         #contentArea
@@ -92,14 +106,9 @@
             display:table-row;
         }
         
-        #bottomBar
-        {
-            display:table-row;
-        }
-        
         #bottomInterior
         {
-            display:table-cell;
+            display:block;
             text-align:right;
         }
 
@@ -111,58 +120,79 @@
 
         #contentContainer
         {
-            display:table-cell;
             height:100%;
         }
 
         #doneButton
         {
-            background-color: #6AC5E8;
             display:inline-block;
             text-align: right;
-            padding: 8px;
+            padding: 5px;
+            padding-top:10px;
             padding-left:10px;
             padding-right:10px;
-            margin-top:40px;
-            margin-right:14px;
-            margin-bottom:14px;
+            margin-top:6px;
+            margin-right:20px;
+            margin-bottom:5px;
             margin-left:14px;
-            border: solid 0px;
-            height:32px;
+            height: 44px;
             min-width:60px;
-            vertical-align:middle;
+            vertical-align:top;
             text-align:center;
+            width:100px;
+            border-radius:3px;
+            cursor:default;
+            cursor:default;
+            transition: all 0.3s ease-in-out;
+            background-color: #209CBE;
             color: white;
-            width:120px;
+            border:solid 1px #209CBE;
+        }
+
+        #doneButton:hover
+        {
+            box-shadow: 0px 2px 7px rgba(150, 150, 150, 0.5);
+        }
+        
+        #doneButton:active
+        {
+            box-shadow:none;
+        }
+
+        #contentContainerOuter
+        {
+            display:table-cell;
         }
 
         </style>
 	</head>
 	<body>
-           <div id='panel'>
-               <div id="topBar">
-                   <div id="topInterior">  
-                       <div id="topBarSizer">
-                            <div id="topBarSizerInterior">
-                              <div data-ctl-class="closeButtonWrapper">
-                                <div id="closeButtonL" data-ctl-class="closeButton"><img src="closew.png" style="width:14px;height:14px;padding-bottom:2px;"/></div>
-                              </div>
-                              <div id="titleText"></div>
-                              <div data-ctl-class="closeButtonWrapper">
-                                <div id="closeButtonR" data-ctl-class="closeButton"><img src="closew.png" style="width:14px;height:14px;padding-bottom:2px;"/></div>
-                              </div>
-                            </div>
-                      </div>
-                   </div>
-                </div>
-               <div id="contentArea">
+        <div id='panel'>
+            <div id="contentArea">
+                <div id="contentContainerOuter">
                     <ContentContainer id="contentContainer"/>
                 </div>
-               <div id="bottomBar">
-                   <div id="bottomInterior">
-                        <div id="doneButton" style="display:none">Done</div>
+            </div>
+        </div>
+        <div id="topBar">
+            <div id="topInterior">
+                <div id="topBarSizer">
+                    <div id="topBarSizerInterior">
+                        <div data-ctl-class="closeButtonWrapper" id="leftCloseBin">
+                            <div id="closeButtonL" data-ctl-class="closeButton"><img src="close.png" style="width:17px;height:17px;padding-bottom:2px;" /></div>
+                        </div>
+                        <div id="titleText"></div>
+                        <div data-ctl-class="closeButtonWrapper">
+                            <div id="closeButtonR" data-ctl-class="closeButton"><img src="close.png" style="width:17px;height:17px;padding-bottom:2px;" /></div>
+                        </div>
                     </div>
                 </div>
-           </div>
+            </div>
+        </div>
+        <div id="bottomBar" style="display:none">
+            <div id="bottomInterior">
+                <div id="doneButton">done</div>
+            </div>
+        </div>
  	</body>
 </html>

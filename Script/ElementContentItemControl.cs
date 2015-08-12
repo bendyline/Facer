@@ -3,10 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using BL.UI;
 using System.Runtime.CompilerServices;
 
-namespace BL
+namespace BL.UI
 {
     public class ElementContentItemControl : Control
     {

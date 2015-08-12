@@ -5,7 +5,7 @@ using System;
 using BL.UI;
 using System.Html;
 
-namespace BL
+namespace BL.UI
 {
     public delegate void PointElementEventHandler(object sender, PointElementEventArgs e);
 

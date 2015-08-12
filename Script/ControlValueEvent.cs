@@ -2,9 +2,8 @@
     You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. */
 
 using System;
-using BL.UI;
 
-namespace BL
+namespace BL.UI
 {
     public delegate void ControlValueEventHandler(object sender, ControlValueEventArgs e);
 

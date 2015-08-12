@@ -1,6 +1,7 @@
 /* Copyright (c) Bendyline LLC. All rights reserved. Licensed under the Apache License, Version 2.0.
     You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. */
 
+using BL;
 using BL.Extern;
 using jQueryApi;
 using System;
@@ -29,6 +30,7 @@ namespace BL.UI.App
         private bool isDragging;
 
         private bool displayPaddles = true;
+        private bool elementInternallyScrolled = false;
 
         private Date animationStart;
 
@@ -49,6 +51,7 @@ namespace BL.UI.App
         private ElementEventListener draggingElementMouseMoveHandler = null;
         private ElementEventListener draggingElementMouseUpHandler = null;
         private ElementEventListener draggingElementMouseOutHandler = null;
+        private ElementEventListener elementScrolledHandler = null;
 
         public event EventHandler Scrolling;
 
@@ -77,7 +80,9 @@ namespace BL.UI.App
         {
             get
             {
-                return this.displayPaddles;
+                return      this.displayPaddles && 
+                                (this.ItemControls == null || (this.ItemControls != null && this.visibleItemCount < this.ItemControls.Count)) && 
+                                !Context.Current.IsTouchOnly;
             }
         }
 
@@ -130,6 +135,7 @@ namespace BL.UI.App
                 Document.Body.AddEventListener("mouseout", this.HandleDragMouseOut, true);
             }
 
+            this.elementScrolledHandler = this.HandleElementScroll;
             this.draggingElementMouseMoveHandler = this.HandleElementMouseMove;
             this.draggingElementMouseUpHandler = this.HandleElementMouseUp;
         }
@@ -143,31 +149,42 @@ namespace BL.UI.App
 
             this.visibilities[index] = isVisible;
 
-            this.ApplyVisibility();
+            this.ApplyHorizontalBinVisibility();
         }
 
         private void ApplyPaddleVisibility()
         {
-            if (this.displayPaddles && this.ItemControls != null  && this.StartIndex > 0 && this.visibleItemCount < this.ItemControls.Count && !Context.Current.IsTouchOnly)
-            {
-                this.leftPaddle.Style.Display = String.Empty;
-            }
-            else
-            {
-                this.leftPaddle.Style.Display = "none";
-            }
-
-            if (this.displayPaddles && this.ItemControls != null && this.StartIndex < this.ItemControls.Count - visibleItemCount && this.visibleItemCount < this.ItemControls.Count && !Context.Current.IsTouchOnly)
+            if (this.DisplayPaddles)
             {
                 this.rightPaddle.Style.Display = String.Empty;
+                this.leftPaddle.Style.Display = String.Empty;
+
+                if (this.DisplayPaddles && this.StartIndex > 0)
+                {
+                    this.leftPaddle.Style.Visibility  = String.Empty;
+                }
+                else
+                {
+                    this.leftPaddle.Style.Visibility = "hidden";
+                }
+
+                if (this.DisplayPaddles && this.ItemControls != null && (this.StartIndex + 1) < this.ItemControls.Count - (visibleItemCount + 1))
+                {
+                    this.rightPaddle.Style.Visibility = String.Empty;
+                }
+                else
+                {
+                    this.rightPaddle.Style.Visibility = "hidden";
+                }
             }
             else
             {
                 this.rightPaddle.Style.Display = "none";
+                this.leftPaddle.Style.Display = "none";
             }
         }
 
-        private void ApplyVisibility()
+        private void ApplyHorizontalBinVisibility()
         {
             for (int i = 0; i < this.ItemControls.Count; i++ )
             {
@@ -201,6 +218,25 @@ namespace BL.UI.App
             }
         }
 
+        private void InferStartIndex()
+        {
+            this.startIndex = 0;
+            double left = 0;
+
+            for (int i = 0; i < this.ItemControls.Count; i++)
+            {
+                ClientRect cr = ElementUtilities.GetBoundingRect(this.ItemControls[i].Element);
+
+                left += (cr.Right - cr.Left);
+
+                if (left > this.itemsBin.ScrollLeft)
+                {
+                    this.startIndex = i;
+                    return;
+                }
+            }
+        }
+
         private void AnimateToIndexPosition()
         {
             this.SetToX();
@@ -230,6 +266,7 @@ namespace BL.UI.App
             {
                 int valu = (int)(this.fromX + ((this.toX - this.fromX) * proportion));
 
+                this.elementInternallyScrolled = true;
                 jQuery.FromObject(this.itemsBin).ScrollLeft(valu);
 
                 this.lastScrollTime = Date.Now;
@@ -252,6 +289,8 @@ namespace BL.UI.App
                 this.Scrolling(this, EventArgs.Empty);
             }
 
+
+            this.elementInternallyScrolled = true;
             this.itemsBin.ScrollLeft = (int)this.toX;
             this.lastScrollTime = Date.Now;
         }
@@ -272,6 +311,7 @@ namespace BL.UI.App
 
                 this.itemsBin.AddEventListener("mousedown", this.HandleElementMouseDown, true);
                 this.itemsBin.AddEventListener("mousemove", this.HandleElementMouseMove, true);
+                this.itemsBin.AddEventListener("scroll", this.elementScrolledHandler, true);
                 this.itemsBin.AddEventListener("mouseup", this.HandleElementMouseUp, true);
                 this.itemsBin.AddEventListener("dragstart", this.HandleDragStartEvent, true);
             }
@@ -372,6 +412,21 @@ namespace BL.UI.App
                 this.HandleElementMouseUp(null);
             }
         }
+        private void HandleElementScroll(ElementEvent e)
+        {
+            if (!this.elementInternallyScrolled)
+            {
+                if (this.isDragging)
+                {
+                    this.isDragging = false;
+                }
+
+                this.InferStartIndex();
+                this.ApplyPaddleVisibility();
+            }
+
+            this.elementInternallyScrolled = false;
+        }
 
         private void HandleElementMouseMove(ElementEvent e)
         {
@@ -397,6 +452,7 @@ namespace BL.UI.App
 
                 Debug.WriteLine("(HorizontalBin::HandleElementMouseMove) - Mouse Move drag: " + newLeft);
 
+                this.elementInternallyScrolled = true;
                 this.itemsBin.ScrollLeft = newLeft;
                 this.lastScrollTime = Date.Now;
 
@@ -541,9 +597,9 @@ namespace BL.UI.App
                 height = (double)this.Height;
             }
 
-            int adjust = 48;
+            int adjust = 8;
 
-            if (displayPaddles)
+            if (this.DisplayPaddles)
             {
                 adjust = 78;
             }

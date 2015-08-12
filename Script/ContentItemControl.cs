@@ -7,7 +7,7 @@ using BL.UI;
 using System.Runtime.CompilerServices;
 using System.Html;
 
-namespace BL
+namespace BL.UI
 {
     public class ContentItemControl : Control
     {
