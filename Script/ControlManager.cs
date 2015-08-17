@@ -75,14 +75,20 @@ namespace BL.UI
 
             adjust += "?v=" + Context.Current.VersionToken;
 
-
             CallbackState cs = CallbackState.Wrap(callback, state);
 
             cs.Tag = namespaceName + "." + typeName;
 
             String path = UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + adjust;
 
-            this.LoadScript(namespaceName, path, this.CreateControlAsyncContinue, cs);
+            if (IsLoadedScriptItem(namespaceName + "." + typeName))
+            {
+                CallbackResult.NotifySynchronousSuccess(this.CreateControlAsyncContinue, cs, null);
+            }
+            else
+            {
+                this.LoadScript(namespaceName, path, this.CreateControlAsyncContinue, cs);
+            }
         }
 
         private void CreateControlAsyncContinue(IAsyncResult result)
@@ -130,56 +136,54 @@ namespace BL.UI
                 }
             }
 
-            object o = null;
+            object previousObject = null;
 
-            // check one namespace up to see if this exists.
-            String precursor = scriptItem.Substring(0, scriptItem.LastIndexOf("."));
+            String currentType = scriptItem;
 
-            if (!String.IsNullOrEmpty(precursor))
+            int firstPeriod = scriptItem.IndexOf(".");
+            bool isEndType = false;
+
+            while (!isEndType)
             {
-                if (this.scriptItemStatuses.ContainsKey(precursor))
+                String type = null;
+
+                if (firstPeriod < 0)
                 {
-                    o = this.scriptItemStatuses[precursor];
+                    firstPeriod = currentType.Length;
+                    isEndType = true;
+
+                    type = currentType;
                 }
                 else
                 {
-                    try
-                    {
-                        o = Script.Eval(precursor);
-                    }
-                    catch
-                    {
-                        o = null;
-                    }
-
-                    if (o != null)
-                    {
-                        this.scriptItemStatuses[precursor] = true;
-                    }
+                    type = currentType.Substring(0, firstPeriod);
+                    currentType = currentType.Substring(firstPeriod + 1, currentType.Length);
+                    firstPeriod = currentType.IndexOf(".");
                 }
-            }
 
-            if (String.IsNullOrEmpty(precursor) || o != null)
-            {
-                try
-                {  
-                    o = Script.Eval(scriptItem);
-                }
-                catch
+                if (previousObject == null)
                 {
-                    o = null;
+                    Script.Literal("{0}=window[{1}]", previousObject, type);
+                }
+                else
+                {
+                    Script.Literal("{0}={0}[{1}]", previousObject, type);
+                }
+
+                if (Script.IsNullOrUndefined(previousObject))
+                {
+                    this.scriptItemStatuses[scriptItem] = false;
+                    return false;
+                }
+                else if (isEndType)
+                {
+                    this.scriptItemStatuses[scriptItem] = true;
+                    return true;
                 }
             }
 
-            if (Script.IsNullOrUndefined(o))
-            {
-                return false;
-            }
-            else
-            {
-                this.scriptItemStatuses[scriptItem] = true;
-                return true;
-            }
+            this.scriptItemStatuses[scriptItem] = false;
+            return false;
         }
 
         public Control Create(String fullControlName)

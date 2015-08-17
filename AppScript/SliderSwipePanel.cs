@@ -17,6 +17,12 @@ namespace BL.UI.App
         RightSlide = 2
     }
 
+    public enum SliderSwipeNavigationPositioning
+    {
+        BottomCenter = 2,
+        BottomLeft = 1
+    }
+
     public class SliderSwipePanel : ItemsControl
     {
         [ScriptName("e_itemsBin")]
@@ -65,7 +71,7 @@ namespace BL.UI.App
         private double downEventPageX;
         private bool displayedSwipeGuides = false;
         private bool displayingSwipeNavigation = false;
-        private bool displayLinkBar = false;
+        private bool displayLinkBar = true;
         private double downEventPageY;
         private bool alwaysDisplaySwipeNavigation = false;
 
@@ -96,7 +102,10 @@ namespace BL.UI.App
         public event IntegerEventHandler VerticalScrollChanged;
         public event EventHandler IndexChangeAnimationCompleted;
 
-        private const int SwipeNavigationDistanceFromEdge = 114;
+        private int swipeNavigationOffsetY= 114;
+        private int swipeNavigationOffsetX = 0;
+        private SliderSwipeNavigationPositioning swipeNavigationPositioning = SliderSwipeNavigationPositioning.BottomCenter;
+
         private String accentColor;
 
         [ScriptName("b_displaySwipeNavigationTitle")]
@@ -110,6 +119,54 @@ namespace BL.UI.App
             set
             {
                 this.displaySwipeNavigationTitle = value;
+            }
+        }
+
+        [ScriptName("i_swipeNavigationOffsetX")]
+        public int SwipeNavigationOffsetX
+        {
+            get
+            {
+                return this.swipeNavigationOffsetX;
+            }
+
+            set
+            {
+                this.swipeNavigationOffsetX = value;
+
+                this.UpdateSizingsOverTime();
+            }
+        }
+
+        [ScriptName("i_swipeNavigationOffsetY")]
+        public int SwipeNavigationOffsetY
+        {
+            get
+            {
+                return this.swipeNavigationOffsetY;
+            }
+
+            set
+            {
+                this.swipeNavigationOffsetY = value;
+
+                this.UpdateSizingsOverTime();
+            }
+        }
+
+        [ScriptName("i_swipeNavigationPositioning")]
+        public SliderSwipeNavigationPositioning SwipeNavigationPositioning
+        {
+            get
+            {
+                return this.swipeNavigationPositioning;
+            }
+
+            set
+            {
+                this.swipeNavigationPositioning = value;
+
+                this.UpdateSizingsOverTime();
             }
         }
 
@@ -1251,6 +1308,7 @@ else if (window.getComputedStyle)
 
             Window.SetTimeout(new Action(this.UpdateSizings), 1);
             Window.SetTimeout(new Action(this.UpdateSizings), 400);
+            Window.SetTimeout(new Action(this.UpdateSizings), 800);
         }
 
         public void UpdateSizings()
@@ -1314,8 +1372,16 @@ else if (window.getComputedStyle)
 
             if (this.swipeNavigation != null && elementVisibleRight > 0)
             {
-                this.swipeNavigation.Style.Left = ((elementWidth - 200) / 2).ToString() + "px";
-                this.swipeNavigation.Style.Top = (elementVisibleBottom - SwipeNavigationDistanceFromEdge).ToString() + "px";
+                if (this.swipeNavigationPositioning == SliderSwipeNavigationPositioning.BottomCenter)
+                {
+                    this.swipeNavigation.Style.Left = ( ((elementWidth - 200) + swipeNavigationOffsetX) / 2).ToString() + "px";
+                    this.swipeNavigation.Style.Top = (elementVisibleBottom - swipeNavigationOffsetY).ToString() + "px";
+                }
+                else
+                {
+                    this.swipeNavigation.Style.Left = (swipeNavigationOffsetX).ToString() + "px";
+                    this.swipeNavigation.Style.Top = (elementVisibleBottom - swipeNavigationOffsetY).ToString() + "px";
+                }
             }
 
             int index = 0;

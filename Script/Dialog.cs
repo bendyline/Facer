@@ -14,6 +14,12 @@ namespace BL.UI
         [ScriptName("e_titleText")]
         public Element titleText;
 
+        [ScriptName("e_closeImageL")]
+        public ImageElement closeImageL;
+
+        [ScriptName("e_closeImageR")]
+        public ImageElement closeImageR;
+
         [ScriptName("e_leftCloseBin")]
         public Element leftCloseBin;
 
@@ -48,6 +54,7 @@ namespace BL.UI
         private bool displayCloseButton = true;
         private bool displayDoneButton = false;
         private bool isShowing = false;
+        private bool isPrimarilyDarkBackground = true;
         private int dialogWidth = 0;
         private int dialogHeight = 0;
         private int dialogIndexAtTimeOfCreation = -1;
@@ -69,6 +76,21 @@ namespace BL.UI
         public static event EventHandler DialogHidden;
 
         private ElementEventListener keyboardEventHandler;
+
+        public bool IsPrimarilyDarkBackground
+        {
+            get
+            {
+                return this.isPrimarilyDarkBackground;
+            }
+
+            set
+            {
+                this.isPrimarilyDarkBackground = value;
+
+                this.ApplyCloseButtonImages();
+            }
+        }
 
         public static bool DialogIsShowing
         {
@@ -224,6 +246,7 @@ namespace BL.UI
             this.topBarSizer.Style.MarginTop = Context.Current.FullScreenTopBufferHeight + "px";
 
             this.UpdateCloseButton();
+            this.ApplyCloseButtonImages();
         }
 
         [ScriptName("v_onDoneButtonClick")]
@@ -242,6 +265,25 @@ namespace BL.UI
         private void HandleCloseButtonR(ElementEvent ee)
         {
             this.Hide();
+        }
+
+        private void ApplyCloseButtonImages()
+        {
+            if (this.closeImageL == null)
+            {
+                return;
+            }
+
+            if (this.IsPrimarilyDarkBackground)
+            {
+                this.closeImageL.Src = Context.Current.ResourceBasePath + Context.Current.ImageResourceSubPath + "closew.png";
+            }
+            else
+            {
+                this.closeImageL.Src = Context.Current.ResourceBasePath + Context.Current.ImageResourceSubPath + "close.png";
+            }
+
+            this.closeImageR.Src = this.closeImageL.Src;
         }
 
         private void UpdateCloseButton()
