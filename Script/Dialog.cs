@@ -427,10 +427,14 @@ namespace BL.UI
                             offset += 78;
                         }
                     }
-
-                    if (!String.IsNullOrEmpty(this.Title))
+                    if (!String.IsNullOrEmpty(this.Title) || this.DisplayCloseButton)
                     {
-                        offset += 22;
+                        offset += (40 + Context.Current.FullScreenTopBufferHeight);
+                        this.topBar.Style.Display = "";
+                    }
+                    else
+                    {
+                        this.topBar.Style.Display = "none";
                     }
 
                     contentContainerStyle.Height = (height - offset) + "px";

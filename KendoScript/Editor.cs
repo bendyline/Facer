@@ -100,13 +100,21 @@ namespace BL.UI.KendoControls
 
             set
             {
+                this.tempValue = value;
+
                 if (this.editor ==  null)
                 {
-                    this.tempValue = value;
                     return;
                 }
 
-                this.editor.Value(value);
+                // an exception in "getSelection" is thrown in Chrome if the RTE contained an image previously
+                try
+                {
+                    this.editor.Value(value);
+                }
+                catch (Exception)
+                {
+                }
             }
         }
 
@@ -287,8 +295,7 @@ namespace BL.UI.KendoControls
 
             jQueryObject jqo = jQuery.FromObject(this.editorElement);
 
-            // note we are try catching to work around an exception issue in IE
-            Script.Literal("var j={0};j.kendoEditor({2});{1}=j.data('kendoEditor')", jqo, this.editor, this.editorOptions);
+            Script.Literal("{0}.kendoEditor({2});{1}={0}.data('kendoEditor')", jqo, this.editor, this.editorOptions);
 
             this.editorElement.Style.BorderWidth = "0px";
 

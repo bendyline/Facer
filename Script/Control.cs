@@ -1141,7 +1141,7 @@ namespace BL.UI
 
         private void ScriptLoadedContinue(IAsyncResult result)
         {
-            Log.DebugMessage("Control with template '" + this.TemplateId + "' has " + this.prerequisiteScriptsRequested + " scripts left. Path: " + result.AsyncState.ToString());
+            // Log.DebugMessage("Control with template '" + this.TemplateId + "' has " + this.prerequisiteScriptsRequested + " scripts left. Path: " + result.AsyncState.ToString());
 
             this.prerequisiteScriptsRequested--;
 
