@@ -69,7 +69,7 @@ namespace BL.UI.App
         private Date animationStart;
 
         private double downEventPageX;
-        private bool displayedSwipeGuides = false;
+        private int swipeGuideCount = 0;
         private bool displayingSwipeNavigation = false;
         private bool displayLinkBar = true;
         private double downEventPageY;
@@ -102,7 +102,7 @@ namespace BL.UI.App
         public event IntegerEventHandler VerticalScrollChanged;
         public event EventHandler IndexChangeAnimationCompleted;
 
-        private int swipeNavigationOffsetY= 114;
+        private int swipeNavigationOffsetY= 124;
         private int swipeNavigationOffsetX = 0;
         private SliderSwipeNavigationPositioning swipeNavigationPositioning = SliderSwipeNavigationPositioning.BottomCenter;
 
@@ -348,6 +348,7 @@ namespace BL.UI.App
             set
             {
                 Log.DebugMessage("Setting swipe panel active index to " + value + " from " + this.activeIndex);
+
                 if (this.activeIndex == value)
                 {
                     this.SetFinalPosition();
@@ -441,8 +442,9 @@ namespace BL.UI.App
         {
             if (  ( this.allowSwiping && 
                     Context.Current.IsTouchOnly && 
-                    !displayedSwipeGuides )
-                  && this.swipeGuideRight != null)
+                    swipeGuideCount < 3 )
+                  && this.swipeGuideRight != null 
+                  && this.swipeGuideRight.Style.Display != "block")
             {
                 this.swipeGuideRight.Style.Display = "block";
 
@@ -454,7 +456,7 @@ namespace BL.UI.App
 
                 this.UpdateSizingsOverTime();
 
-                this.displayedSwipeGuides = true;
+                this.swipeGuideCount++;
             }
         }
 
@@ -1023,6 +1025,7 @@ namespace BL.UI.App
             this.FlashSwipeNavigation();
 
             this.UpdateSizingsOverTime();
+            this.ConsiderShowingSwipeGuidelines();
         }
 
         protected override void OnVisibilityChanged()

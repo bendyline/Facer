@@ -63,11 +63,7 @@ namespace BL.UI.KendoControls
             {
                 this.editorHeight = value;
 
-                if (this.editorHeight != null && this.Element != null && this.editorElement != null)
-                {
-                    this.Element.Style.Height = this.editorHeight;
-                    this.editorElement.Style.Height = this.editorHeight;
-                }
+                this.ApplyEditorHeight();
             }
         }
 
@@ -161,6 +157,26 @@ namespace BL.UI.KendoControls
             this.EnsureScript("kendo.ui.Editor", "js/kendo/kendo.editor.min.js");
         }
 
+        private void ApplyEditorHeight()
+        {
+            if (this.editorHeight != null && this.Element != null && this.editorElement != null)
+            {
+                this.Element.Style.Height = this.editorHeight;
+                this.editorElement.Style.Height = this.editorHeight;
+
+                Element tableElement = this.Element.ChildNodes[0];
+                if (tableElement.TagName.ToUpperCase() == "TABLE" && this.editorHeight.EndsWith("px"))
+                {
+                    //                 TBODY           Second TR      TD                  IFRAME
+                    tableElement.ChildNodes[0].ChildNodes[1].ChildNodes[0].ChildNodes[0].Style.Height = Int32.Parse(this.editorHeight.Substring(0, this.editorHeight.Length - 2)) - 80 + "px";
+                }
+            }
+            else if (this.Element != null && this.editorHeight == null)
+            {
+                this.Element.Style.Height = "100%";
+            }
+        }
+
         protected override void OnApplyTemplate()
         {
             if (this.editorOptions != null && this.editorOptions.ImageBrowser != null && this.editorOptions.ImageBrowser.BeforeLaunch != null && !this.calledImageBrowserCallback)
@@ -203,15 +219,7 @@ namespace BL.UI.KendoControls
                 this.editorElement.SetAttribute("rows", this.rows);
             }
 
-            if (this.editorHeight != null)
-            {
-                this.editorElement.Style.Height = this.editorHeight;
-                this.Element.Style.Height = this.editorHeight;
-            }
-            else
-            {
-                this.Element.Style.Height = "100%";
-            }
+            this.ApplyEditorHeight();
             
             this.Element.Style.Width = "100%";
             
@@ -298,6 +306,8 @@ namespace BL.UI.KendoControls
             Script.Literal("{0}.kendoEditor({2});{1}={0}.data('kendoEditor')", jqo, this.editor, this.editorOptions);
 
             this.editorElement.Style.BorderWidth = "0px";
+
+            this.ApplyEditorHeight();
 
             if (this.editor != null)
             {

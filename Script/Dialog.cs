@@ -1,4 +1,4 @@
-/* Copyright (c) Bendyline LLC. All rights reserved. Licensed under the Apache License, Version 2.0.
+﻿/* Copyright (c) Bendyline LLC. All rights reserved. Licensed under the Apache License, Version 2.0.
     You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. */
 
 using System;
@@ -9,16 +9,17 @@ using System.Runtime.CompilerServices;
 
 namespace BL.UI
 {
+    public enum CloseButtonStyle
+    {
+        CloseX = 0,
+        BackArrow = 1
+    }
     public class Dialog : ContentControl
     {
+        private CloseButtonStyle closeButtonStyle = CloseButtonStyle.CloseX;
+
         [ScriptName("e_titleText")]
         public Element titleText;
-
-        [ScriptName("e_closeImageL")]
-        public ImageElement closeImageL;
-
-        [ScriptName("e_closeImageR")]
-        public ImageElement closeImageR;
 
         [ScriptName("e_leftCloseBin")]
         public Element leftCloseBin;
@@ -57,6 +58,8 @@ namespace BL.UI
         private bool isPrimarilyDarkBackground = true;
         private int dialogWidth = 0;
         private int dialogHeight = 0;
+        private int interiorBottomPadding = 0;
+        private int interiorTopPadding = 0;
         private int dialogIndexAtTimeOfCreation = -1;
         private String overflow = null;
         private String overflowX = null;
@@ -77,6 +80,47 @@ namespace BL.UI
 
         private ElementEventListener keyboardEventHandler;
 
+        public CloseButtonStyle CloseButtonStyle
+        {
+            get
+            {
+                return this.closeButtonStyle;
+            }
+
+            set
+            {
+                this.closeButtonStyle = value;
+
+                this.ApplyCloseButtonStyle();
+            }
+        }
+
+        public int InteriorBottomPadding
+        {
+            get
+            {
+                return this.interiorBottomPadding;
+            }
+
+            set
+            {
+                this.interiorBottomPadding = value;
+            }
+        }
+
+        public int InteriorTopPadding
+        {
+            get
+            {
+                return this.interiorTopPadding;
+            }
+
+            set
+            {
+                this.interiorTopPadding = value;
+            }
+        }
+
         public bool IsPrimarilyDarkBackground
         {
             get
@@ -88,7 +132,7 @@ namespace BL.UI
             {
                 this.isPrimarilyDarkBackground = value;
 
-                this.ApplyCloseButtonImages();
+                this.ApplyCloseButtonStyle();
             }
         }
 
@@ -246,7 +290,7 @@ namespace BL.UI
             this.topBarSizer.Style.MarginTop = Context.Current.FullScreenTopBufferHeight + "px";
 
             this.UpdateCloseButton();
-            this.ApplyCloseButtonImages();
+            this.ApplyCloseButtonStyle();
         }
 
         [ScriptName("v_onDoneButtonClick")]
@@ -267,23 +311,43 @@ namespace BL.UI
             this.Hide();
         }
 
-        private void ApplyCloseButtonImages()
+        private void ApplyCloseButtonStyle()
         {
-            if (this.closeImageL == null)
+            if (this.closeButtonL == null)
             {
                 return;
             }
 
-            if (this.IsPrimarilyDarkBackground)
+            Element closeButton = this.closeButtonR;
+
+            if (Context.Current.IsSmallFormFactor)
             {
-                this.closeImageL.Src = Context.Current.ResourceBasePath + Context.Current.ImageResourceSubPath + "closew.png";
+                closeButton = this.closeButtonL;
+            }
+
+            if (this.closeButtonStyle == CloseButtonStyle.BackArrow)
+            {
+                ElementUtilities.SetText(closeButton, "");
+                closeButton.Style.Position = "relative";
+                closeButton.Style.Top = "-2px";
             }
             else
             {
-                this.closeImageL.Src = Context.Current.ResourceBasePath + Context.Current.ImageResourceSubPath + "close.png";
+                ElementUtilities.SetText(closeButton, "");
+                closeButton.Style.Position = "";
+                closeButton.Style.Top = "0px";
             }
 
-            this.closeImageR.Src = this.closeImageL.Src;
+            if (this.IsPrimarilyDarkBackground)
+            {
+
+                closeButton.Style.Color = "#FFFFFF";
+            }
+            else
+            {
+
+                closeButton.Style.Color = "#333333";
+            }
         }
 
         private void UpdateCloseButton()
@@ -307,6 +371,8 @@ namespace BL.UI
                     this.closeButtonL.Style.Display = "none";
                     this.leftCloseBin.Style.Display = "none";
                 }
+
+
             }
             else
             {
@@ -411,7 +477,7 @@ namespace BL.UI
                 {
                     this.contentContainer.Style.OverflowX = "hidden";
 
-                    int offset = 16;
+                    int offset = 0;
 
                     if (this.TemplateId == "bl-ui-dialogfullscreen")
                     {
@@ -424,9 +490,10 @@ namespace BL.UI
 
                         if (this.DisplayDoneButton)
                         {
-                            offset += 78;
+                            offset += 40;
                         }
                     }
+
                     if (!String.IsNullOrEmpty(this.Title) || this.DisplayCloseButton)
                     {
                         offset += (40 + Context.Current.FullScreenTopBufferHeight);
@@ -437,7 +504,11 @@ namespace BL.UI
                         this.topBar.Style.Display = "none";
                     }
 
-                    contentContainerStyle.Height = (height - offset) + "px";
+                    contentContainerStyle.PaddingTop = this.interiorTopPadding + "px";
+
+                    contentContainerStyle.Height = (height - (offset + this.interiorBottomPadding)) + "px";
+
+                    this.panel.Style.PaddingBottom = this.interiorBottomPadding + "px";
                 }
                 else
                 {

@@ -39,9 +39,10 @@
 
         #closeButton
         {
-            font-size:medium;
+            font-size:x-large;
             text-align: right;
-            cursor:default;            
+            cursor:default;        
+            font-family:'Kendo UI'    
         }        
   
         #titleText
@@ -54,6 +55,7 @@
             cursor:default;
             vertical-align:top;
             padding:2px;
+            padding-top:4px;
             text-transform:uppercase;
         }
 
@@ -82,8 +84,8 @@
             background-color:#209CBE;
             vertical-align:middle;
             padding:4px;
-            padding-bottom:7px;
-            padding-top:8px;
+            padding-bottom:5px;
+            padding-top:6px;
         }
         
         #contentArea
@@ -162,32 +164,32 @@
         </style>
 	</head>
 	<body>
-           <div id='panel'>
-               <div id="topBar">
-                   <div id="topInterior">  
-                       <div id="topBarSizer">
-                            <div id="topBarSizerInterior">
-                              <div data-ctl-class="closeButtonWrapper" id="leftCloseBin">
-                                <div id="closeButtonL" data-ctl-class="closeButton"><img id="closeImageL" src="closew.png" style="width:17px;height:17px;padding-bottom:2px;"/></div>
-                              </div>
-                              <div id="titleText"></div>
-                              <div data-ctl-class="closeButtonWrapper">
-                                <div id="closeButtonR" data-ctl-class="closeButton"><img id="closeImageR" src="closew.png" style="width:17px;height:17px;padding-bottom:2px;"/></div>
-                              </div>
+        <div id='panel'>
+            <div id="topBar">
+                <div id="topInterior">  
+                    <div id="topBarSizer">
+                        <div id="topBarSizerInterior">
+                            <div data-ctl-class="closeButtonWrapper" id="leftCloseBin">
+                            <div id="closeButtonL" data-ctl-class="closeButton"></div>
                             </div>
-                      </div>
-                   </div>
-                </div>
-               <div id="contentArea">
-                   <div id="contentContainerOuter">
-                        <ContentContainer id="contentContainer"/>
+                            <div id="titleText"></div>
+                            <div data-ctl-class="closeButtonWrapper">
+                            <div id="closeButtonR" data-ctl-class="closeButton"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-               <div id="bottomBar" style="display:none">
-                   <div id="bottomInterior">
-                        <div id="doneButton">done</div>
-                    </div>
+            </div>
+            <div id="contentArea">
+                <div id="contentContainerOuter">
+                    <ContentContainer id="contentContainer"/>
                 </div>
-           </div>
+            </div>
+            <div id="bottomBar" style="display:none">
+                <div id="bottomInterior">
+                    <div id="doneButton">done</div>
+                </div>
+            </div>
+        </div>
  	</body>
 </html>

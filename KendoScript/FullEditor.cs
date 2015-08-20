@@ -159,7 +159,12 @@ namespace BL.UI.KendoControls
             d.VerticalPadding = 0;
             d.HorizontalPadding = 0;
             d.Title = this.title;
-            d.DisplayDoneButton = true;
+
+            if (Context.Current.IsOnscreenKeyboardDevice)
+            {
+                d.InteriorBottomPadding = Context.Current.OnScreenKeyboardHeight;
+            }
+
             d.Show();
 
             if (this.popupEditor != null)
@@ -171,7 +176,22 @@ namespace BL.UI.KendoControls
             this.popupEditor = new Editor();
             this.popupEditor.Options = this.EditorOptions;
             this.popupEditor.Rows = 0;
-            this.popupEditor.EditorHeight = "100%";
+
+            int editorHeightOffset = 78;
+
+            if (Context.Current.IsSmallFormFactor)
+            {
+                d.DisplayDoneButton = false;
+                d.CloseButtonStyle = CloseButtonStyle.BackArrow;
+            }
+            else
+            {
+                d.DisplayDoneButton = true;
+                editorHeightOffset += 40;
+            }
+
+            this.popupEditor.EditorHeight = (Window.InnerHeight - (Context.Current.OnScreenKeyboardHeight + editorHeightOffset)) + "px";
+            
             this.popupEditor.DisplayInlineToolbar = true;
             this.popupEditor.GrabFocusOnLoad = true;
 

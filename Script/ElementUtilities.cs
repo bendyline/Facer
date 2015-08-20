@@ -11,6 +11,72 @@ namespace BL.UI
 {
     public static class ElementUtilities
     {
+
+        public static void RegisterTextInputBehaviors(InputElement e)
+        {
+            e.AddEventListener("keyup", HandleInputTextKeyUp, true);
+            e.AddEventListener("focus", HandleInputFocus, true);
+        }
+
+        public static void DeregisterTextInputBehaviors(InputElement e)
+        {
+            e.RemoveEventListener("keyup", HandleInputTextKeyUp, true);
+            e.RemoveEventListener("focus", HandleInputFocus, true);
+        }
+
+        public static void RegisterTextAreaBehaviors(InputElement e)
+        {
+            e.AddEventListener("focus", HandleInputFocus, true);
+        }
+
+        public static void DeregisterTextAreaBehaviors(InputElement e)
+        {
+            e.RemoveEventListener("focus", HandleInputFocus, true);
+        }
+
+        private static void HandleInputFocus(ElementEvent e)
+        {
+            // if there is an onscreen keyboard, scroll the active text element up
+            // so it remains visible (not hidden behind the on screen keyboard)
+            if (Context.Current.IsOnscreenKeyboardDevice)
+            {
+                ClientRect elementRect = ElementUtilities.GetBoundingRect(e.Target);
+
+                double offsetTop = elementRect.Top;
+
+                double invisibleTop = Window.InnerHeight - (Context.Current.OnScreenKeyboardHeight + 40);
+
+                if (offsetTop > invisibleTop)
+                {
+                    // find the first parent element that is scrollable.
+                    Element scrollableParent = e.Target.ParentNode;
+
+                    while (scrollableParent != null)
+                    {
+                        if (scrollableParent.Style.OverflowY.ToLowerCase() == "auto")
+                        {
+                            scrollableParent.ScrollTop += (int)(offsetTop - invisibleTop);
+
+                            return;
+                        }
+
+                        scrollableParent = scrollableParent.ParentNode;
+                    }
+                }
+            }
+        }
+
+        private static void HandleInputTextKeyUp(ElementEvent e)
+        {
+            // particularly on mobile devices, hitting enter seems like the way to dismiss the 
+            // on screen keyboard, so force the text input to blur to cause the OSK to go
+            // away
+            if (e.KeyCode == 13)
+            {
+                e.Target.Blur();
+            }
+        }
+
         public static void ClearChildElements(Element e)
         {
             if (e == null)
