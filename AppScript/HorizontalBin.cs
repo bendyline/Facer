@@ -270,7 +270,7 @@ namespace BL.UI.App
                 jQuery.FromObject(this.itemsBin).ScrollLeft(valu);
 
                 this.lastScrollTime = Date.Now;
-                Log.Message("Setting bin left to " + this.itemsBin.ScrollLeft + " TOX:" + this.toX + " FROMX:" + this.fromX + " PROP" + proportion + " VAL" + valu);
+                // Log.Message("Setting bin left to " + this.itemsBin.ScrollLeft + " TOX:" + this.toX + " FROMX:" + this.fromX + " PROP" + proportion + " VAL" + valu);
                 Window.SetTimeout(this.AnimateTick, 15);
             }
             else
@@ -289,6 +289,10 @@ namespace BL.UI.App
                 this.Scrolling(this, EventArgs.Empty);
             }
 
+            if (this.itemsBin == null)
+            {
+                return;
+            }
 
             this.elementInternallyScrolled = true;
             this.itemsBin.ScrollLeft = (int)this.toX;
@@ -362,23 +366,9 @@ namespace BL.UI.App
             this.UpdateSizings(null);
         }
 
-        private bool IsDefaultInputElement(ElementEvent e)
-        {
-            String targetTagName = e.Target.TagName.ToLowerCase();
-
-            object contentEditable = e.Target.GetAttribute("contenteditable");
-
-            if (targetTagName == "input" || targetTagName == "select" || targetTagName == "textarea" || (String)contentEditable == "true")
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         private void HandleElementMouseDown(ElementEvent e)
         {
-            if (IsDefaultInputElement(e))
+            if (ElementUtilities.IsDefaultInputElement(e, false))
             {
                 return;
             }
@@ -430,7 +420,7 @@ namespace BL.UI.App
 
         private void HandleElementMouseMove(ElementEvent e)
         {
-            if (IsDefaultInputElement(e))
+            if (ElementUtilities.IsDefaultInputElement(e, false))
             {
                 e.CancelBubble = false;
                 return;
@@ -453,7 +443,12 @@ namespace BL.UI.App
                 Debug.WriteLine("(HorizontalBin::HandleElementMouseMove) - Mouse Move drag: " + newLeft);
 
                 this.elementInternallyScrolled = true;
-                this.itemsBin.ScrollLeft = newLeft;
+
+                if (this.itemsBin != null)
+                {
+                    this.itemsBin.ScrollLeft = newLeft;
+                }
+
                 this.lastScrollTime = Date.Now;
 
                 if (this.Scrolling != null)

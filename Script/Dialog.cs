@@ -490,13 +490,13 @@ namespace BL.UI
 
                         if (this.DisplayDoneButton)
                         {
-                            offset += 40;
+                            offset += 64;
                         }
                     }
 
                     if (!String.IsNullOrEmpty(this.Title) || this.DisplayCloseButton)
                     {
-                        offset += (40 + Context.Current.FullScreenTopBufferHeight);
+                        offset += (45 + Context.Current.FullScreenTopBufferHeight);
                         this.topBar.Style.Display = "";
                     }
                     else
@@ -627,6 +627,11 @@ namespace BL.UI
             if (this.isShowing)
             {
                 this.isShowing = false;
+
+                if (Document.ActiveElement != null)
+                {
+                    Document.ActiveElement.Blur();
+                }
 
                 Document.Body.RemoveEventListener("keypress", this.keyboardEventHandler, false);
 

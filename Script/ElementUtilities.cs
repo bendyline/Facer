@@ -53,7 +53,7 @@ namespace BL.UI
 
                     while (scrollableParent != null)
                     {
-                        if (scrollableParent.Style.OverflowY.ToLowerCase() == "auto")
+                        if (scrollableParent.Style != null && scrollableParent.Style.OverflowY != null && scrollableParent.Style.OverflowY.ToLowerCase() == "auto")
                         {
                             scrollableParent.ScrollTop += (int)(offsetTop - invisibleTop);
 
@@ -122,28 +122,28 @@ namespace BL.UI
 
         public static String GetTouchStartEventName()
         {
-            Script.Literal("if (window.navigator.msPointerEnabled) { return \"MSPointerDown\"; }");
+            Script.Literal("if (window.navigator.pointerEnabled) { return \"pointerdown\"; } else if (window.navigator.msPointerEnabled) { return \"MSPointerDown\"; }");
 
             return "touchstart";
         }
 
         public static String GetTouchMoveEventName()
         {
-            Script.Literal("if (window.navigator.msPointerEnabled) { return \"MSPointerMove\"; }");
+            Script.Literal("if (window.navigator.pointerEnabled) { return \"pointermove\"; } else if (window.navigator.msPointerEnabled) { return \"MSPointerMove\"; }");
 
             return "touchmove";
         }
 
         public static String GetTouchEndEventName()
         {
-            Script.Literal("if (window.navigator.msPointerEnabled) { return \"MSPointerUp\"; }");
+            Script.Literal("if (window.navigator.pointerEnabled) { return \"pointerup\"; } else if (window.navigator.msPointerEnabled) { return \"MSPointerUp\"; }");
 
             return "touchend";
         }
 
         public static String GetTouchCancelEventName()
         {
-            Script.Literal("if (window.navigator.msPointerEnabled) { return null; }");
+            Script.Literal("if (window.navigator.pointerEnabled) { return \"pointercancel\"; } else if (window.navigator.msPointerEnabled) { return null; }");
 
             return "touchcancel";
         }
@@ -161,6 +161,21 @@ namespace BL.UI
             }
 
             return null;
+        }
+        public static bool GetIsPointerEnabled()
+        {
+            bool isPointerEnabled = false;
+
+            Script.Literal("{0}=(window.navigator.pointerEnabled || window.navigator.msPointerEnabled)", isPointerEnabled);
+
+            return isPointerEnabled;
+        }
+
+        public static bool GetIsPrimary(ElementEvent e)
+        {
+            Script.Literal("if (window.navigator.pointerEnabled || window.navigator.msPointerEnabled) {{ if ({0}.isPrimary != false) {{ return true; }} return false; }} ", e);
+
+            return true;
         }
 
         public static double GetPageX(ElementEvent e)
@@ -291,6 +306,67 @@ namespace BL.UI
 
             eventDetails.PreventDefault();
         }
+
+        public static Style GetComputedStyle(Element e)
+        {
+            Style style = e.Style;
+
+            Script.Literal(@"
+if ({0}.currentStyle)
+{{
+    {1} = {0}.currentStyle;
+}}
+else if (window.getComputedStyle)
+{{
+    {1} = document.defaultView.getComputedStyle({0}, null);
+}}
+        ", e, style);
+
+            return style;
+        }
+
+        public static bool IsDefaultInputElement(ElementEvent e, bool includeYScrollEvents)
+        {
+            String targetTagName = e.Target.TagName.ToLowerCase();
+
+            object contentEditable = e.Target.GetAttribute("contenteditable");
+
+            if (targetTagName == "input" || targetTagName == "img" || targetTagName == "select" || targetTagName == "textarea" || (String)contentEditable == "true")
+            {
+                return true;
+            }
+
+            if (!Script.IsNullOrUndefined(e.SrcElement))
+            {
+                String targetClass = e.SrcElement.ClassName;
+
+                if (!String.IsNullOrEmpty(targetClass))
+                {
+                    if (targetClass.IndexOf("switch-") > 0 || targetClass.IndexOf("grip") > 0 || targetClass.IndexOf("leaflet") > 0 || targetClass.IndexOf("handle") > 0)
+                    {
+                        return true;
+                    }
+                }
+
+                Style style = GetComputedStyle(e.SrcElement);
+
+                if (!Script.IsNullOrUndefined(style))
+                {
+                    if (style.Overflow == "auto" ||
+                            style.Overflow == "scroll" ||
+                            (includeYScrollEvents && style.OverflowY == "auto") ||
+                            (includeYScrollEvents && style.OverflowY == "scroll") ||
+                            style.OverflowX == "auto" ||
+                            style.OverflowX == "scroll")
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
     }
 
 }

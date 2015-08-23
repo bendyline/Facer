@@ -411,7 +411,7 @@ namespace BL.UI.App
             }
 
             this.draggingElementMouseMoveHandler = this.HandleElementMouseMove;
-            this.draggingElementMouseUpHandler = this.HandleElementMouseUp;
+            this.draggingElementMouseUpHandler = this.HandlePointerUp;
         }
 
         public void RevertToPreviousWholePage()
@@ -994,27 +994,25 @@ namespace BL.UI.App
             }
 
 
-            if (Context.Current.IsTouchOnly)
+            if (Context.Current.IsTouchOnly || ElementUtilities.GetIsPointerEnabled())
             {
                 // Debug.WriteLine("(SliderSwipePanel::OnApplyTemplate) - Registering touch events " + ElementUtilities.GetTouchStartEventName());
 
                 this.Element.AddEventListener(ElementUtilities.GetTouchStartEventName(), this.HandleElementMouseDown, true);
 
                 Document.Body.AddEventListener(ElementUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
-                Document.Body.AddEventListener(ElementUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
-
+                this.Element.AddEventListener(ElementUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
+                
                 if (ElementUtilities.GetTouchCancelEventName() != null)
                 {
-                    Document.Body.AddEventListener(ElementUtilities.GetTouchCancelEventName(), this.draggingElementMouseUpHandler, true);
+                    this.Element.AddEventListener(ElementUtilities.GetTouchCancelEventName(), this.draggingElementMouseUpHandler, true);
                 }
             }
             else
             {
-                // Debug.WriteLine("(SliderSwipePanel::OnApplyTemplate) - Registering mouse events ");
-
                 this.Element.AddEventListener("mousedown", this.HandleElementMouseDown, true);
                 this.Element.AddEventListener("mousemove", this.HandleElementMouseMove, true);
-                this.Element.AddEventListener("mouseup", this.HandleElementMouseUp, true);
+                this.Element.AddEventListener("mouseup", this.HandlePointerUp, true);
                 this.Element.AddEventListener("dragstart", this.HandleDragStartEvent, true);
             }
             
@@ -1052,62 +1050,9 @@ namespace BL.UI.App
             this.UpdateSizingsOverTime();
         }
 
-        private bool IsDefaultInputElement(ElementEvent e)
-        {
-            String targetTagName = e.Target.TagName.ToLowerCase();
-
-            object contentEditable = e.Target.GetAttribute("contenteditable");
-
-            if (targetTagName == "input"||  targetTagName == "img" || targetTagName == "select" || targetTagName == "textarea" || (String)contentEditable == "true")
-            {
-                return true;
-            }
-
-            if (!Script.IsNullOrUndefined(e.SrcElement))
-            {
-                String targetClass = e.SrcElement.ClassName;
-
-                if (!String.IsNullOrEmpty(targetClass))
-                {
-                    if (targetClass.IndexOf("switch-") > 0 || targetClass.IndexOf("grip") > 0 || targetClass.IndexOf("leaflet") > 0 || targetClass.IndexOf("handle") > 0)
-                    {
-                        return true;
-                    }
-                }
-
-                Style style = null;
-
-                Script.Literal(@"
-if ({0}.currentStyle)
-{{
-    {1} = {0}.currentStyle;
-}}
-else if (window.getComputedStyle)
-{{
-    {1} = document.defaultView.getComputedStyle({0}, null);
-}}
-        ", e.SrcElement, style);
-                
-                if (!Script.IsNullOrUndefined(style))
-                {
-                    if (style.Overflow == "auto" ||
-                            style.Overflow == "scroll" ||
-                            style.OverflowY == "auto" ||
-                            style.OverflowY == "scroll" ||
-                            style.OverflowX == "auto" ||
-                            style.OverflowX == "scroll")
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
         private void HandleElementMouseDown(ElementEvent e)
         {
-            if (IsDefaultInputElement(e))
+            if (ElementUtilities.IsDefaultInputElement(e, false) || !ElementUtilities.GetIsPrimary(e))
             {
                 return;
             }
@@ -1137,14 +1082,14 @@ else if (window.getComputedStyle)
 
             if (now - this.lastDragEventTime > 100 && this.isDragging)
             {
-                this.HandleElementMouseUp(null);
+                this.HandlePointerUp(null);
             }
         }
 
         private void HandleElementMouseMove(ElementEvent e)
         {
-            if (IsDefaultInputElement(e))
-            {
+            if (ElementUtilities.IsDefaultInputElement(e, false) || !ElementUtilities.GetIsPrimary(e))
+            { 
                 return;
             }
 
@@ -1229,14 +1174,19 @@ else if (window.getComputedStyle)
             // has the mouse left the window?
             if ((e.ToElement == null && !Context.Current.IsTouchOnly) || (e.ToElement != null && e.ToElement.NodeName == "HTML"))
             {
-                this.HandleElementMouseUp(e);
+                this.HandlePointerUp(e);
             }
 
             e.CancelBubble = true;
         }
 
-        private void HandleElementMouseUp(ElementEvent e)
+        private void HandlePointerUp(ElementEvent e)
         {
+            if (!ElementUtilities.GetIsPrimary(e))
+            {
+                return;
+            }
+
             this.isConsideringDrag = false;
             Debug.WriteLine("(SliderSwipePanel::MouseUp)");
 

@@ -797,7 +797,7 @@ namespace BL.UI
                 this.element.AddEventListener("mouseout", this.mouseOutHandler, true);
                 this.element.AddEventListener("mouseenter", this.mouseEnterHandler, true);
                 this.element.AddEventListener("mouseleave", this.mouseLeaveHandler, true);
-                this.element.AddEventListener("mousemove", this.mouseMoveHandler, true);
+                this.element.AddEventListener("mousemove", this.mouseMoveHandler, false);
                 Window.AddEventListener("scroll", this.windowScrollHandler, true);
 
                 this.interactionEventsRegistered = true;
