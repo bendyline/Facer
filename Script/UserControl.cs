@@ -93,7 +93,33 @@ namespace BL.UI
             }
         }
 
-        public String UserId
+        public Nullable<long> UserId
+        {
+            get
+            {
+                if (this.user != null)
+                {
+                    return this.user.Id;
+                }
+
+                if (this.userReference != null)
+                {
+                    return this.userReference.Id;
+                }
+
+                return null;
+            }
+            set
+            {
+                UserReference ur = new UserReference();
+
+                ur.Id = value;
+                ur.NickName = String.Empty;
+
+                this.UserReference = ur;
+            }
+        }
+        public String UserUniqueKey
         {
             get
             {
@@ -153,7 +179,13 @@ namespace BL.UI
         {
             if (this.userReference != null && this.userReference.UniqueKey != null)
             {
-                User user = UserManager.Current.EnsureUser(this.userReference.UniqueKey);
+                User user = UserManager.Current.EnsureUserByUniqueKey(this.userReference.UniqueKey);
+
+                user.LoadUser(this.UserLoaded, null);
+            }
+            else if (this.userReference != null && this.userReference.Id != null)
+            {
+                User user = UserManager.Current.EnsureUserById((long)this.userReference.Id);
 
                 user.LoadUser(this.UserLoaded, null);
             }

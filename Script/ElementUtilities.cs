@@ -11,6 +11,19 @@ namespace BL.UI
 {
     public static class ElementUtilities
     {
+        private static Date lastScrollTime = new Date(2012, 1, 1);
+
+        public static bool HasScrolledRecently()
+        {
+            Date now = Date.Now;
+
+            return (now.GetTime() - lastScrollTime.GetTime()) < 600;
+        }
+
+        public static void UpdateLastScrollTime()
+        {
+            lastScrollTime = Date.Now;
+        }
 
         public static void RegisterTextInputBehaviors(InputElement e)
         {
@@ -166,7 +179,7 @@ namespace BL.UI
         {
             bool isPointerEnabled = false;
 
-            Script.Literal("{0}=(window.navigator.pointerEnabled || window.navigator.msPointerEnabled)", isPointerEnabled);
+            Script.Literal("{0}=(navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0)", isPointerEnabled);
 
             return isPointerEnabled;
         }
@@ -221,6 +234,11 @@ namespace BL.UI
         public static void SetHtml(Element element, String html)
         {
             element.InnerHTML = ToStaticHTML(html);
+        }
+
+        public static void SetTouchAction(Element element, String value)
+        {
+            Script.Literal("{0}.touchAction={1};{0}.msTouchAction={1};", element.Style, value);
         }
 
         public static void SetEmptyContent(Element element)
@@ -331,7 +349,7 @@ else if (window.getComputedStyle)
 
             object contentEditable = e.Target.GetAttribute("contenteditable");
 
-            if (targetTagName == "input" || targetTagName == "img" || targetTagName == "select" || targetTagName == "textarea" || (String)contentEditable == "true")
+            if (targetTagName == "input" || targetTagName == "select" || targetTagName == "textarea" || (String)contentEditable == "true")
             {
                 return true;
             }

@@ -39,7 +39,6 @@ namespace BL.UI.App
 
         private double initialScrollX;
         private ElementEventListener windowSizeChanged;
-        private Date lastScrollTime;
         private int visibleItemCount = 1;
         private double fromX;
         private double toX;
@@ -67,15 +66,7 @@ namespace BL.UI.App
                 this.gapBetweenSections = value;
             }
         }
-
-        public Date LastScrollTime
-        {
-            get
-            {
-                return this.lastScrollTime;
-            }
-        }
-
+        
         public bool DisplayPaddles
         {
             get
@@ -269,7 +260,7 @@ namespace BL.UI.App
                 this.elementInternallyScrolled = true;
                 jQuery.FromObject(this.itemsBin).ScrollLeft(valu);
 
-                this.lastScrollTime = Date.Now;
+                ElementUtilities.UpdateLastScrollTime();
                 // Log.Message("Setting bin left to " + this.itemsBin.ScrollLeft + " TOX:" + this.toX + " FROMX:" + this.fromX + " PROP" + proportion + " VAL" + valu);
                 Window.SetTimeout(this.AnimateTick, 15);
             }
@@ -296,7 +287,6 @@ namespace BL.UI.App
 
             this.elementInternallyScrolled = true;
             this.itemsBin.ScrollLeft = (int)this.toX;
-            this.lastScrollTime = Date.Now;
         }
 
         protected override void OnApplyTemplate()
@@ -449,7 +439,7 @@ namespace BL.UI.App
                     this.itemsBin.ScrollLeft = newLeft;
                 }
 
-                this.lastScrollTime = Date.Now;
+                ElementUtilities.UpdateLastScrollTime();
 
                 if (this.Scrolling != null)
                 {

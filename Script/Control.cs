@@ -78,7 +78,6 @@ namespace BL.UI
 
         private Action applyVisibleOnFrameAction;
 
-        private Date lastScrollTime = Date.Now;
         private bool isDelayHidden = false;
         private bool isRetrievingTemplate = false;
 
@@ -660,7 +659,7 @@ namespace BL.UI
 
             if (now.GetTime() - this.touchStartTime < 100 && 
                 now.GetTime() - this.lastClickTime > 200 && 
-                now.GetTime() > this.lastScrollTime.GetTime() + delayTime)
+                !ElementUtilities.HasScrolledRecently())
             {
                 this.lastClickTime = now.GetTime();
                 this.OnClick(e);
@@ -679,7 +678,7 @@ namespace BL.UI
             }
 
             if (now.GetTime() - lastClickTime > 200 && 
-                now.GetTime() > this.lastScrollTime.GetTime() + delayTime)
+                !ElementUtilities.HasScrolledRecently())
             {
                 this.lastClickTime = now.GetTime();
                 this.OnClick(e);
@@ -750,14 +749,18 @@ namespace BL.UI
         {
             if (this.interactionEventsRegistered)
             {
-                this.element.RemoveEventListener("click", this.clickHandler, true);
-                this.element.RemoveEventListener("touchstart", this.touchStartHandler, true);
-                this.element.RemoveEventListener("touchend", this.touchEndHandler, true);
+                this.element.RemoveEventListener("click", this.clickHandler, false);
+
+                if (!ElementUtilities.GetIsPointerEnabled())
+                {
+                    this.element.RemoveEventListener("touchstart", this.touchStartHandler, false);
+                    this.element.RemoveEventListener("touchend", this.touchEndHandler, false);
+                }
                 this.element.RemoveEventListener("mouseover", this.mouseOverHandler, true);
                 this.element.RemoveEventListener("mouseout", this.mouseOutHandler, true);
                 this.element.RemoveEventListener("mouseenter", this.mouseEnterHandler, true);
                 this.element.RemoveEventListener("mouseleave", this.mouseLeaveHandler, true);
-                this.element.RemoveEventListener("mousemove", this.mouseMoveHandler, true);
+                this.element.RemoveEventListener("mousemove", this.mouseMoveHandler, false);
                 Window.RemoveEventListener("scroll", this.windowScrollHandler, true);
 
                 this.interactionEventsRegistered = false;
@@ -790,15 +793,20 @@ namespace BL.UI
                     this.clickHandler = this.HandleClick;
                 }
 
-                this.element.AddEventListener("click", this.clickHandler , true);
-                this.element.AddEventListener("touchstart", this.touchStartHandler, true);
-                this.element.AddEventListener("touchend", this.touchEndHandler, true);
-                this.element.AddEventListener("mouseover", this.mouseOverHandler, true);
-                this.element.AddEventListener("mouseout", this.mouseOutHandler, true);
-                this.element.AddEventListener("mouseenter", this.mouseEnterHandler, true);
-                this.element.AddEventListener("mouseleave", this.mouseLeaveHandler, true);
+                this.element.AddEventListener("click", this.clickHandler, false);
+
+                if (!ElementUtilities.GetIsPointerEnabled())
+                {
+                    this.element.AddEventListener("touchstart", this.touchStartHandler, false);
+                    this.element.AddEventListener("touchend", this.touchEndHandler, false);
+                }
+
+                this.element.AddEventListener("mouseover", this.mouseOverHandler, false);
+                this.element.AddEventListener("mouseout", this.mouseOutHandler, false);
+                this.element.AddEventListener("mouseenter", this.mouseEnterHandler, false);
+                this.element.AddEventListener("mouseleave", this.mouseLeaveHandler, false);
                 this.element.AddEventListener("mousemove", this.mouseMoveHandler, false);
-                Window.AddEventListener("scroll", this.windowScrollHandler, true);
+                Window.AddEventListener("scroll", this.windowScrollHandler, false);
 
                 this.interactionEventsRegistered = true;
             }
@@ -1827,7 +1835,7 @@ namespace BL.UI
         
         private void HandleWindowScroll(ElementEvent e)
         {
-            this.lastScrollTime = Date.Now;
+            ElementUtilities.UpdateLastScrollTime();
         }
 
 

@@ -313,7 +313,14 @@ namespace BL.UI.App
             }
             set
             {
+                if (this.allowSwiping == value)
+                {
+                    return;
+                }
+
                 this.allowSwiping = value;
+
+                this.UpdateSwiping();
             }
         }
 
@@ -615,6 +622,24 @@ namespace BL.UI.App
             this.UpdateSizingsOverTime();
 
             this.FlashSwipeNavigation();
+        }
+
+        private void UpdateSwiping()
+        {
+            if (this.Element == null)
+            {
+                return;
+            }
+
+            if (this.allowSwiping)
+            {
+                // block the default touch action, which would cause the whole page to swipe
+                ElementUtilities.SetTouchAction(this.Element, "none");
+            }
+            else
+            {
+                ElementUtilities.SetTouchAction(this.Element, "pan-y");
+            }
         }
 
         private int GetNextPage(int index)
@@ -997,8 +1022,7 @@ namespace BL.UI.App
             if (Context.Current.IsTouchOnly || ElementUtilities.GetIsPointerEnabled())
             {
                 // Debug.WriteLine("(SliderSwipePanel::OnApplyTemplate) - Registering touch events " + ElementUtilities.GetTouchStartEventName());
-
-                this.Element.AddEventListener(ElementUtilities.GetTouchStartEventName(), this.HandleElementMouseDown, true);
+                Document.Body.AddEventListener(ElementUtilities.GetTouchStartEventName(), this.HandleElementMouseDown, true);
 
                 Document.Body.AddEventListener(ElementUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
                 this.Element.AddEventListener(ElementUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
@@ -1006,6 +1030,15 @@ namespace BL.UI.App
                 if (ElementUtilities.GetTouchCancelEventName() != null)
                 {
                     this.Element.AddEventListener(ElementUtilities.GetTouchCancelEventName(), this.draggingElementMouseUpHandler, true);
+                }
+
+                // bug: Chrome on desktop kind-of implements pointer events, but doesn't seem to pass mouse events via pointers.
+                if (Context.Current.DevicePlatform == DevicePlatform.Chrome && !Context.Current.IsTouchOnly)
+                {
+                    this.Element.AddEventListener("mousedown", this.HandleElementMouseDown, true);
+                    this.Element.AddEventListener("mousemove", this.HandleElementMouseMove, true);
+                    this.Element.AddEventListener("mouseup", this.HandlePointerUp, true);
+                    this.Element.AddEventListener("dragstart", this.HandleDragStartEvent, true);
                 }
             }
             else
@@ -1024,6 +1057,7 @@ namespace BL.UI.App
 
             this.UpdateSizingsOverTime();
             this.ConsiderShowingSwipeGuidelines();
+            this.UpdateSwiping();
         }
 
         protected override void OnVisibilityChanged()
@@ -1052,7 +1086,7 @@ namespace BL.UI.App
 
         private void HandleElementMouseDown(ElementEvent e)
         {
-            if (ElementUtilities.IsDefaultInputElement(e, false) || !ElementUtilities.GetIsPrimary(e))
+            if (ElementUtilities.IsDefaultInputElement(e, false) || !ElementUtilities.GetIsPrimary(e) || !this.allowSwiping)
             {
                 return;
             }
@@ -1088,7 +1122,7 @@ namespace BL.UI.App
 
         private void HandleElementMouseMove(ElementEvent e)
         {
-            if (ElementUtilities.IsDefaultInputElement(e, false) || !ElementUtilities.GetIsPrimary(e))
+            if (ElementUtilities.IsDefaultInputElement(e, false) || !ElementUtilities.GetIsPrimary(e) || !this.allowSwiping)
             { 
                 return;
             }
@@ -1098,6 +1132,8 @@ namespace BL.UI.App
             if (this.isDragging)
             {
                 e.PreventDefault();
+
+                ElementUtilities.UpdateLastScrollTime();
 
                 this.lastDragEventTime = Date.Now.GetTime();
 
@@ -1182,7 +1218,7 @@ namespace BL.UI.App
 
         private void HandlePointerUp(ElementEvent e)
         {
-            if (!ElementUtilities.GetIsPrimary(e))
+            if (!ElementUtilities.GetIsPrimary(e) || !this.allowSwiping)
             {
                 return;
             }
