@@ -832,7 +832,7 @@ namespace BL.UI.App
 
         private void SetAnimationImmediate()
         {
-            if (!this.isImmediateAnimating)
+            if (!this.isImmediateAnimating && this.itemsTable != null)
             {
                 ElementUtilities.SetTransition(this.itemsTable, "none");
                 this.isImmediateAnimating = true;
@@ -841,9 +841,16 @@ namespace BL.UI.App
 
         private void SetAnimationLong()
         {
-            if (this.isImmediateAnimating)
+            if (this.isImmediateAnimating && this.itemsTable != null)
             {
-                ElementUtilities.SetTransition(this.itemsTable, "transform 0.4s ease-in-out");
+                if (Context.Current.DevicePlatform == DevicePlatform.iOS || Context.Current.DevicePlatform == DevicePlatform.MacSafari)
+                {
+                    ElementUtilities.SetTransition(this.itemsTable, "left 0.4s ease-in-out");
+                }
+                else
+                {
+                    ElementUtilities.SetTransition(this.itemsTable, "transform 0.4s ease-in-out");
+                }
                 this.isImmediateAnimating = false;
             }
         }
@@ -854,8 +861,8 @@ namespace BL.UI.App
             {
                 return;
             }
-            this.isAnimating = true;
 
+            this.isAnimating = true;
 
             this.SetAnimationLong();
             ElementUtilities.AnimateOnNextFrame(new Action(this.UpdateInteriorHorizontalPosition));
@@ -892,11 +899,15 @@ namespace BL.UI.App
                 return;
             }
 
-            ElementUtilities.SetTransform(this.itemsTable, "translateX(-" + left + "px)");
-            
-            //this.itemsTable.Style.Left = "-" + left + "px";
-
-            //      this.itemsBin.ScrollLeft = (int)left;
+            // iOS doesn't really animate translations very well.
+            if (Context.Current.DevicePlatform == DevicePlatform.iOS || Context.Current.DevicePlatform == DevicePlatform.MacSafari)
+            {
+                this.itemsTable.Style.Left = "-" + left + "px";
+            }
+            else
+            {
+                ElementUtilities.SetTransform(this.itemsTable, "translateX(-" + left + "px)");
+            }
         }
 
         private void UpdateLinkBin()
