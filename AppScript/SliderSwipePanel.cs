@@ -19,14 +19,21 @@ namespace BL.UI.App
 
     public enum SliderSwipeNavigationPositioning
     {
+        BottomLeft = 1,
         BottomCenter = 2,
-        BottomLeft = 1
+        InlineSmallFormFactorOnly=3
     }
 
     public class SliderSwipePanel : ItemsControl
     {
         [ScriptName("e_itemsBin")]
         private Element itemsBin;
+
+        [ScriptName("e_smallSwipeArea")]
+        private Element smallSwipeArea;
+
+        [ScriptName("e_itemsTable")]
+        private Element itemsTable;
 
         [ScriptName("e_topAreaOuter")]
         private Element topAreaOuter;
@@ -66,7 +73,6 @@ namespace BL.UI.App
         private double panelWidth;
 
         private double lastDragEventTime;
-        private Date animationStart;
 
         private double downEventPageX;
         private int swipeGuideCount = 0;
@@ -84,10 +90,8 @@ namespace BL.UI.App
 
         private double initialScrollX;
         private double initialScrollY;
-        private Action animationTickHandler;
         private ElementEventListener windowSizeChanged;
-
-        private double fromX;
+        
         private double toX;
         private bool isAnimating = false;
         private bool displaySwipeNavigationTitle = true;
@@ -99,8 +103,10 @@ namespace BL.UI.App
         private ElementEventListener draggingElementMouseUpHandler = null;
         private ElementEventListener draggingElementMouseOutHandler = null;
 
-        public event IntegerEventHandler VerticalScrollChanged;
         public event EventHandler IndexChangeAnimationCompleted;
+
+        private bool isWaitingForDragEnd = false;
+        private bool isImmediateAnimating = false;
 
         private int swipeNavigationOffsetY= 124;
         private int swipeNavigationOffsetX = 0;
@@ -358,7 +364,7 @@ namespace BL.UI.App
 
                 if (this.activeIndex == value)
                 {
-                    this.SetFinalPosition();
+                    this.UpdateInteriorHorizontalPosition();
                     return;
                 }
 
@@ -410,7 +416,6 @@ namespace BL.UI.App
             this.paneSettingsCollection = new PaneSettingsCollection();
 
             this.visibilities = new List<bool>();
-            this.animationTickHandler = new Action(this.AnimateTick);
 
             if (!Context.Current.IsTouchOnly)
             {
@@ -489,10 +494,9 @@ namespace BL.UI.App
                             this.lastFlashIndex != this.ActiveIndex
                         )
                     ) &&
-                    this.swipeNavigation != null && 
+                    this.swipeNavigationDotBin != null && 
                     this.swipeNavigationTitle != null)
             {
-                this.swipeNavigation.Style.Display = "block";
 
                 this.UpdateSwipeNavigationLinkState();
 
@@ -503,12 +507,17 @@ namespace BL.UI.App
 
                 this.lastFlashIndex = this.ActiveIndex;
 
-                if (!this.alwaysDisplaySwipeNavigation)
+                if (this.swipeNavigation != null)
                 {
-                    this.swipeNavigationOpacityAnimator.Element = this.swipeNavigation;
-                    this.swipeNavigationOpacityAnimator.From = 1;
-                    this.swipeNavigationOpacityAnimator.To = 0;
-                    this.swipeNavigationOpacityAnimator.StartAfter(3000, 500, this.HideSwipeNavigation, null);
+                    this.swipeNavigation.Style.Display = "block";
+
+                    if (!this.alwaysDisplaySwipeNavigation)
+                    {
+                        this.swipeNavigationOpacityAnimator.Element = this.swipeNavigation;
+                        this.swipeNavigationOpacityAnimator.From = 1;
+                        this.swipeNavigationOpacityAnimator.To = 0;
+                        this.swipeNavigationOpacityAnimator.StartAfter(3000, 500, this.HideSwipeNavigation, null);
+                    }
                 }
 
                 this.UpdateSizingsOverTime();
@@ -518,7 +527,6 @@ namespace BL.UI.App
         }
         private void HideSwipeNavigation(IAsyncResult result)
         {
-
             if (this.swipeNavigation != null)
             {
                 this.swipeNavigation.Style.Display = "none";
@@ -527,36 +535,42 @@ namespace BL.UI.App
 
         private void UpdateSwipeNavigationLinkState()
         {
-            if (this.displaySwipeNavigationTitle)
+            if (this.swipeNavigationTitle != null)
             {
-                this.swipeNavigationTitle.InnerText = this.LinkTitles[this.ActiveIndex];
-                this.swipeNavigationTitle.Style.Display = "";
-            }
-            else
-            {
-                this.swipeNavigationTitle.Style.Display = "none";
-            }
-
-            ElementUtilities.ClearChildElements(this.swipeNavigationDotBin);
-
-            for (int i=0; i<this.ItemControls.Count; i++)
-            {
-                if (this.GetVisible(i))
+                if (this.displaySwipeNavigationTitle)
                 {
-                    Element dot = null;
+                    this.swipeNavigationTitle.InnerText = this.LinkTitles[this.ActiveIndex];
+                    this.swipeNavigationTitle.Style.Display = "";
+                }
+                else
+                {
+                    this.swipeNavigationTitle.Style.Display = "none";
+                }
+            }
 
-                    if (i == this.activeIndex)
+            if (this.swipeNavigationDotBin != null)
+            {
+                ElementUtilities.ClearChildElements(this.swipeNavigationDotBin);
+
+                for (int i = 0; i < this.ItemControls.Count; i++)
+                {
+                    if (this.GetVisible(i))
                     {
-                        dot = this.CreateElementWithType("swipeDotBase swipeDotBaseActive", "SPAN");
-                    }
-                    else
-                    {
-                        dot = this.CreateElementWithType("swipeDotBase swipeDotBaseInactive", "SPAN");
-                    }
+                        Element dot = null;
 
-                    dot.InnerHTML = "&#160;";
+                        if (i == this.activeIndex)
+                        {
+                            dot = this.CreateElementWithType("swipeDotBase swipeDotBaseActive", "SPAN");
+                        }
+                        else
+                        {
+                            dot = this.CreateElementWithType("swipeDotBase swipeDotBaseInactive", "SPAN");
+                        }
 
-                    this.swipeNavigationDotBin.AppendChild(dot);
+                        dot.InnerHTML = "&#160;";
+
+                        this.swipeNavigationDotBin.AppendChild(dot);
+                    }
                 }
             }
         }
@@ -571,7 +585,8 @@ namespace BL.UI.App
             {
                 this.ApplyVisibility();
                 this.UpdateSizings();
-                this.SetFinalPosition();
+                this.SetAnimationImmediate();
+                this.UpdateInteriorHorizontalPosition();
                 return;
             }
 
@@ -759,7 +774,7 @@ namespace BL.UI.App
                         }
                     }
 
-                    this.toX = left;// ((elementLeft + this.itemsBin.ScrollLeft) - baseLeft);
+                    this.toX = left;
                 }
                 else
                 {
@@ -815,57 +830,47 @@ namespace BL.UI.App
             this.UpdateLinkBin();
         }
 
+        private void SetAnimationImmediate()
+        {
+            if (!this.isImmediateAnimating)
+            {
+                ElementUtilities.SetTransition(this.itemsTable, "none");
+                this.isImmediateAnimating = true;
+            }
+        }
+
+        private void SetAnimationLong()
+        {
+            if (this.isImmediateAnimating)
+            {
+                ElementUtilities.SetTransition(this.itemsTable, "transform 0.4s ease-in-out");
+                this.isImmediateAnimating = false;
+            }
+        }
+
         private void AnimateToIndexPosition()
         {
-            this.SetToX();
-
             if (this.isAnimating)
             {
                 return;
             }
-            
             this.isAnimating = true;
 
-            this.fromX = this.itemsBin.ScrollLeft;
 
-            this.animationStart = Date.Empty;
+            this.SetAnimationLong();
+            ElementUtilities.AnimateOnNextFrame(new Action(this.UpdateInteriorHorizontalPosition));
 
-            ElementUtilities.AnimateOnNextFrame(this.animationTickHandler);
+            Window.SetTimeout(this.AnimationComplete, 420);
         }
 
-        private void AnimateTick()
+        private void AnimationComplete()
         {
-            Date now = Date.Now;
-
-            if (this.animationStart == Date.Empty)
-            {
-                this.animationStart = now;
-            }
-
-            int ms = now.GetTime() - this.animationStart.GetTime();
-            double proportion = Easing.EaseInOutQuart(ms, 0, 1, this.scrollAnimationTime );
-
-            // Log.DebugMessage("SliderSwipePanel Animation Frame @ " + ms + " pos: " + proportion);
-            
-            if (proportion < 1 && proportion > -1 && ms <= this.scrollAnimationTime)
-            {
-                this.SetPanelLeft(this.fromX + ((this.toX - this.fromX) * proportion));
-
-                ElementUtilities.AnimateOnNextFrame(this.animationTickHandler);
-            }
-            else
-            {
-                this.SetFinalPosition();
-                this.isAnimating = false;
-
-                if (this.IndexChangeAnimationCompleted != null)
-                {
-                    this.IndexChangeAnimationCompleted(this, EventArgs.Empty);
-                }
-            }
+            this.isAnimating = false;
+            this.SetAnimationImmediate();
         }
-
-        private void SetFinalPosition()
+       
+        
+        private void UpdateInteriorHorizontalPosition()
         {
             this.SetToX();
 
@@ -887,19 +892,45 @@ namespace BL.UI.App
                 return;
             }
 
-            this.itemsBin.ScrollLeft = (int)left;
+            ElementUtilities.SetTransform(this.itemsTable, "translateX(-" + left + "px)");
+            
+            //this.itemsTable.Style.Left = "-" + left + "px";
+
+            //      this.itemsBin.ScrollLeft = (int)left;
         }
 
         private void UpdateLinkBin()
         {
+            if (this.swipeNavigationPositioning == SliderSwipeNavigationPositioning.InlineSmallFormFactorOnly)
+            {
+                if (this.swipeNavigationDotBin != null)
+                {
+                    if (Context.Current.IsSmallFormFactor)
+                    {
+                        this.swipeNavigationDotBin.Style.Display = "";
+                    }
+                    else
+                    {
+                        this.swipeNavigationDotBin.Style.Display = "none";
+                    }
+                }
+
+                if (this.swipeNavigationTitle != null)
+                {
+                    if (Context.Current.IsSmallFormFactor)
+                    {
+                        this.swipeNavigationTitle.Style.Display = "";
+                    }
+                    else
+                    {
+                        this.swipeNavigationTitle.Style.Display = "none";
+                    }
+                }
+            }
+
             if (this.containerLinkBin == null)
             {
                 return;
-            }
-
-            while (this.containerLinkBin.ChildNodes.Length > 0)
-            {
-                this.containerLinkBin.RemoveChild(this.containerLinkBin.ChildNodes[0]);
             }
 
             if (this.linkTitles == null || this.linkTitles.Count == 0 || !this.displayLinkBar)
@@ -912,10 +943,14 @@ namespace BL.UI.App
                 this.topAreaOuter.Style.Display = "block";
             }
 
-            if (Context.Current.IsSmallFormFactor && this.topAreaOuter != null)
+            if (Context.Current.IsSmallFormFactor)
             {
-                this.topAreaOuter.Style.Display = "none";
                 return;
+            }
+
+            while (this.containerLinkBin.ChildNodes.Length > 0)
+            {
+                this.containerLinkBin.RemoveChild(this.containerLinkBin.ChildNodes[0]);
             }
 
             int i = 0;
@@ -1013,12 +1048,11 @@ namespace BL.UI.App
         {
             base.OnApplyTemplate();
 
-            if (Context.Current.IsSmallFormFactor)
+            if (!Context.Current.IsSmallFormFactor && this.smallSwipeArea != null)
             {
-//                this.gapBetweenSections = 10;
+                this.smallSwipeArea.Style.Display = "none";
             }
-
-
+        
             if (Context.Current.IsTouchOnly || ElementUtilities.GetIsPointerEnabled())
             {
                 // Debug.WriteLine("(SliderSwipePanel::OnApplyTemplate) - Registering touch events " + ElementUtilities.GetTouchStartEventName());
@@ -1102,7 +1136,9 @@ namespace BL.UI.App
                 this.downEventPageX = ElementUtilities.GetPageX(e);
                 this.downEventPageY = ElementUtilities.GetPageY(e);
 
-                this.initialScrollX = this.itemsBin.ScrollLeft;
+                this.initialScrollX = this.toX;
+
+                Window.SetTimeout(this.ExpireConsiderStartDragging, 250);
             }
             else
             {
@@ -1112,19 +1148,37 @@ namespace BL.UI.App
 
         private void HandleDragMoveDeadTimeout()
         {
+            if (!this.isDragging)
+            {
+                return;
+            }
+
             int now = Date.Now.GetTime();
 
             if (now - this.lastDragEventTime > 100 && this.isDragging)
             {
+                this.isWaitingForDragEnd = false;
                 this.HandlePointerUp(null);
+            }
+            else
+            {
+                Window.SetTimeout(this.HandleDragMoveDeadTimeout, 50);
             }
         }
 
         private void HandleElementMouseMove(ElementEvent e)
         {
-            if (ElementUtilities.IsDefaultInputElement(e, false) || !ElementUtilities.GetIsPrimary(e) || !this.allowSwiping)
-            { 
+            if (!ElementUtilities.GetIsPrimary(e) || !this.allowSwiping)
+            {
                 return;
+            }
+
+            if (!this.isDragging)
+            {
+                if (ElementUtilities.IsDefaultInputElement(e, false))
+                {
+                    return;
+                }
             }
 
             this.lastMoveEvent = e;
@@ -1137,30 +1191,29 @@ namespace BL.UI.App
 
                 this.lastDragEventTime = Date.Now.GetTime();
 
-                Window.SetTimeout(this.HandleDragMoveDeadTimeout, 100);
-
-                int newLeft = (int)Math.Floor(this.initialScrollX + (this.downEventPageX - ElementUtilities.GetPageX(e)));
-                // Debug.WriteLine("(SliderSwipePanel::HandleElementMouseMove) - Mouse Move drag: " + newLeft);
-
-                this.SetPanelLeft(newLeft);
-
-                if (this.VerticalScrollChanged != null)
+                if (!this.isWaitingForDragEnd)
                 {
-                    int newTop = (int)Math.Floor(this.initialScrollY+ (this.downEventPageY - ElementUtilities.GetPageY(e)));
+                    Window.SetTimeout(this.HandleDragMoveDeadTimeout, 110);
+                }
 
-                    IntegerEventArgs iea = new IntegerEventArgs(newTop);
+                double newLeft = this.initialScrollX + (this.downEventPageX - ElementUtilities.GetPageX(e));
 
-                    this.VerticalScrollChanged(this, iea);
+                this.SetAnimationImmediate();
+
+                if (newLeft != this.toX)
+                {
+                    this.SetPanelLeft(newLeft);
+                    this.toX = newLeft;
                 }
             }
             else
-            {
+            {                
                 if (this.isConsideringDrag)
                 {
                     double diffX = Math.Abs((this.downEventPageX - ElementUtilities.GetPageX(this.lastMoveEvent)));
                     double diffY = Math.Abs((this.downEventPageY - ElementUtilities.GetPageY(this.lastMoveEvent)));
 
-                    if (diffX != 0 || diffY != 0)
+                    if (diffX > 4 || diffY > 4)
                     {
                         this.ConsiderStartDragging();
                     }
@@ -1168,6 +1221,11 @@ namespace BL.UI.App
 
                 // Debug.WriteLine("(SliderSwipePanel::HandleElementMouseMove) - Not dragging");
             }
+        }
+
+        private void ExpireConsiderStartDragging()
+        {
+            this.isConsideringDrag = false;
         }
 
         private void ConsiderStartDragging()
@@ -1180,18 +1238,12 @@ namespace BL.UI.App
             double diffX = Math.Abs((this.downEventPageX - ElementUtilities.GetPageX(this.lastMoveEvent)));
             double diffY = Math.Abs((this.downEventPageY - ElementUtilities.GetPageY(this.lastMoveEvent)));
 
-            if (diffX > diffY)
+            if (diffX > diffY && diffX > 4 && !this.isAnimating)
             {
                 this.isDragging = true;
 
                 // Debug.WriteLine("(SliderSwipePanel::ConsiderStartDragging)");
-            }
-            else
-            {
-                this.isConsideringDrag = false;
-
-                // Debug.WriteLine("(SliderSwipePanel::ConsiderStartDragging) - Failed CSD check" + diffX + diffY);
-            }
+            }    
         }
 
         private void HandleDragMouseOut(ElementEvent e)
@@ -1218,13 +1270,13 @@ namespace BL.UI.App
 
         private void HandlePointerUp(ElementEvent e)
         {
-            if (!ElementUtilities.GetIsPrimary(e) || !this.allowSwiping)
+            if ((e != null && !ElementUtilities.GetIsPrimary(e)) || !this.allowSwiping)
             {
                 return;
             }
 
             this.isConsideringDrag = false;
-            Debug.WriteLine("(SliderSwipePanel::MouseUp)");
+            Debug.WriteLine("(SliderSwipePanel::PointerUp)");
 
             if (this.isDragging)
             {
@@ -1233,14 +1285,10 @@ namespace BL.UI.App
                     e.PreventDefault();
                 }
 
-                Debug.WriteLine("(SliderSwipePanel::ConsiderStartDragging) - Dragging");
-         /*       if (Context.Current.IsTouchOnly)
-                {
-                   Document.Body.RemoveEventListener(ElementUtilities.GetTouchMoveEventName(), this.draggingElementMouseMoveHandler, true);
-                   Document.Body.RemoveEventListener(ElementUtilities.GetTouchEndEventName(), this.draggingElementMouseUpHandler, true);
-                }*/
 
+                this.isWaitingForDragEnd = false;
                 this.isDragging = false;
+
                 double diffX = this.downEventPageX - ElementUtilities.GetPageX(this.lastMoveEvent);
 
                 int nextPage = this.GetNextPage(this.ActiveIndex);
@@ -1277,7 +1325,8 @@ namespace BL.UI.App
 
             if (!this.isAnimating)
             {
-                this.SetFinalPosition();
+                this.SetAnimationImmediate();
+                this.UpdateInteriorHorizontalPosition();
             }
         }
 
@@ -1287,7 +1336,8 @@ namespace BL.UI.App
 
             if (!this.isAnimating)
             {
-                this.SetFinalPosition();
+                this.SetAnimationImmediate();
+                this.UpdateInteriorHorizontalPosition();
             }
         }
 
@@ -1387,14 +1437,17 @@ namespace BL.UI.App
 
                     if (this.useFullWindow)
                     {
-                        style.MaxWidth = Context.Current.BrowserInnerWidth + "px";
-                        style.MinWidth = Context.Current.BrowserInnerWidth + "px";
-                        style.Width = Context.Current.BrowserInnerWidth + "px";
+                        style.MaxWidth = "100vw";
+                        style.MinWidth = "100vw";
+                        style.Width = "100vw";
                     }
                     else if (ps.FitToWidth && width > 100)
                     {
-                        style.MinWidth = width.ToString() + "px";
-                        style.Width = width.ToString() + "px";
+                        style.MaxWidth = "100vw";
+                        style.MinWidth = "100vw";
+                        style.Width = "100vw";
+                        //                        style.MinWidth = width.ToString() + "px";
+                        //                     style.Width = width.ToString() + "px";
                     }
                     else
                     {
@@ -1434,7 +1487,8 @@ namespace BL.UI.App
 
             if (!this.isAnimating)
             {
-                this.SetFinalPosition();
+                this.SetAnimationImmediate();
+                this.UpdateInteriorHorizontalPosition();
             }
         }
     }

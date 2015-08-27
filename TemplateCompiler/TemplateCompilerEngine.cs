@@ -60,6 +60,9 @@ namespace Bendyline.UI.TemplateCompiler
                     }
                 }
 
+                // snap everything we do to, file wise, to lower case
+                effectiveOutputFolder = effectiveOutputFolder.ToLowerCase();
+
                 DirectoryInfo di = new DirectoryInfo(effectiveOutputFolder);
 
                 return di;
@@ -335,15 +338,15 @@ namespace Bendyline.UI.TemplateCompiler
             String json = GetCrunchedJson();
             String css = GetFactoredCss();
 
-            String filePath = FileUtilities.EnsurePath(di.FullName, name + ".json");
+            String filePath = FileUtilities.EnsurePath(di.FullName, name + ".json").ToLowerCase();
 
             FileUtilities.SetTextToFile(filePath, json);
 
-            filePath = FileUtilities.EnsurePath(di.FullName, name + ".css");
+            filePath = FileUtilities.EnsurePath(di.FullName, name + ".css").ToLowerCase();
 
             FileUtilities.SetTextToFile(filePath, css);
 
-            filePath = FileUtilities.EnsurePath(di.FullName, name + ".js");
+            filePath = FileUtilities.EnsurePath(di.FullName, name + ".js").ToLowerCase();
 
             String content = String.Format("BL.UI.TemplateManager.get_current().addTemplateFile(\"{1}\", {0});", json, name.Substring(0, name.Length - 2).ToLowerCase());
 

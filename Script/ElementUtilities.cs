@@ -123,6 +123,11 @@ namespace BL.UI
             Script.Literal("{0}.style.backgroundSize={1}", element, value);
         }
 
+        public static void SetTransition(Element element, String value)
+        {
+            Script.Literal("{0}.style.transition={1}", element, value);
+        }
+
         public static void SetTransform(Element element, String value)
         {
             Script.Literal("{0}.style.transform={1}", element, value);

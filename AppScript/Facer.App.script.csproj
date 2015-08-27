@@ -16,7 +16,7 @@
     <GenerateResources>True</GenerateResources>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\web\gs\Facer\App\dbg\</OutputPath>
+    <OutputPath>..\..\web\gs\facer\app\dbg\</OutputPath>
     <DefineConstants>DEBUG;CODE_ANALYSIS;SCRIPTSHARP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
