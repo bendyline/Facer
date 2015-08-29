@@ -483,6 +483,13 @@ namespace BL.UI
                     {
                         offset = 0;
                         this.contentContainer.Style.OverflowY = "hidden";
+
+                        if (Context.Current.DevicePlatform == DevicePlatform.iOS && !Context.Current.IsFullScreenWebApp && !Context.Current.IsHostedInApp)
+                        {
+                            // this is set in CSS, but due to iOS Safari's Bottom-Bar hide/show behavior we need to explicitly set it via BrowserInnerHeight,
+                            // which takes into account the real interior size.
+                            this.bottomBar.Style.Top = (Context.Current.BrowserInnerHeight - 69) + "px";
+                        }
                     }
                     else
                     {

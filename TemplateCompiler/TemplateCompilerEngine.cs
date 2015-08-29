@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Bendyline.Base;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Bendyline.UI.TemplateCompiler
 {
@@ -313,6 +314,19 @@ namespace Bendyline.UI.TemplateCompiler
             return sb.ToString();
         }
 
+        public static string RemoveWhiteSpaceFromStylesheets(string content)
+        {
+            content = Regex.Replace(content, @"[a-zA-Z]+#", "#");
+            content = Regex.Replace(content, @"[\n\r]+\s*", string.Empty);
+            content = Regex.Replace(content, @"\s+", " ");
+            content = Regex.Replace(content, @"\s?([:,;{}])\s?", "$1");
+            content = content.Replace(";}", "}");
+            content = Regex.Replace(content, @"([\s:]0)(px|pt|%|em)", "$1");
+            content = Regex.Replace(content, @"/\*[\d\D]*?\*/", string.Empty);
+
+            return content;
+        }
+
         private bool ExportJsonFiles(String outputFolder, String name)
         {
             DirectoryInfo di = this.EffectiveOutputFolder;
@@ -343,6 +357,7 @@ namespace Bendyline.UI.TemplateCompiler
             FileUtilities.SetTextToFile(filePath, json);
 
             filePath = FileUtilities.EnsurePath(di.FullName, name + ".css").ToLowerCase();
+            css = RemoveWhiteSpaceFromStylesheets(css);
 
             FileUtilities.SetTextToFile(filePath, css);
 

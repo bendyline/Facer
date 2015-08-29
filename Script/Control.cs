@@ -650,14 +650,7 @@ namespace BL.UI
         {
             Date now = Date.Now;
 
-            int delayTime = 100;
-
-            if (Context.Current.IsTouchOnly)
-            {
-                delayTime = 500;
-            }
-
-            if (now.GetTime() - this.touchStartTime < 100 && 
+            if (now.GetTime() - this.touchStartTime < 200 && 
                 now.GetTime() - this.lastClickTime > 200 && 
                 !ElementUtilities.HasScrolledRecently())
             {
@@ -670,14 +663,7 @@ namespace BL.UI
         {
             Date now = Date.Now;
 
-            int delayTime = 100;
-
-            if (Context.Current.IsTouchOnly)
-            {
-                delayTime = 500;
-            }
-
-            if (now.GetTime() - lastClickTime > 200 && 
+            if (now.GetTime() - this.lastClickTime > 200 && 
                 !ElementUtilities.HasScrolledRecently())
             {
                 this.lastClickTime = now.GetTime();
@@ -1829,6 +1815,7 @@ namespace BL.UI
             else if (this.hookedResize && (!this.trackResizeEvents || !this.Visible))
             {
                 this.DisposeResizeEventing();
+                this.hookedResize = false;
             }
         }
         

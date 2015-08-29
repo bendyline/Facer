@@ -90,7 +90,7 @@ namespace BL.UI.App
 
         private double initialScrollX;
         private double initialScrollY;
-        private ElementEventListener windowSizeChanged;
+        private ElementEventListener sizeChanged;
         
         private double toX;
         private bool isAnimating = false;
@@ -102,11 +102,12 @@ namespace BL.UI.App
         private ElementEventListener draggingElementMouseMoveHandler = null;
         private ElementEventListener draggingElementMouseUpHandler = null;
         private ElementEventListener draggingElementMouseOutHandler = null;
-
+        
         public event EventHandler IndexChangeAnimationCompleted;
 
         private bool isWaitingForDragEnd = false;
         private bool isImmediateAnimating = false;
+        private bool isWindowSizeEventRegistered = false;
 
         private int swipeNavigationOffsetY= 124;
         private int swipeNavigationOffsetX = 0;
@@ -411,7 +412,7 @@ namespace BL.UI.App
         public SliderSwipePanel()
         {
             this.WrapItems = true;
-            this.windowSizeChanged = this.UpdateSizingsEvent;
+            this.sizeChanged = this.UpdateSizingsEvent;
 
             this.paneSettingsCollection = new PaneSettingsCollection();
 
@@ -851,6 +852,7 @@ namespace BL.UI.App
                 {
                     ElementUtilities.SetTransition(this.itemsTable, "transform 0.4s ease-in-out");
                 }
+
                 this.isImmediateAnimating = false;
             }
         }
@@ -865,6 +867,7 @@ namespace BL.UI.App
             this.isAnimating = true;
 
             this.SetAnimationLong();
+
             ElementUtilities.AnimateOnNextFrame(new Action(this.UpdateInteriorHorizontalPosition));
 
             Window.SetTimeout(this.AnimationComplete, 420);
@@ -888,12 +891,6 @@ namespace BL.UI.App
 
         private void SetPanelLeft(double left)
         {
-      //      Script.Literal("{0}.style.transform=\"translate(-\" + {1} + \"px,0px)\"", this.itemsBin, left);
-
-            //this.itemsBin.Style.Transform = "translate(" + left + "px,0px)";
-
-      //      transform: translate(3em,0);
-
             if (this.itemsBin == null)
             {
                 return;
@@ -1100,6 +1097,8 @@ namespace BL.UI.App
 
             this.FlashSwipeNavigation();
 
+            this.ConsiderSizeChangedRegistration();
+
             this.UpdateSizingsOverTime();
             this.ConsiderShowingSwipeGuidelines();
             this.UpdateSwiping();
@@ -1109,16 +1108,28 @@ namespace BL.UI.App
         {
             base.OnVisibilityChanged();
 
-            if (this.Visible)
-            {
-                Window.AddEventListener("resize", this.windowSizeChanged);
-            }
-            else
-            {
-                Window.RemoveEventListener("resize", this.windowSizeChanged);
-            }
+            this.ConsiderSizeChangedRegistration();
 
             this.UpdateSizingsOverTime();
+        }
+
+        private void ConsiderSizeChangedRegistration()
+        { 
+            if (this.Element != null)
+            {
+                if (this.Visible && !this.isWindowSizeEventRegistered)
+                {
+                    this.isWindowSizeEventRegistered = true;
+
+                    Window.AddEventListener("resize", this.sizeChanged);
+                }
+                else if (this.isWindowSizeEventRegistered)
+                {
+                    this.isWindowSizeEventRegistered = false;
+
+                    Window.RemoveEventListener("resize", this.sizeChanged);
+                }
+            }
         }
 
         protected override void OnItemControlAdded(Control c)
@@ -1333,29 +1344,17 @@ namespace BL.UI.App
             base.OnDimensionChanged();
 
             this.UpdateSizingsOverTime();
-
-            if (!this.isAnimating)
-            {
-                this.SetAnimationImmediate();
-                this.UpdateInteriorHorizontalPosition();
-            }
         }
 
         public void UpdateSizingsEvent(ElementEvent e)
         {
             this.UpdateSizingsOverTime();
-
-            if (!this.isAnimating)
-            {
-                this.SetAnimationImmediate();
-                this.UpdateInteriorHorizontalPosition();
-            }
         }
 
         private void UpdateSizingsOverTime()
         {
             this.UpdateSizings();
-
+            
             Window.SetTimeout(new Action(this.UpdateSizings), 1);
             Window.SetTimeout(new Action(this.UpdateSizings), 400);
             Window.SetTimeout(new Action(this.UpdateSizings), 800);
@@ -1373,6 +1372,8 @@ namespace BL.UI.App
             double elementVisibleRight = cr.Right;
             double elementVisibleLeft = cr.Left;
             double elementVisibleBottom = cr.Bottom;
+
+            // Log.DebugMessage("Sizing Event: " + elementVisibleLeft + "|" + elementVisibleBottom);
 
             if (elementVisibleLeft < 0)
             {
@@ -1411,27 +1412,12 @@ namespace BL.UI.App
 
             this.panelWidth = Window.InnerWidth;
 
-            if (this.swipeGuideRight != null && elementVisibleRight > 0)
-            {
-                this.swipeGuideRight.Style.MaxWidth = "70px";
 
-                this.swipeGuideRight.Style.Width = "70px";
-                this.swipeGuideRight.Style.Left = (elementVisibleRight - 70).ToString() + "px";
-                this.swipeGuideRight.Style.Top = (((elementVisibleBottom - cr.Top) / 2) + cr.Top - 70).ToString() + "px";
-            }
-
-            if (this.swipeNavigation != null && elementVisibleRight > 0)
+            if (Context.Current.DevicePlatform == DevicePlatform.iOS && !Context.Current.IsFullScreenWebApp && !Context.Current.IsHostedInApp && this.swipeNavigation != null)
             {
-                if (this.swipeNavigationPositioning == SliderSwipeNavigationPositioning.BottomCenter)
-                {
-                    this.swipeNavigation.Style.Left = ( ((elementWidth - 200) + swipeNavigationOffsetX) / 2).ToString() + "px";
-                    this.swipeNavigation.Style.Top = (elementVisibleBottom - swipeNavigationOffsetY).ToString() + "px";
-                }
-                else
-                {
-                    this.swipeNavigation.Style.Left = (swipeNavigationOffsetX).ToString() + "px";
-                    this.swipeNavigation.Style.Top = (elementVisibleBottom - swipeNavigationOffsetY).ToString() + "px";
-                }
+                // this is set in CSS, but due to iOS Safari's Bottom-Bar hide/show behavior we need to explicitly set it via BrowserInnerHeight,
+                // which takes into account the real interior size.
+                this.swipeNavigation.Style.Top = (Context.Current.BrowserInnerHeight - 69) + "px";
             }
 
             int index = 0;
@@ -1448,17 +1434,22 @@ namespace BL.UI.App
 
                     if (this.useFullWindow)
                     {
-                        style.MaxWidth = "100vw";
-                        style.MinWidth = "100vw";
-                        style.Width = "100vw";
+                        this.itemsBin.Style.Width = "100vw";
+                        this.itemsBin.Style.MaxWidth = "100vw";
+                        this.itemsBin.Style.MinWidth = "100vw";
+
+                        String newHeight = Context.Current.BrowserInnerHeight + "px";
+
+                        this.itemsBin.Style.Height = newHeight;
+                        this.itemsBin.Style.MaxHeight = newHeight;
+                        this.itemsBin.Style.MinHeight = newHeight;
                     }
-                    else if (ps.FitToWidth && width > 100)
+
+                    if (this.useFullWindow || (ps.FitToWidth && width > 100))
                     {
                         style.MaxWidth = "100vw";
                         style.MinWidth = "100vw";
                         style.Width = "100vw";
-                        //                        style.MinWidth = width.ToString() + "px";
-                        //                     style.Width = width.ToString() + "px";
                     }
                     else
                     {
@@ -1470,9 +1461,11 @@ namespace BL.UI.App
 
                     if (this.useFullWindow)
                     {
-                        style.MaxHeight = Context.Current.BrowserInnerHeight + "px";
-                        style.MinHeight = Context.Current.BrowserInnerHeight + "px";
-                        style.Height = Context.Current.BrowserInnerHeight + "px";
+                        String newHeight = Context.Current.BrowserInnerHeight + "px";
+
+                        style.Height = newHeight;
+                        style.MaxHeight = newHeight;
+                        style.MinHeight = newHeight;
                     }
                     else if (this.InteriorItemHeight != null)
                     {
@@ -1495,12 +1488,7 @@ namespace BL.UI.App
                 index++;
             }
 
-
-            if (!this.isAnimating)
-            {
-                this.SetAnimationImmediate();
-                this.UpdateInteriorHorizontalPosition();
-            }
+            this.UpdateInteriorHorizontalPosition();
         }
     }
 }
