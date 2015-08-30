@@ -108,6 +108,7 @@ namespace BL.UI.App
         private bool isWaitingForDragEnd = false;
         private bool isImmediateAnimating = false;
         private bool isWindowSizeEventRegistered = false;
+        private bool reparentedSwipeGuideRight = false;
 
         private int swipeNavigationOffsetY= 124;
         private int swipeNavigationOffsetX = 0;
@@ -459,6 +460,14 @@ namespace BL.UI.App
                   && this.swipeGuideRight != null 
                   && this.swipeGuideRight.Style.Display != "block")
             {
+                if (!this.reparentedSwipeGuideRight)
+                {
+                    this.reparentedSwipeGuideRight = true;
+                    this.swipeGuideRight.ParentNode.RemoveChild(this.swipeGuideRight);
+
+                    Document.Body.AppendChild(this.swipeGuideRight);
+                }
+
                 this.swipeGuideRight.Style.Display = "block";
 
                 OpacityAnimator oa = new OpacityAnimator();

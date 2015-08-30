@@ -40,7 +40,7 @@ namespace BL.UI
         private String templateId;
         private String template;
         private String tagName;
-        private Element spinnerElement;
+        private bool hasShownSpinner;
         private bool initted = false;
         private bool childControlsCreated = false;
         private bool elementsEnsured = false;
@@ -838,12 +838,12 @@ namespace BL.UI
 
         public void EnsureId()
         {
-            if (this.id != null)
+            if (!String.IsNullOrEmpty(this.id))
             {
                 return;
             }
 
-            if (this.Element != null)
+            if (this.Element != null && !String.IsNullOrEmpty(this.Element.ID))
             {
                 this.id = this.Element.ID;
             }
@@ -1072,37 +1072,13 @@ namespace BL.UI
 
         private void EnsureLoadingSpinner()
         {
-            if (this.Element != null && this.Element.ChildNodes.Length == 0)
+            if (!this.hasShownSpinner)
             {
-                ImageElement imageElement = (ImageElement)Document.CreateElement("img");
-
-                imageElement.Src = Context.Current.ResourceBasePath + Context.Current.ImageResourceSubPath + "loadingspinner.gif";
-
-                imageElement.Style.VerticalAlign = "middle";
-                imageElement.Style.TextAlign = "center";
-                imageElement.Style.Opacity = "0";
-                imageElement.Style.Position = "fixed";
-
-                imageElement.Style.Left = ((Context.Current.BrowserInnerWidth / 2) - 22) + "px";
-                imageElement.Style.Top = ((Context.Current.BrowserInnerHeight / 2) - 22) + "px";
-
-                ElementUtilities.SetTransform(element, "all .4s");
-
-                this.Element.AppendChild(imageElement);
-
-                this.spinnerElement = imageElement;
-
-                Window.SetTimeout(this.StartLoadingSpinnerAnimation, 100);
+                this.hasShownSpinner = true;
+                ElementUtilities.AddPendingOperation("ctl" + this.Id);
             }
         }
-
-        private void StartLoadingSpinnerAnimation()
-        {
-            if (this.spinnerElement != null)
-            {
-                this.spinnerElement.Style.Opacity = ".8";
-            }
-        }
+        
         private void HandleApplyTemplateContinue(IAsyncResult result)
         {
             this.isRetrievingTemplate = false;
@@ -1206,7 +1182,7 @@ namespace BL.UI
 
                 TemplateParserResult tpr = tp.Parse(this.Id, this.TemplateId, template);
 
-                this.spinnerElement = null;
+                this.hasShownSpinner = false;
                 HtmlUtilities.SetInnerHtml(this.Element, tpr.Markup);
 
                 if (tpr.ItemsContainer != null)
@@ -1309,11 +1285,9 @@ namespace BL.UI
 
         private void RemoveSpinner()
         {
-            if (this.spinnerElement != null)
-            {
-                ElementUtilities.RemoveIfChildOf(this.spinnerElement, this.Element);
-                this.spinnerElement = null;
-            }
+            ElementUtilities.RemovePendingOperation("ctl" + this.Id);
+
+            this.hasShownSpinner = false;
         }
 
         private void CompleteApplyTemplate()
@@ -1441,7 +1415,7 @@ namespace BL.UI
                     if (this.innerHtml != null)
                     {
                         HtmlUtilities.SetInnerHtml(this.ContentElement, this.innerHtml);
-                        this.spinnerElement = null;
+                        this.hasShownSpinner = false;
                     }
 
                     if (this.templateControls != null)
@@ -1601,9 +1575,9 @@ namespace BL.UI
 
         public virtual void Dispose()
         {
-            if (this.spinnerElement != null)
+            if (this.hasShownSpinner)
             {
-                ElementUtilities.RemoveIfChildOf(this.Element, this.spinnerElement);
+                ElementUtilities.RemovePendingOperation("ctl" + this.Id);
             }
 
             this.DisposeInteractionEventing();

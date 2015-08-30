@@ -84,6 +84,7 @@ namespace BL.UI
                 String cssPath = UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + rootCssPath + this.fileName + ".t.css?v=" + Context.Current.VersionToken;
                 
                 ControlManager.Current.EnsureStylesheet(cssPath);
+                ElementUtilities.AddPendingOperation(this.fileName);
 
                 jQuery.GetJson(UrlUtilities.EnsurePathEndsWithSlash(Context.Current.ResourceBasePath) + rootTemplatePath + this.fileName + ".t.json?v=" + Context.Current.VersionToken, new AjaxCallback<object>(this.TemplatesRetrieved));
             }
@@ -91,6 +92,8 @@ namespace BL.UI
 
         private void TemplatesRetrieved(object data)
         {
+            ElementUtilities.RemovePendingOperation(this.fileName);
+
             if (data == null)
             {
                 return;

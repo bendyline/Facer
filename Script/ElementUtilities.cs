@@ -12,6 +12,120 @@ namespace BL.UI
     public static class ElementUtilities
     {
         private static Date lastScrollTime = new Date(2012, 1, 1);
+        private static Date lastTimeUpdate = Date.Now;
+
+        private static Element loadingElement;
+        private static Dictionary<String, object> pendingOperations = new Dictionary<string, object>();
+
+        public static void Init()
+        {
+            Window.SetInterval(UpdateTick, 50);
+        }
+
+        private static void UpdateTick()
+        {
+            Date now = Date.Now;
+
+            // if the time interval is unexpectedly long, it could be because iOS
+            // on versions < iOS8, and on Cordova and for web apps, pauses all
+            // JS during scroll (and scroll events don't fire.). So treat long pauses as
+            // essentially a  scroll
+            if (now.GetTime() - lastTimeUpdate.GetTime() > 70)
+            {
+                lastScrollTime = now;
+            }
+
+            lastTimeUpdate = now;
+        }
+
+        public static void AddPendingOperation(String operationIdentifier)
+        {
+            pendingOperations[operationIdentifier] = true;
+
+
+            ShowLoadingSpinner();
+        }
+        public static int GetPendingOperationCount()
+        {
+            int pendingOperationCount = 0;
+
+            foreach (KeyValuePair<String, object> oper in pendingOperations)
+            {
+                if ((bool)oper.Value == true)
+                {
+                    pendingOperationCount++;
+                }
+            }
+
+            return pendingOperationCount;
+        }
+
+        public static void RemovePendingOperation(String operationIdentifier)
+        {
+            pendingOperations[operationIdentifier] = false;
+
+            if (GetPendingOperationCount() == 0)
+            {
+                HideLoadingSpinner();
+            }
+        }
+
+        private static void ShowLoadingSpinner()
+        {
+            if (GetPendingOperationCount() == 0)
+            {
+                return;
+            }
+
+            if (loadingElement == null)
+            {
+                ImageElement imageElement = (ImageElement)Document.CreateElement("img");
+
+                imageElement.Src = Context.Current.ResourceBasePath + Context.Current.ImageResourceSubPath + "loadingspinner.gif";
+
+                imageElement.Style.VerticalAlign = "middle";
+                imageElement.Style.TextAlign = "center";
+                imageElement.Style.Opacity = "0";
+                imageElement.Style.Position = "fixed";
+
+                imageElement.Style.Left = ((Context.Current.BrowserInnerWidth / 2) - 22) + "px";
+                imageElement.Style.Top = ((Context.Current.BrowserInnerHeight / 2) - 22) + "px";
+
+                ElementUtilities.SetTransform(imageElement, "opacity .4s");
+
+                Document.Body.AppendChild(imageElement);
+
+                loadingElement = imageElement;
+            }
+
+            if (GetPendingOperationCount() == 0)
+            {
+                return;
+            }
+
+            loadingElement.Style.Display = "block";
+
+            Window.SetTimeout(StartLoadingSpinnerAnimation, 100);
+        }
+
+        private static void HideLoadingSpinner()
+        {
+            if (loadingElement == null)
+            {
+                return;
+            }
+
+            loadingElement.Style.Display = "none";
+            loadingElement.Style.Opacity = "0";
+        } 
+
+         private static void StartLoadingSpinnerAnimation()
+        {
+            if (loadingElement != null && GetPendingOperationCount() > 0)
+            {
+                loadingElement.Style.Opacity = ".8";
+            }
+        }
 
         public static bool HasScrolledRecently()
         {
@@ -24,6 +138,19 @@ namespace BL.UI
         {
             lastScrollTime = Date.Now;
         }
+
+        public static void RegisterTextInputBehaviorsEnterOnly(InputElement e)
+        {
+            e.AddEventListener("keyup", HandleInputTextKeyUp, true);
+            e.AddEventListener("focus", HandleInputFocus, true);
+        }
+
+        public static void DeregisterTextInputBehaviorsEnterOnly(InputElement e)
+        {
+            e.RemoveEventListener("keyup", HandleInputTextKeyUp, true);
+            e.RemoveEventListener("focus", HandleInputFocus, true);
+        }
+
 
         public static void RegisterTextInputBehaviors(InputElement e)
         {
