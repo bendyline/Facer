@@ -131,7 +131,7 @@ namespace BL.UI
         {
             Date now = Date.Now;
 
-            return (now.GetTime() - lastScrollTime.GetTime()) < 600;
+            return (now.GetTime() - lastScrollTime.GetTime()) < 300;
         }
 
         public static void UpdateLastScrollTime()

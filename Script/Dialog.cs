@@ -575,10 +575,12 @@ namespace BL.UI
             this.UpdateCloseButton();
 
             this.Element.Style.Opacity = "0";
-            string transform = "scale(0.2,0.2)";
-            Script.Literal("{0}.transform={1}", this.panel.Style, transform);
 
-
+            if (Context.Current.DevicePlatform != DevicePlatform.Microsoft)
+            {
+                string transform = "scale(0.2,0.2)";
+                Script.Literal("{0}.transform={1}", this.panel.Style, transform);
+            }
 
             Window.SetTimeout(this.StartAnimation, 50);
             Document.Body.AppendChild(this.Element);
@@ -588,13 +590,31 @@ namespace BL.UI
 
         private void StartAnimation()
         {
-            String transition = "all " + ".35s ease-in-out";
-            Script.Literal("{0}.transition={1};{2}.transition={1};{0}.transform=\"scale(1,1)\";{2}.opacity=\"1\"", this.panel.Style, transition, this.Element.Style);
+            String transition = "transform .35s ease-in-out, opacity .35s ease-in-out";
+
+            // IE has a weird judder on scaling the dialog out that looks really bad, so don't scale the dialog on IE/Edge.
+            if (Context.Current.DevicePlatform == DevicePlatform.Microsoft)
+            {
+                Script.Literal("{2}.transition={1};{2}.opacity=\"1\"", this.panel.Style, transition, this.Element.Style);
+            }
+            else
+            {
+                Script.Literal("{0}.transition={1};{2}.transition={1};{0}.transform=\"scale(1,1)\";{2}.opacity=\"1\"", this.panel.Style, transition, this.Element.Style);
+            }
         }
 
         private void CloseAnimation()
         {
-            Script.Literal("{0}.transform=\"scale(0.2,0.2)\";{1}.opacity=\"0\"", this.panel.Style, this.Element.Style);
+            Log.Message("Close animation for " + this.Element.ID);
+
+            if (Context.Current.DevicePlatform == DevicePlatform.Microsoft)
+            {
+                Script.Literal("{1}.opacity=\"0\"", this.panel.Style, this.Element.Style);
+            }
+            else
+            {
+                Script.Literal("{0}.transform=\"scale(0.2,0.2)\";{1}.opacity=\"0\"", this.panel.Style, this.Element.Style);
+            }
         }
 
         protected override void OnContentChanged(Control control)
@@ -642,16 +662,6 @@ namespace BL.UI
 
                 Document.Body.RemoveEventListener("keypress", this.keyboardEventHandler, false);
 
-                dialogsShown--;
-
-                if (dialogsShown == 0)
-                {
-                    if (DialogHidden != null)
-                    {
-                        DialogHidden(this, EventArgs.Empty);
-                    }
-                }
-
                 this.CloseAnimation();
                 Window.SetTimeout(this.HideContinue, 350);
             }
@@ -659,6 +669,16 @@ namespace BL.UI
 
         private void HideContinue()
         {
+            dialogsShown--;
+
+            if (dialogsShown == 0)
+            {
+                if (DialogHidden != null)
+                {
+                    DialogHidden(this, EventArgs.Empty);
+                }
+            }
+
             if (this.Closing != null)
             {
                 this.Closing(this, EventArgs.Empty);

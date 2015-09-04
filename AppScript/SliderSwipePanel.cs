@@ -456,8 +456,9 @@ namespace BL.UI.App
         {
             if (  ( this.allowSwiping && 
                     Context.Current.IsTouchOnly && 
-                    swipeGuideCount < 3 )
+                    swipeGuideCount < 4 )
                   && this.swipeGuideRight != null 
+                  && this.Visible
                   && this.swipeGuideRight.Style.Display != "block")
             {
                 if (!this.reparentedSwipeGuideRight)
@@ -1120,6 +1121,15 @@ namespace BL.UI.App
             this.ConsiderSizeChangedRegistration();
 
             this.UpdateSizingsOverTime();
+
+            if (!this.Visible)
+            {
+                this.HideSwipeGuide(null);
+            }
+            else
+            {
+                this.ConsiderShowingSwipeGuidelines();
+            }
         }
 
         private void ConsiderSizeChangedRegistration()
