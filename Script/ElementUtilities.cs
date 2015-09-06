@@ -79,23 +79,35 @@ namespace BL.UI
 
             if (loadingElement == null)
             {
-                ImageElement imageElement = (ImageElement)Document.CreateElement("img");
 
-                imageElement.Src = Context.Current.ResourceBasePath + Context.Current.ImageResourceSubPath + "loadingspinner.gif";
+                Element waitingElement = (Element)Document.CreateElement("div");
+                Style outerStyle = waitingElement.Style;
 
-                imageElement.Style.VerticalAlign = "middle";
-                imageElement.Style.TextAlign = "center";
-                imageElement.Style.Opacity = "0";
-                imageElement.Style.Position = "fixed";
+                outerStyle.VerticalAlign = "middle";
+                outerStyle.TextAlign = "center";
+                outerStyle.Opacity = "0";
+                outerStyle.Position = "fixed";
+                outerStyle.Position = "fixed";
 
-                imageElement.Style.Left = ((Context.Current.BrowserInnerWidth / 2) - 22) + "px";
-                imageElement.Style.Top = ((Context.Current.BrowserInnerHeight / 2) - 22) + "px";
+                ElementUtilities.SetBorderRadius(waitingElement, "4px");
+                outerStyle.Border = "solid 1px #52bae4";
+                outerStyle.BackgroundColor = "#52bae4";
+                outerStyle.Width = "66px";
+                outerStyle.Height = "66px";
+                outerStyle.Padding = "10px";
+            
+                waitingElement.Style.Left = ((Context.Current.BrowserInnerWidth / 2) - 33) + "px";
+                waitingElement.Style.Top = ((Context.Current.BrowserInnerHeight / 2) - 33) + "px";
 
-                ElementUtilities.SetTransform(imageElement, "opacity .4s");
+                Element waitingInteriorElement = Document.CreateElement("I");
+                waitingInteriorElement.ClassName = "fa fa-circle-o-notch fa-3x fa-spin";
+                waitingInteriorElement.Style.Color = "white";
 
-                Document.Body.AppendChild(imageElement);
+                waitingElement.AppendChild(waitingInteriorElement);
 
-                loadingElement = imageElement;
+                Document.Body.AppendChild(waitingElement);
+
+                loadingElement = waitingElement;
             }
 
             if (GetPendingOperationCount() == 0)
@@ -150,7 +162,6 @@ namespace BL.UI
             e.RemoveEventListener("keyup", HandleInputTextKeyUp, true);
             e.RemoveEventListener("focus", HandleInputFocus, true);
         }
-
 
         public static void RegisterTextInputBehaviors(InputElement e)
         {
@@ -248,6 +259,11 @@ namespace BL.UI
         public static void SetBackgroundSize(Element element, String value)
         {
             Script.Literal("{0}.style.backgroundSize={1}", element, value);
+        }
+
+        public static void SetBorderRadius(Element element, String value)
+        {
+            Script.Literal("{0}.style.borderRadius={1}", element, value);
         }
 
         public static void SetTransition(Element element, String value)

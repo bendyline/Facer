@@ -589,7 +589,7 @@ namespace BL.UI.App
 
         public void SetActiveIndexImmediate(int newActiveIndex)
         {
-            Log.DebugMessage("Active index " + newActiveIndex + " from " + this.activeIndex);
+            // Log.DebugMessage("Active index " + newActiveIndex + " from " + this.activeIndex);
             this.FlashSwipeNavigation();
 
             if (this.activeIndex == newActiveIndex)
@@ -1392,7 +1392,7 @@ namespace BL.UI.App
             double elementVisibleLeft = cr.Left;
             double elementVisibleBottom = cr.Bottom;
 
-            // Log.DebugMessage("Sizing Event: " + elementVisibleLeft + "|" + elementVisibleBottom);
+            // Log.DebugMessage("Sizing Event: " + elementVisibleLeft + "|" + elementVisibleBottom + "|" + this.Height);
 
             if (elementVisibleLeft < 0)
             {
@@ -1430,6 +1430,7 @@ namespace BL.UI.App
             }
 
             this.panelWidth = Window.InnerWidth;
+
 
 
             if (Context.Current.DevicePlatform == DevicePlatform.iOS && !Context.Current.IsFullScreenWebApp && !Context.Current.IsHostedInApp && this.swipeNavigation != null)

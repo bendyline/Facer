@@ -71,7 +71,7 @@ namespace BL.UI.App
         {
             get
             {
-                return      this.displayPaddles && 
+                return       this.displayPaddles && 
                                 (this.ItemControls == null || (this.ItemControls != null && this.visibleItemCount < this.ItemControls.Count)) && 
                                 !Context.Current.IsTouchOnly;
             }
@@ -159,7 +159,7 @@ namespace BL.UI.App
                     this.leftPaddle.Style.Visibility = "hidden";
                 }
 
-                if (this.DisplayPaddles && this.ItemControls != null && (this.StartIndex + 1) < this.ItemControls.Count - (visibleItemCount + 1))
+                if (this.DisplayPaddles && this.ItemControls != null && this.StartIndex  < this.ItemControls.Count - (visibleItemCount + 1))
                 {
                     this.rightPaddle.Style.Visibility = String.Empty;
                 }

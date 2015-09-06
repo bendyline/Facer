@@ -274,6 +274,8 @@ namespace BL.UI
             {
                 if (this.height == value)
                 {
+                    this.OnDimensionChanged();
+
                     return;
                 }
 

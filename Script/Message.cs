@@ -38,8 +38,41 @@ namespace BL.UI
         private String heading;
         private String htmlBody;
 
+        private String affirmText;
+        private String cancelText;
+
         private Action affirmAction;
         private Action closeAction;
+
+        public String AffirmText
+        {
+            get
+            {
+                return this.affirmText;
+            }
+
+            set
+            {
+                this.affirmText = value;
+
+                this.UpdateAffirmButton();
+            }
+        }
+
+        public String CancelText
+        {
+            get
+            {
+                return this.cancelText;
+            }
+
+            set
+            {
+                this.cancelText = value;
+
+                this.UpdateCancelButton();
+            }
+        }
 
         public MessageType Type
         {
@@ -151,6 +184,40 @@ namespace BL.UI
             base.OnApplyTemplate();
         }
 
+        private void UpdateAffirmButton()
+        {
+            if (this.okButton == null)
+            {
+                return;
+            }
+
+            if (!String.IsNullOrEmpty(this.affirmText))
+            {
+                ElementUtilities.SetText(this.okButton, this.affirmText);
+            }
+            else
+            {
+                ElementUtilities.SetText(this.okButton, "OK");
+            }
+        }
+
+        private void UpdateCancelButton()
+        {
+            if (this.cancelButton == null)
+            {
+                return;
+            }
+
+            if (!String.IsNullOrEmpty(this.cancelText))
+            {
+                ElementUtilities.SetText(this.cancelButton, this.cancelText);
+            }
+            else
+            {
+                ElementUtilities.SetText(this.cancelButton, "Cancel");
+            }
+        }
+
         protected override void OnUpdate()
         {
             if (this.messageArea != null)
@@ -203,6 +270,9 @@ namespace BL.UI
                     this.cancelButton.Style.Display = "";
                 }
             }
+
+            this.UpdateAffirmButton();
+            this.UpdateCancelButton();
         }
 
         private void parentDialog_Closing(object sender, EventArgs e)
@@ -249,18 +319,20 @@ namespace BL.UI
 
         public static void ShowMessage(String heading, String textOnlyContent, Action closeAction)
         {
-            Show(heading, textOnlyContent, null, MessageType.OKOnly, null, closeAction);
+            Show(heading, textOnlyContent, null, MessageType.OKOnly, null, null, closeAction, null);
         }
         public static void ShowTextAndHtmlMessage(String heading, String textOnlyContent, String htmlContent, Action closeAction)
         {
-            Show(heading, textOnlyContent, htmlContent, MessageType.OKOnly, null, closeAction);
+            Show(heading, textOnlyContent, htmlContent, MessageType.OKOnly, null, null, closeAction, null);
         }
 
-        public static void Show(String heading, String textOnlyContent, String htmlBody, MessageType messageType, Action affirmAction, Action closeAction)
+        public static void Show(String heading, String textOnlyContent, String htmlBody, MessageType messageType, Action affirmAction, String affirmText, Action closeAction, String closeText)
         {
             Message m = new Message();
             m.Content = textOnlyContent;
             m.HtmlBody = htmlBody;
+            m.AffirmText = affirmText;
+            m.CancelText = closeText;
             m.Heading = heading;
             m.Type = messageType;
 
