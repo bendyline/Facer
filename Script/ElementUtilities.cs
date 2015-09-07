@@ -508,10 +508,27 @@ else if (window.getComputedStyle)
 
                 if (!String.IsNullOrEmpty(targetClass))
                 {
-                    if (targetClass.IndexOf("switch-") > 0 || targetClass.IndexOf("grip") > 0 || targetClass.IndexOf("leaflet") > 0 || targetClass.IndexOf("handle") > 0)
+                    if (targetClass.IndexOf("switch-") > 0 || targetClass.IndexOf("grip") > 0 || targetClass.IndexOf("leaflet") > 0 || targetClass.IndexOf("handle") > 0 || targetClass.IndexOf("k-popup") > 0)
                     {
                         return true;
                     }
+                }
+
+                Element element = e.SrcElement;
+
+                while (element != null)
+                {
+                    targetClass = element.ClassName;
+
+                    if (!String.IsNullOrEmpty(targetClass))
+                    {
+                        if (targetClass.IndexOf("k-popup") > 0)
+                        {
+                            return true;
+                        }
+                    }
+
+                    element = element.ParentNode;
                 }
 
                 Style style = GetComputedStyle(e.SrcElement);
