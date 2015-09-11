@@ -17,14 +17,6 @@ namespace BL.UI.KendoControls
         private kendo.mobile.MobileSwitch mobileSwitch;
         private bool? isChecked;
 
-        public override string TagName
-        {
-            get
-            {
-                return "INPUT";
-            }
-        }
-
         [ScriptName("b_checked")]
         public bool Checked
         {

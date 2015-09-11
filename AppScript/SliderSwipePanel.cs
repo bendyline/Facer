@@ -375,6 +375,7 @@ namespace BL.UI.App
 
                 this.FlashSwipeNavigation();
 
+                this.UpdateSwipeGuidelines();
                 this.ApplyVisibility();
                 this.AnimateToIndexPosition();
 
@@ -455,7 +456,9 @@ namespace BL.UI.App
         public void ConsiderShowingSwipeGuidelines()
         {
             if (  ( this.allowSwiping && 
-                    Context.Current.IsTouchOnly && 
+                    Context.Current.IsTouchOnly &&
+                    this.ActiveIndex < this.ItemControls.Count - 1 && 
+                     this.GetNextPage(this.ActiveIndex) >= 0 &&
                     swipeGuideCount < 4 )
                   && this.swipeGuideRight != null 
                   && this.Visible
@@ -480,6 +483,14 @@ namespace BL.UI.App
                 this.UpdateSizingsOverTime();
 
                 this.swipeGuideCount++;
+            }
+        }
+
+        private void UpdateSwipeGuidelines()
+        {
+            if (this.ActiveIndex >= this.ItemControls.Count - 1 || this.GetNextPage(this.ActiveIndex) < 0)
+            {
+                this.HideSwipeGuide(null);
             }
         }
 
@@ -607,6 +618,7 @@ namespace BL.UI.App
             this.ApplyVisibility();
            
             this.UpdateLinkHighlights();
+            this.UpdateSwipeGuidelines();
 
             if (this.containerLinkBin != null && this.containerLinkBin.ChildNodes.Length > this.activeIndex)
             {
@@ -915,6 +927,8 @@ namespace BL.UI.App
             {
                 ElementUtilities.SetTransform(this.itemsTable, "translateX(-" + left + "px)");
             }
+
+            this.itemsBin.ScrollLeft = 0;
         }
 
         private void UpdateLinkBin()
@@ -1335,11 +1349,11 @@ namespace BL.UI.App
                 int nextPage = this.GetNextPage(this.ActiveIndex);
                 int previousPage = this.GetPreviousPage(this.ActiveIndex);
 
-                if (diffX > 8 && this.ActiveIndex < this.ItemControls.Count - 1 && nextPage >= 0) //this.itemsBin.ScrollLeft > (initialScrollX + (panelWidth / 4)) && this.ActiveIndex < this.ItemControls.Count - 1)
+                if (diffX > 8 && this.ActiveIndex < this.ItemControls.Count - 1 && nextPage >= 0) 
                 {                    
                     this.ActiveIndex = nextPage;
                 }
-                else if (diffX < -8 && previousPage >= 0) //this.itemsBin.ScrollLeft < (initialScrollX - (panelWidth / 4)) && this.ActiveIndex > 0)
+                else if (diffX < -8 && previousPage >= 0) 
                 {
                     this.ActiveIndex = previousPage;
                 }

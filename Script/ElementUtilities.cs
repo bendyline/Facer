@@ -87,14 +87,13 @@ namespace BL.UI
                 outerStyle.TextAlign = "center";
                 outerStyle.Opacity = "0";
                 outerStyle.Position = "fixed";
-                outerStyle.Position = "fixed";
-
                 ElementUtilities.SetBorderRadius(waitingElement, "4px");
                 outerStyle.Border = "solid 1px #52bae4";
                 outerStyle.BackgroundColor = "#52bae4";
                 outerStyle.Width = "66px";
                 outerStyle.Height = "66px";
                 outerStyle.Padding = "10px";
+                outerStyle.ZIndex = 6000;
             
                 waitingElement.Style.Left = ((Context.Current.BrowserInnerWidth / 2) - 33) + "px";
                 waitingElement.Style.Top = ((Context.Current.BrowserInnerHeight / 2) - 33) + "px";
@@ -195,7 +194,7 @@ namespace BL.UI
 
                 double offsetTop = elementRect.Top;
 
-                double invisibleTop = Window.InnerHeight - (Context.Current.OnScreenKeyboardHeight + 40);
+                double invisibleTop = Window.InnerHeight - (Context.Current.OnScreenKeyboardHeight);
 
                 if (offsetTop > invisibleTop)
                 {

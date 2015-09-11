@@ -19,6 +19,11 @@ namespace Kendo.DataViz.UI
 
         public DataSource DataSource;
 
+        public void ToggleHighlight(bool toggle, object options)
+        {
+            ;
+        }
+
         public void SetDataSource(DataSource dataSource)
         {
             ;

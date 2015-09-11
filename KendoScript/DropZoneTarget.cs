@@ -198,7 +198,6 @@ namespace BL.UI.KendoControls
 
         private void UnHover()
         {
-
             this.IsHoveredOver = false;
 
             this.activeHeightAnimator = new HeightAnimator();

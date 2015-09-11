@@ -51,6 +51,13 @@ namespace BL.UI.KendoControls
             chart.Bind("change", this.HandleDateChange);
         }
 
+        public void Blur()
+        {
+            // done to get rid of random tooltips that stick around if you move the chart offscreen.
+            // a better solution might be to use togglehighlight, but that implies tracking selection, etc.
+            chart.Refresh();
+        }
+
         private void HandleDateChange(object e)
         {
             if (this.Changed != null)
