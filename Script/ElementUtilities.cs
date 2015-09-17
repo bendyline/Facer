@@ -14,8 +14,18 @@ namespace BL.UI
         private static Date lastScrollTime = new Date(2012, 1, 1);
         private static Date lastTimeUpdate = Date.Now;
 
+        private static Element fixedContainerElement;
+        private static String fixedLastTop;
         private static Element loadingElement;
         private static Dictionary<String, object> pendingOperations = new Dictionary<string, object>();
+
+        public static Element FixedContainerElement
+        {
+            get
+            {
+                return fixedContainerElement;
+            }
+        }
 
         public static void Init()
         {
@@ -68,6 +78,28 @@ namespace BL.UI
             {
                 HideLoadingSpinner();
             }
+        }
+
+        public static bool IsVisible(Element element)
+        {
+            if (element.Style.Display == "none" || element.Style.Visibility == "hidden")
+            {
+                return false;
+            }
+
+            ClientRect rec = ElementUtilities.GetBoundingRect(element);
+
+            if (rec.Right - rec.Left < 2)
+            {
+                return false;
+            }
+
+            if (rec.Bottom - rec.Top < 2)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private static void ShowLoadingSpinner()
@@ -154,6 +186,8 @@ namespace BL.UI
         {
             e.AddEventListener("keyup", HandleInputTextKeyUp, true);
             e.AddEventListener("focus", HandleInputFocus, true);
+            e.AddEventListener("blur", HandleInputBlur, true);
+            e.AddEventListener("touchstart", HandleInputTouchStart, true);
         }
 
         public static void DeregisterTextInputBehaviorsEnterOnly(InputElement e)
@@ -166,6 +200,8 @@ namespace BL.UI
         {
             e.AddEventListener("keyup", HandleInputTextKeyUp, true);
             e.AddEventListener("focus", HandleInputFocus, true);
+            e.AddEventListener("blur", HandleInputBlur, true);
+            e.AddEventListener("touchstart", HandleInputTouchStart, true);
         }
 
         public static void DeregisterTextInputBehaviors(InputElement e)
@@ -184,17 +220,101 @@ namespace BL.UI
             e.RemoveEventListener("focus", HandleInputFocus, true);
         }
 
+        private static void HandleInputTouchStart(ElementEvent e)
+        {
+            PrepareInputForFocus(e.Target);
+        }
+
+        public static bool IsTextInputElement (Element element)
+        {
+            if (element.TagName == null)
+            {
+                return false;
+            }
+
+            String tagName = element.TagName.ToUpperCase();
+
+            if (tagName != "INPUT" && tagName != "TEXTAREA")
+            {
+                return false;
+            }
+
+            if (element.TagName == "INPUT")
+            {
+                String type = ((InputElement)element).Type;
+
+                if (type == null)
+                {
+                    return true;
+                }
+
+                type = type.ToUpperCase();
+
+                if (type == "BUTTON" || type == "SUBMIT" || type == "CHECKBOX")
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static void PrepareInputForFocus(Element element)
+        {
+            // on iOS, text input focus and scrolling within a Position="Fixed" parent is completely
+            // weird and random.  Convert Position=Fixed elements to absolute temporarily while 
+            // an input within them has focus.
+            if (Context.Current.DevicePlatform == DevicePlatform.iOS && element != null && ElementUtilities.IsTextInputElement(element))
+            {
+                Element fixedElementCandidate = element.ParentNode;
+                
+                while (fixedElementCandidate != null)
+                {
+                    Style effectiveStyle = ElementUtilities.GetComputedStyle(fixedElementCandidate);
+
+                    if (effectiveStyle.Position == "fixed")
+                    {
+                        fixedContainerElement = fixedElementCandidate;
+                        fixedLastTop = fixedElementCandidate.Style.Top;
+
+                        // note: this positioning algorithm isn't really right, and of course doesn't take into
+                        // account what will happen if the user scrolls.  However, in instances where this is
+                        // used (dialogs + header elements), putting it at the top of the page is a reasonable.
+                        // TODO: need more sophistication here to let elements specify how they should be 
+                        // handled.                        
+                        fixedContainerElement.Style.Top = "0px";
+                        fixedContainerElement.Style.Position = "absolute";
+
+                        return;
+                    }
+
+                    fixedElementCandidate = fixedElementCandidate.ParentNode;
+                }
+            }
+        }
+
+        private static void HandleInputBlur(ElementEvent e)
+        {
+            if (fixedContainerElement != null)
+            {
+                fixedContainerElement.Style.Top = fixedLastTop;
+                fixedContainerElement = null;
+            }
+        }
+
         private static void HandleInputFocus(ElementEvent e)
         {
             // if there is an onscreen keyboard, scroll the active text element up
             // so it remains visible (not hidden behind the on screen keyboard)
             if (Context.Current.IsOnscreenKeyboardDevice)
             {
+                e.PreventDefault();
+
                 ClientRect elementRect = ElementUtilities.GetBoundingRect(e.Target);
 
                 double offsetTop = elementRect.Top;
 
-                double invisibleTop = Window.InnerHeight - (Context.Current.OnScreenKeyboardHeight);
+                double invisibleTop = Context.Current.BrowserInnerHeight - (Context.Current.OnScreenKeyboardHeight);
 
                 if (offsetTop > invisibleTop)
                 {
@@ -203,10 +323,12 @@ namespace BL.UI
 
                     while (scrollableParent != null)
                     {
-                        if (scrollableParent.Style != null && scrollableParent.Style.OverflowY != null && scrollableParent.Style.OverflowY.ToLowerCase() == "auto")
+                        if (scrollableParent.Style != null && 
+                            (   scrollableParent.Style.OverflowY != null && 
+                                scrollableParent.Style.OverflowY.ToLowerCase() == "auto")
+                           )
                         {
                             scrollableParent.ScrollTop += (int)(offsetTop - invisibleTop);
-
                             return;
                         }
 

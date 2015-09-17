@@ -12,6 +12,26 @@ namespace BL.UI
     {
         private Control c;
         private String id;
+        private String idWithinParent;
+
+
+        public String IdWithinParentControl
+        {
+            get
+            {
+                if (this.idWithinParent == null && c != null)
+                {
+                    return c.IdWithinParentControl;
+                }
+
+                return this.idWithinParent;
+            }
+
+            set
+            {
+                this.idWithinParent = value;
+            }
+        }
 
         public String Id
         {

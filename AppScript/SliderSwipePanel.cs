@@ -455,8 +455,9 @@ namespace BL.UI.App
 
         public void ConsiderShowingSwipeGuidelines()
         {
-            if (  ( this.allowSwiping && 
+            if ((this.allowSwiping &&
                     Context.Current.IsTouchOnly &&
+                    ElementUtilities.IsVisible(this.Element) && 
                     this.ActiveIndex < this.ItemControls.Count - 1 && 
                      this.GetNextPage(this.ActiveIndex) >= 0 &&
                     swipeGuideCount < 4 )

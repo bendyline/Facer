@@ -51,6 +51,7 @@ namespace BL.UI.App
                 ControlEventArgs cea = new ControlEventArgs((Control)sender);
 
                 cea.Id = e.Value;
+                cea.IdWithinParentControl = e.Value;
 
                 this.ItemClicked(this, cea);
             }

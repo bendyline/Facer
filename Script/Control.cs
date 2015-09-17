@@ -392,6 +392,23 @@ namespace BL.UI
             }
         }
 
+        public String IdWithinParentControl
+        {
+            get
+            {
+                String leafId = this.Id;
+
+                int lastDash = leafId.LastIndexOf("-");
+
+                if (lastDash > 0)
+                {
+                    leafId = leafId.Substring(lastDash + 1, leafId.Length);
+                }
+
+                return leafId;
+            }
+        }
+
         [ScriptName("s_id")]
         public String Id
         {
@@ -1454,19 +1471,7 @@ namespace BL.UI
             }
 
             this.ApplyVisibility();
-        }
-
-        private String GetControlShortId(String id)
-        {
-            int lastEqual = id.LastIndexOf("-");
-
-            if (lastEqual > 0)
-            {
-                return id.Substring(lastEqual + 1, id.Length);
-            }
-
-            return id;
-        }
+        }        
 
         public Element GetTemplateElementById(String id)
         {
@@ -1477,6 +1482,7 @@ namespace BL.UI
 
             return null;
         }
+
         public Control GetTemplateControlById(String id)
         {
             if (this.templateControls == null)
@@ -1486,7 +1492,7 @@ namespace BL.UI
 
             foreach (Control c in this.templateControls)
             {
-                if (this.GetControlShortId(c.Id) == id)
+                if (c.IdWithinParentControl == id)
                 {
                     return c;
                 }
@@ -1499,7 +1505,7 @@ namespace BL.UI
 
             foreach (Control c in this.templateDescendentControls)
             {
-                if (this.GetControlShortId(c.Id) == id)
+                if (c.IdWithinParentControl == id)
                 {
                     return c;
                 }

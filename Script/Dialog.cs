@@ -413,7 +413,7 @@ namespace BL.UI
                 Style elementStyle = this.Element.Style;
 
                 elementStyle.Position = "fixed";
-                elementStyle.ZIndex = 4000;
+                elementStyle.ZIndex = 5000;
                 elementStyle.Top = "0px";
                 elementStyle.Left = "0px";
 
