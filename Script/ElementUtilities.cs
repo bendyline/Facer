@@ -13,6 +13,7 @@ namespace BL.UI
     {
         private static Date lastScrollTime = new Date(2012, 1, 1);
         private static Date lastTimeUpdate = Date.Now;
+        private static int lastPageYOffsetBeforeInputFocus = 0;
 
         private static Element fixedContainerElement;
         private static String fixedLastTop;
@@ -182,6 +183,35 @@ namespace BL.UI
             lastScrollTime = Date.Now;
         }
 
+        public static void RegisterScrollableArea(Element e)
+        {
+            e.AddEventListener("touchstart", HandleScrollableTouchStart, true);
+            e.AddEventListener("touchmove", HandleScrollableTouchMove, true);
+        }
+
+        public static void DeregisterScrollableArea(Element e)
+        {
+            e.RemoveEventListener("touchstart", HandleScrollableTouchStart, true);
+            e.RemoveEventListener("touchmove", HandleScrollableTouchMove, true);
+        }
+
+        private static void HandleScrollableTouchStart(ElementEvent e)
+        {
+            if (e.CurrentTarget.ScrollTop == 0)
+            {
+                e.CurrentTarget.ScrollTop = 1;
+            }
+            else if (e.CurrentTarget.ScrollHeight == e.CurrentTarget.ScrollTop + e.CurrentTarget.OffsetHeight)
+            {
+                e.CurrentTarget.ScrollTop -= 1;
+            }
+        }
+
+        private static void HandleScrollableTouchMove(ElementEvent e)
+        {
+            e.StopPropagation();
+        }
+
         public static void RegisterTextInputBehaviorsEnterOnly(InputElement e)
         {
             e.AddEventListener("keyup", HandleInputTextKeyUp, true);
@@ -302,6 +332,13 @@ namespace BL.UI
             }
         }
 
+        public static void ReportNewScrollTop()
+        {
+            Window.Scroll(0, lastPageYOffsetBeforeInputFocus);
+        }
+
+
+
         private static void HandleInputFocus(ElementEvent e)
         {
             // if there is an onscreen keyboard, scroll the active text element up
@@ -309,12 +346,24 @@ namespace BL.UI
             if (Context.Current.IsOnscreenKeyboardDevice)
             {
                 e.PreventDefault();
+                e.CancelBubble = true;
+
+                // in iOS, despite the notion that we're .PreventDefaulting, iOS will still change the Window.PageYOffset (scroll the whole page)
+                // so come along asynchronously later and reset that. 
+                lastPageYOffsetBeforeInputFocus = Window.PageYOffset;
+                Window.SetTimeout(ReportNewScrollTop, 100);
 
                 ClientRect elementRect = ElementUtilities.GetBoundingRect(e.Target);
 
                 double offsetTop = elementRect.Top;
 
-                double invisibleTop = Context.Current.BrowserInnerHeight - (Context.Current.OnScreenKeyboardHeight);
+                double invisibleTop = Context.Current.BrowserInnerHeight - Context.Current.OnScreenKeyboardHeight;
+
+                // compensate for the notion that we're going to reset the whole-page body scroll in just a bit.
+                if (Context.Current.DevicePlatform == DevicePlatform.iOS)
+                {
+                    invisibleTop -= (Context.Current.OnScreenKeyboardHeight - 170);
+                }
 
                 if (offsetTop > invisibleTop)
                 {
@@ -323,9 +372,11 @@ namespace BL.UI
 
                     while (scrollableParent != null)
                     {
-                        if (scrollableParent.Style != null && 
-                            (   scrollableParent.Style.OverflowY != null && 
-                                scrollableParent.Style.OverflowY.ToLowerCase() == "auto")
+                        Style style = ElementUtilities.GetComputedStyle(scrollableParent);
+
+                        if (style != null && 
+                            (   style.OverflowY != null && 
+                                style.OverflowY.ToLowerCase() == "auto")
                            )
                         {
                             scrollableParent.ScrollTop += (int)(offsetTop - invisibleTop);

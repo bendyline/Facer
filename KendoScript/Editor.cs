@@ -318,7 +318,10 @@ namespace BL.UI.KendoControls
                     this.editor.Value(this.tempValue);
                 }
 
-                this.editor.Focus();
+                if (this.grabFocusOnLoad)
+                {
+                    this.editor.Focus();
+                }
             }
         }
 

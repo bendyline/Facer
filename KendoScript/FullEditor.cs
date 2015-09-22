@@ -177,7 +177,7 @@ namespace BL.UI.KendoControls
             this.popupEditor.Options = this.EditorOptions;
             this.popupEditor.Rows = 0;
 
-            int editorHeightOffset = 78;
+            int editorHeightOffset = 48;
 
             if (Context.Current.IsSmallFormFactor)
             {
@@ -187,13 +187,12 @@ namespace BL.UI.KendoControls
             else
             {
                 d.DisplayDoneButton = true;
-                editorHeightOffset += 40;
+                editorHeightOffset += 60;
             }
 
             this.popupEditor.EditorHeight = (Window.InnerHeight - (Context.Current.OnScreenKeyboardHeight + editorHeightOffset)) + "px";
             
             this.popupEditor.DisplayInlineToolbar = true;
-            this.popupEditor.GrabFocusOnLoad = true;
 
             if (this.html != null)
             {
