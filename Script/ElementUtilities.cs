@@ -14,7 +14,7 @@ namespace BL.UI
         private static Date lastScrollTime = new Date(2012, 1, 1);
         private static Date lastTimeUpdate = Date.Now;
         private static int lastPageYOffsetBeforeInputFocus = 0;
-
+        private static Element lastFocusedElement = null;
         private static Element fixedContainerElement;
         private static String fixedLastTop;
         private static Element loadingElement;
@@ -185,14 +185,15 @@ namespace BL.UI
 
         public static void RegisterScrollableArea(Element e)
         {
-            e.AddEventListener("touchstart", HandleScrollableTouchStart, true);
-            e.AddEventListener("touchmove", HandleScrollableTouchMove, true);
+            // disabled the below code, as this seems to disable drag and drop within the controls.
+    //        e.AddEventListener("touchstart", HandleScrollableTouchStart, true);
+       //     e.AddEventListener("touchmove", HandleScrollableTouchMove, true);
         }
 
         public static void DeregisterScrollableArea(Element e)
         {
-            e.RemoveEventListener("touchstart", HandleScrollableTouchStart, true);
-            e.RemoveEventListener("touchmove", HandleScrollableTouchMove, true);
+     //       e.RemoveEventListener("touchstart", HandleScrollableTouchStart, true);
+      //      e.RemoveEventListener("touchmove", HandleScrollableTouchMove, true);
         }
 
         private static void HandleScrollableTouchStart(ElementEvent e)
@@ -334,10 +335,12 @@ namespace BL.UI
 
         public static void ReportNewScrollTop()
         {
-            Window.Scroll(0, lastPageYOffsetBeforeInputFocus);
+            if (Window.PageYOffset != lastPageYOffsetBeforeInputFocus && lastFocusedElement != null)
+            {
+                Window.ScrollTo(0, lastPageYOffsetBeforeInputFocus);
+                lastFocusedElement = null;
+            }
         }
-
-
 
         private static void HandleInputFocus(ElementEvent e)
         {
@@ -350,8 +353,15 @@ namespace BL.UI
 
                 // in iOS, despite the notion that we're .PreventDefaulting, iOS will still change the Window.PageYOffset (scroll the whole page)
                 // so come along asynchronously later and reset that. 
-                lastPageYOffsetBeforeInputFocus = Window.PageYOffset;
+
+                if (lastFocusedElement != e.Target)
+                {
+                    lastFocusedElement = e.Target;
+                    lastPageYOffsetBeforeInputFocus = Window.PageYOffset;
+                }
+
                 Window.SetTimeout(ReportNewScrollTop, 100);
+                Window.SetTimeout(ReportNewScrollTop, 200);
 
                 ClientRect elementRect = ElementUtilities.GetBoundingRect(e.Target);
 

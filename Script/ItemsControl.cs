@@ -112,7 +112,7 @@ namespace BL.UI
                 this.itemControlsById = new Dictionary<string, Control>();
             }
 
-            Debug.Assert(!this.itemControls.Contains(c));
+            Debug.Assert(!this.itemControls.Contains(c), "Could insert control to child at index " + index);
 
             this.itemControls.Insert(index, c);
             this.itemControlsById[c.Id] = c;

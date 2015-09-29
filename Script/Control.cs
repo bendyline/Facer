@@ -817,6 +817,34 @@ namespace BL.UI
             }
         }
 
+        public void Blur()
+        {
+            if (Document.ActiveElement != null)
+            {
+                Document.ActiveElement.Blur();
+            }
+
+            this.BlurChildren();
+        }
+
+        internal void BlurChildren()
+        {
+            if (this.templateControls != null)
+            {
+                foreach (Control c in this.templateControls)
+                {
+                    c.BlurChildren();
+                }
+            }
+
+            this.OnBlur();
+        }
+
+        protected virtual void OnBlur()
+        {
+
+        }
+
         private void ApplyClass()
         {
             if (this.Element != null)
@@ -1669,7 +1697,7 @@ namespace BL.UI
                 this.templateControls = new List<Control>();
             }
 
-            Debug.Assert(!this.templateControls.Contains(child));
+            Debug.Assert(!this.templateControls.Contains(child), "Error adding child to base control");
             child.ParentControl = this;
             this.templateControls.Add(child);
 
