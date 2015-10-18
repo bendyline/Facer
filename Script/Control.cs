@@ -392,6 +392,42 @@ namespace BL.UI
             }
         }
 
+        public bool IsActive
+        {
+
+            get
+            {
+                if (!this.visible)
+                {
+                    return false;
+                }
+
+                if (Dialog.DialogIsShowing)
+                {
+                    bool isWithinDialog = false;
+
+                    Control parent = this.ParentControl;
+
+                    while (parent != null)
+                    {
+                        if (parent is Dialog)
+                        {
+                            isWithinDialog = true;
+                        }
+
+                        parent = parent.ParentControl;
+                    }
+
+                    if (!isWithinDialog)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
         public String IdWithinParentControl
         {
             get
@@ -668,10 +704,12 @@ namespace BL.UI
         private void HandleTouchEnd(ElementEvent e)
         {
             Date now = Date.Now;
+            Debug.WriteLine("HandleTouchEnd: " + (now.GetTime() - this.touchStartTime < 300) + "|" + (now.GetTime() - this.lastClickTime > 200) + "|" + !ElementUtilities.HasScrolledRecently() + "|" + this.IsActive);
 
-            if (now.GetTime() - this.touchStartTime < 200 && 
+            if (now.GetTime() - this.touchStartTime < 300 && 
                 now.GetTime() - this.lastClickTime > 200 && 
-                !ElementUtilities.HasScrolledRecently())
+                !ElementUtilities.HasScrolledRecently() && 
+                this.IsActive)
             {
                 this.lastClickTime = now.GetTime();
                 this.OnClick(e);
@@ -682,8 +720,11 @@ namespace BL.UI
         {
             Date now = Date.Now;
 
+            Debug.WriteLine("HandleClick: " + (now.GetTime() - this.lastClickTime > 200) + "|" + !ElementUtilities.HasScrolledRecently() + "|" + this.IsActive);
+
             if (now.GetTime() - this.lastClickTime > 200 && 
-                !ElementUtilities.HasScrolledRecently())
+                !ElementUtilities.HasScrolledRecently() &&
+                this.IsActive)
             {
                 this.lastClickTime = now.GetTime();
                 this.OnClick(e);

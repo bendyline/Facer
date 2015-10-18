@@ -597,9 +597,9 @@ namespace BL.UI.App
             }
             else if (this.Element.ParentNode != null)
             {
-                ClientRect cr = ElementUtilities.GetBoundingRect(this.Element.ParentNode);
+                //ClientRect cr = ElementUtilities.GetBoundingRect(this.Element.ParentNode);
 
-                width = (int)((cr.Right - cr.Left) - adjust);
+                width = this.Element.ClientWidth; // (int)((cr.Right - cr.Left) - adjust);
             }
 
             int itemWidth= 0;
@@ -614,10 +614,10 @@ namespace BL.UI.App
                     style.MarginRight = this.gapBetweenSections + "px";
                     style.Height = (height-8).ToString() + "px";
 
-                    ClientRect cr = ElementUtilities.GetBoundingRect(c.Element);
+                    //   ClientRect cr = ElementUtilities.GetBoundingRect(c.Element);
 
-                    itemWidth += (int)(cr.Right - cr.Left);
-
+                    //     itemWidth += (int)(cr.Right - cr.Left);
+                    itemWidth += this.Element.ClientWidth;
                     c.Element.ParentNode.Style.Height = "100%";
                     itemCount++;
                 }

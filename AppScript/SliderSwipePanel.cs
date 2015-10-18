@@ -1176,7 +1176,7 @@ namespace BL.UI.App
 
         private void HandleElementMouseDown(ElementEvent e)
         {
-            if (ElementUtilities.IsDefaultInputElement(e, false) || !ElementUtilities.GetIsPrimary(e) || !this.allowSwiping)
+            if (ElementUtilities.IsDefaultInputElement(e, false) || !ElementUtilities.GetIsPrimary(e) || !this.allowSwiping || !this.IsActive)
             {
                 return;
             }
@@ -1224,7 +1224,7 @@ namespace BL.UI.App
 
         private void HandleElementMouseMove(ElementEvent e)
         {
-            if (!ElementUtilities.GetIsPrimary(e) || !this.allowSwiping)
+            if (!ElementUtilities.GetIsPrimary(e) || !this.allowSwiping || !this.IsActive)
             {
                 return;
             }
@@ -1304,6 +1304,11 @@ namespace BL.UI.App
 
         private void HandleDragMouseOut(ElementEvent e)
         {
+            if (!this.IsActive)
+            {
+                return;
+            }
+
             if (this.isDragging)
             {
                 e.PreventDefault();
@@ -1326,7 +1331,7 @@ namespace BL.UI.App
 
         private void HandlePointerUp(ElementEvent e)
         {
-            if ((e != null && !ElementUtilities.GetIsPrimary(e)) || !this.allowSwiping)
+            if ((e != null && !ElementUtilities.GetIsPrimary(e)) || !this.allowSwiping || !this.IsActive)
             {
                 return;
             }

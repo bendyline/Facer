@@ -41,9 +41,17 @@ namespace BL.UI
             // on versions < iOS8, and on Cordova and for web apps, pauses all
             // JS during scroll (and scroll events don't fire.). So treat long pauses as
             // essentially a  scroll
-            if (now.GetTime() - lastTimeUpdate.GetTime() > 70)
+
+            // note that although this interval is set to 50ms, /very frequently/ after any intensive rendering
+            // the interval timer will be massively delayed
+            if (now.GetTime() - lastTimeUpdate.GetTime() > 200)
             {
-                lastScrollTime = now;
+                Log.DebugMessage("Long 200ms pause detected.");
+
+                if (Context.Current.DevicePlatform == DevicePlatform.iOS)
+                {
+                    lastScrollTime = now;
+                }
             }
 
             lastTimeUpdate = now;
@@ -175,7 +183,7 @@ namespace BL.UI
         {
             Date now = Date.Now;
 
-            return (now.GetTime() - lastScrollTime.GetTime()) < 300;
+            return (now.GetTime() - lastScrollTime.GetTime()) < 100;
         }
 
         public static void UpdateLastScrollTime()
@@ -186,31 +194,70 @@ namespace BL.UI
         public static void RegisterScrollableArea(Element e)
         {
             // disabled the below code, as this seems to disable drag and drop within the controls.
-    //        e.AddEventListener("touchstart", HandleScrollableTouchStart, true);
-       //     e.AddEventListener("touchmove", HandleScrollableTouchMove, true);
+            e.AddEventListener("touchstart", HandleScrollableTouchStart, true);
+            e.AddEventListener("touchmove", HandleScrollableTouchMove, true);
         }
 
         public static void DeregisterScrollableArea(Element e)
         {
-     //       e.RemoveEventListener("touchstart", HandleScrollableTouchStart, true);
-      //      e.RemoveEventListener("touchmove", HandleScrollableTouchMove, true);
+            e.RemoveEventListener("touchstart", HandleScrollableTouchStart, true);
+            e.RemoveEventListener("touchmove", HandleScrollableTouchMove, true);
+        }
+
+        public static bool ElementIsDragStarter(Element e)
+        {
+            if (!Script.IsNullOrUndefined(e))
+            {
+                String targetClass = e.ClassName;
+
+                Element element = e;
+
+                while (element != null)
+                {
+                    targetClass = element.ClassName;
+
+                    if (!String.IsNullOrEmpty(targetClass))
+                    {
+                        if (targetClass.IndexOf("switch-") > 0 || targetClass.IndexOf("grip") > 0 || targetClass.IndexOf("leaflet") > 0 || targetClass.IndexOf("handle") > 0 || targetClass.IndexOf("k-popup") > 0)
+                        {
+                            return true;
+                        }
+                    }
+
+                    element = element.ParentNode;
+                }
+            }
+
+            return false;
         }
 
         private static void HandleScrollableTouchStart(ElementEvent e)
         {
-            if (e.CurrentTarget.ScrollTop == 0)
+           if (Context.Current.DevicePlatform == DevicePlatform.iOS)
             {
-                e.CurrentTarget.ScrollTop = 1;
-            }
-            else if (e.CurrentTarget.ScrollHeight == e.CurrentTarget.ScrollTop + e.CurrentTarget.OffsetHeight)
-            {
-                e.CurrentTarget.ScrollTop -= 1;
+                if (!ElementUtilities.ElementIsDragStarter(e.SrcElement))
+                {
+                    if (e.CurrentTarget.ScrollTop == 0)
+                    {
+                        e.CurrentTarget.ScrollTop = 1;
+                    }
+                    else if (e.CurrentTarget.ScrollHeight == e.CurrentTarget.ScrollTop + e.CurrentTarget.OffsetHeight)
+                    {
+                        e.CurrentTarget.ScrollTop -= 1;
+                    }
+                }
             }
         }
 
         private static void HandleScrollableTouchMove(ElementEvent e)
         {
-            e.StopPropagation();
+            if (Context.Current.DevicePlatform == DevicePlatform.iOS)
+            {
+                if (!ElementUtilities.ElementIsDragStarter(e.SrcElement))
+                {
+                    e.StopPropagation();
+                }
+            }
         }
 
         public static void RegisterTextInputBehaviorsEnterOnly(InputElement e)
@@ -407,6 +454,7 @@ namespace BL.UI
             if (e.KeyCode == 13)
             {
                 e.Target.Blur();
+                Script.Literal("return false");
             }
         }
 

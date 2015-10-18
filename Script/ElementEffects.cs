@@ -311,7 +311,10 @@ namespace BL.UI
                 if (Context.Current.IsTouchOnly)
                 {
                     this.element.AddEventListener("touchstart", this.HandleElementMouseDown, true);
+                    this.element.AddEventListener("touchmove", this.HandleElementTouchMove, true);
                     this.element.AddEventListener("touchend", this.HandleElementMouseUp, true);
+
+              //      ElementUtilities.RegisterScrollableArea(this.element);
                 }
                 else
                 {
@@ -320,6 +323,10 @@ namespace BL.UI
                     this.element.AddEventListener("dragstart", this.HandleDragStartEvent, true);
                 }
             }
+        }
+        private void HandleElementTouchMove(ElementEvent e)
+        {
+            e.CancelBubble = true;
         }
 
         private void HandleElementMouseDown(ElementEvent e)
@@ -344,6 +351,8 @@ namespace BL.UI
 
                 this.DragPreStart(this, psea);
             }
+
+            e.CancelBubble = true;
         }
 
         private void HandleElementMouseUp(ElementEvent e)
@@ -351,6 +360,8 @@ namespace BL.UI
             this.isMouseDown = false;
 
             this.HandleDragMouseUpBehavior();
+
+            e.CancelBubble = true;
         }
 
         private void HandleDragStartEvent(ElementEvent e)
@@ -382,6 +393,7 @@ namespace BL.UI
             }
 
             Debug.WriteLine("(ElementEffects::HandleEelementDragging) - Cancelling default pointer event action.");
+
             e.PreventDefault();
             e.CancelBubble = true;
         }
