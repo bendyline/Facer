@@ -28,8 +28,6 @@ namespace BL.UI.KendoControls
         private bool isActive = false;
         private bool isHoveredOver = false;
 
-        private HeightAnimator activeHeightAnimator;
-
         public event EventHandler DroppedOn;
 
         public int ExpandedHeight
@@ -172,18 +170,9 @@ namespace BL.UI.KendoControls
 
             this.IsHoveredOver = true;
 
-            if (this.activeHeightAnimator != null)
-            {
-                this.activeHeightAnimator.Cancel(true);
-            }
-
-            this.activeHeightAnimator = new HeightAnimator();
-            this.activeHeightAnimator.From = 20;
-            this.activeHeightAnimator.To  = this.expandedHeight;
-
-            this.activeHeightAnimator.Element = this.Element;
-
-            this.activeHeightAnimator.Start(300, null, null);
+            this.Element.Style.Height = this.expandedHeight + "px";
+            this.Element.Style.MinHeight = this.Element.Style.Height;
+            this.Element.Style.MaxHeight = this.Element.Style.Height;
         }
 
         private void HandleDragLeave(DropEventArgs eventArgs)
@@ -200,13 +189,9 @@ namespace BL.UI.KendoControls
         {
             this.IsHoveredOver = false;
 
-            this.activeHeightAnimator = new HeightAnimator();
-            this.activeHeightAnimator.From = this.expandedHeight;
-            this.activeHeightAnimator.To = 20;
-
-            this.activeHeightAnimator.Element = this.Element;
-
-            this.activeHeightAnimator.Start(300, null, null);
+            this.Element.Style.Height = "20px";
+            this.Element.Style.MinHeight = this.Element.Style.Height;
+            this.Element.Style.MaxHeight = this.Element.Style.Height;
         }
 
         private void HandleDrop(DropEventArgs eventArgs)
