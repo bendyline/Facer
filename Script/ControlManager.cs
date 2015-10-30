@@ -69,6 +69,22 @@ namespace BL.UI
             }
         }
 
+        public void CreateControlFromFullTypeAsync(String fullType, AsyncCallback callback, object state)
+        {
+            int lastPeriod = fullType.LastIndexOf(".");
+
+            if (lastPeriod <= 0)
+            {
+                if (callback != null)
+                {
+                    CallbackResult.NotifySynchronousFailure(callback, state, "invalidTypeName");
+                    return;
+                }
+            }
+
+            this.CreateControlAsync(fullType.Substring(0, lastPeriod), fullType.Substring(lastPeriod + 1, fullType.Length), callback, state);
+        }
+
         public void CreateControlAsync(String namespaceName, String typeName, AsyncCallback callback, object state)
         {
             String adjust = String.Format(Context.Current.ScriptLibraryTemplate, namespaceName.ToLowerCase());
@@ -215,17 +231,17 @@ namespace BL.UI
             return (Control)c;
         }
 
-        public Control CreateControlFromFullName(String fullName)
+        public Control CreateControlFromFullType(String fullType)
         {
-            int lastPeriod = fullName.LastIndexOf(".");
+            int lastPeriod = fullType.LastIndexOf(".");
 
             if (lastPeriod < 0)
             {
                 return null;
             }
 
-            String namespaceStr = fullName.Substring(0, lastPeriod);
-            String typeNameStr = fullName.Substring(lastPeriod + 1, fullName.Length);
+            String namespaceStr = fullType.Substring(0, lastPeriod);
+            String typeNameStr = fullType.Substring(lastPeriod + 1, fullType.Length);
 
             return CreateControl(namespaceStr, typeNameStr);
         }
