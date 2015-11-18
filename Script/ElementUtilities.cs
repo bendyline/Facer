@@ -727,7 +727,7 @@ else if (window.getComputedStyle)
 
             object contentEditable = e.Target.GetAttribute("contenteditable");
 
-            if (targetTagName == "input" || targetTagName == "select" || targetTagName == "textarea" || (String)contentEditable == "true")
+            if (targetTagName == "button" || targetTagName == "input" || targetTagName == "select" || targetTagName == "textarea" || (String)contentEditable == "true")
             {
                 return true;
             }
@@ -749,6 +749,16 @@ else if (window.getComputedStyle)
                 while (element != null)
                 {
                     targetClass = element.ClassName;
+
+                    if (element != null && element.TagName != null)
+                    {
+                        targetTagName = element.TagName.ToLowerCase();
+
+                        if (targetTagName == "button" || targetTagName == "input" || targetTagName == "select" || targetTagName == "textarea" || (String)contentEditable == "true")
+                        {
+                            return true;
+                        }
+                    }
 
                     if (!String.IsNullOrEmpty(targetClass))
                     {

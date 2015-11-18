@@ -10,12 +10,21 @@ namespace BL.UI.App
     {
         public event ControlEventHandler ItemClicked;
         private TabBarButton lastControl;
+        private bool firstAdded = false;
 
         protected override void OnItemControlAdded(Control c)
         {
             if (c is TabBarButton)
             {
-                ((ToolBarButton)c).Clicked += new EventHandler(TabBar_Clicked);
+                if (!firstAdded)
+                {
+                    firstAdded = true;
+                    lastControl = (TabBarButton)c;
+
+                    lastControl.Toggled = true;
+                }
+
+                ((TabBarButton)c).Clicked += new EventHandler(TabBar_Clicked);
             }
 
         }

@@ -254,6 +254,14 @@ namespace BL.UI.KendoControls
 
         private void HandleChange(object e)
         {   
+            if (Window.Event != null && Window.Event.Target != null)
+            {
+                if (ElementUtilities.IsDefaultInputElement(Window.Event, false))
+                {
+                    return;
+                }
+            }
+
             Script.Literal("{0}={0}.sender", e);
 
             if (this.Change != null)
