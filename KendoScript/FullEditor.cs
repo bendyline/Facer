@@ -34,6 +34,20 @@ namespace BL.UI.KendoControls
         private EventHandler popupChanged;
         private String editCta;
         private bool readOnly = false;
+        private String[] stylesheets;
+
+        public String[] Stylesheets
+        {
+            get
+            {
+                return this.stylesheets;
+            }
+
+            set
+            {
+                this.stylesheets = value;
+            }
+        }
 
         public String EditCta
         {
@@ -175,6 +189,7 @@ namespace BL.UI.KendoControls
 
             this.popupEditor = new Editor();
             this.popupEditor.Options = this.EditorOptions;
+            this.popupEditor.Stylesheets = this.stylesheets;
             this.popupEditor.Rows = 0;
 
             int editorHeightOffset = 48;

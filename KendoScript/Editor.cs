@@ -23,6 +23,7 @@ namespace BL.UI.KendoControls
         private bool calledImageBrowserCallback = false;
         private bool grabFocusOnLoad = false;
         private Element editorElement = null;
+        private String[] stylesheets;
 
         public bool GrabFocusOnLoad
         {
@@ -34,6 +35,19 @@ namespace BL.UI.KendoControls
             set
             {
                 this.grabFocusOnLoad = value;
+            }
+        }
+
+        public String[] Stylesheets
+        {
+            get
+            {
+                return this.stylesheets;
+            }
+
+            set
+            {
+                this.stylesheets = value;
             }
         }
 
@@ -296,9 +310,9 @@ namespace BL.UI.KendoControls
                 this.editorOptions.Serialization.Semantic = false;
             }
 
-            if (this.editorOptions.Stylesheets == null)
-            {
-                this.editorOptions.Stylesheets = new String[] { Context.Current.ResourceBasePath + "qla/css/qla.css?v=" + Context.Current.VersionToken };
+            if (this.stylesheets != null)
+            {                
+                this.editorOptions.Stylesheets = this.stylesheets;
             }
 
             jQueryObject jqo = jQuery.FromObject(this.editorElement);
