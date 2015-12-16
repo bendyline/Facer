@@ -62,7 +62,7 @@ namespace Bendyline.UI.TemplateCompiler
                 }
 
                 // snap everything we do to, file wise, to lower case
-                effectiveOutputFolder = effectiveOutputFolder.ToLowerCase();
+                effectiveOutputFolder = effectiveOutputFolder.ToLower();
 
                 DirectoryInfo di = new DirectoryInfo(effectiveOutputFolder);
 
@@ -200,7 +200,7 @@ namespace Bendyline.UI.TemplateCompiler
          
                     if (nextHash < 0)
                     {
-                        String tagStart = content.Trim().ToLowerCase();
+                        String tagStart = content.Trim().ToLower();
 
                         if (tagStart.StartsWith("body"))
                         {
@@ -352,18 +352,18 @@ namespace Bendyline.UI.TemplateCompiler
             String json = GetCrunchedJson();
             String css = GetFactoredCss();
 
-            String filePath = FileUtilities.EnsurePath(di.FullName, name + ".json").ToLowerCase();
+            String filePath = FileUtilities.EnsurePath(di.FullName, name + ".json").ToLower();
 
             FileUtilities.SetTextToFile(filePath, json);
 
-            filePath = FileUtilities.EnsurePath(di.FullName, name + ".css").ToLowerCase();
+            filePath = FileUtilities.EnsurePath(di.FullName, name + ".css").ToLower();
             css = RemoveWhiteSpaceFromStylesheets(css);
 
             FileUtilities.SetTextToFile(filePath, css);
 
-            filePath = FileUtilities.EnsurePath(di.FullName, name + ".js").ToLowerCase();
+            filePath = FileUtilities.EnsurePath(di.FullName, name + ".js").ToLower();
 
-            String content = String.Format("BL.UI.TemplateManager.get_current().addTemplateFile(\"{1}\", {0});", json, name.Substring(0, name.Length - 2).ToLowerCase());
+            String content = String.Format("BL.UI.TemplateManager.get_current().addTemplateFile(\"{1}\", {0});", json, name.Substring(0, name.Length - 2).ToLower());
 
             FileUtilities.SetTextToFile(filePath, content);
             return true;
@@ -400,7 +400,7 @@ namespace Bendyline.UI.TemplateCompiler
 
             foreach (FileInfo fi in files)
             {
-                String extension = fi.Extension.ToLowerCase();
+                String extension = fi.Extension.ToLower();
 
                 if (extension == ".htm" || extension == ".html")
                 {
@@ -427,14 +427,14 @@ namespace Bendyline.UI.TemplateCompiler
 
                 if (id == null || id == String.Empty)
                 {
-                    id = this.Name.ToLowerCase();
+                    id = this.Name.ToLower();
 
                     if (id.EndsWith(".t"))
                     {
                         id = id.Substring(0, id.Length - 2);
                     }
 
-                    id = id.Replace(".", "-") + "-" + FileUtilities.GetBaseFileName(fi.Name).ToLowerCase();
+                    id = id.Replace(".", "-") + "-" + FileUtilities.GetBaseFileName(fi.Name).ToLower();
                 }
 
                 if (IsValidTemplateId(id))

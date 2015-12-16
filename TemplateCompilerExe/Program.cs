@@ -18,7 +18,7 @@ namespace Bendyline.UI.TemplateCompiler.exe
             for (int i=0; i<args.Length; i++)
             {
                 String arg = args[i];
-                String argCanon = arg.ToLowerCase();
+                String argCanon = arg.ToLower();
 
                 if (argCanon.StartsWith("/"))
                 {
