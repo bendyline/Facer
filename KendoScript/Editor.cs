@@ -362,7 +362,14 @@ namespace BL.UI.KendoControls
         {
             if (this.editor != null)
             {
-                this.editor.Destroy();
+                try
+                {
+                    this.editor.Destroy();
+                }
+                catch (Exception e)
+                {
+                    ;
+                }
             }
 
             base.Dispose();
