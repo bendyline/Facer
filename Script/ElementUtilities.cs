@@ -31,9 +31,20 @@ namespace BL.UI
         public static void Init()
         {
             Window.SetInterval(UpdateTick, 50);
+          /*Document.Body.AddEventListener("touchstart", ElementUtilities.HandleTouchMove, true);
+           Document.Body.AddEventListener("touchmove", ElementUtilities.HandleTouchMove, true);
+            Document.AddEventListener("touchstart", ElementUtilities.HandleTouchMove, true);
+            Document.AddEventListener("touchmove", ElementUtilities.HandleTouchMove, true);*/
         }
 
-        private static void UpdateTick()
+        /*
+        private static void HandleTouchMove(ElementEvent e)
+        {
+            e.PreventDefault();
+            e.StopPropagation();
+        }*/
+
+            private static void UpdateTick()
         {
             Date now = Date.Now;
 
@@ -612,6 +623,11 @@ namespace BL.UI
         public static void SetHtml(Element element, String html)
         {
             element.InnerHTML = ToStaticHTML(html);
+        }
+
+        public static void SetOverflowScrolling(Element element, String value)
+        {
+            Script.Literal("{0}.webkitOverflowScrolling={1};", element.Style, value);
         }
 
         public static void SetTouchAction(Element element, String value)

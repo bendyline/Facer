@@ -1194,6 +1194,8 @@ namespace BL.UI.App
 
                 this.initialScrollX = this.toX;
 
+                e.StopPropagation();
+
                 Window.SetTimeout(this.ExpireConsiderStartDragging, 250);
             }
             else
@@ -1275,6 +1277,7 @@ namespace BL.UI.App
                     }
                 }
 
+                // e.StopPropagation();
                 // Debug.WriteLine("(SliderSwipePanel::HandleElementMouseMove) - Not dragging");
             }
         }

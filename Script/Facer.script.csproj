@@ -127,6 +127,8 @@
     <Content Include="Dialog.htm" />
     <Content Include="DebugPanel.htm" />
     <Content Include="SlotsItemControl1x2x1h.htm" />
+    <Content Include="SlotsItemControl3v.htm" />
+    <Content Include="SlotsItemControl4v.htm" />
     <Content Include="SlotsItemControl2v.htm" />
     <Content Include="SlotsItemControl2x1v.htm" />
     <Content Include="ListItem.htm" />
