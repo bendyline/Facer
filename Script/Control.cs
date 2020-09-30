@@ -1318,6 +1318,10 @@ namespace BL.UI
                         {
                             Script.Literal("{0}['e_' + {1}]={2}", this, controlId, element);
                             this.setElements.Add("e_" + controlId);
+
+                            String clickFunctionName = "v_on" + controlId.Substring(0, 1).ToUpperCase() + controlId.Substring(1, controlId.Length) + "Click";
+
+                            Script.Literal("if ({0}[{1}] != null) {{ if ({3} == null) {{ {3} = {{}}; }} var del = ss.Delegate.create({0}, {0}[{1}]); {3}[{3}.length-1]={{\"element\":{2},\"event\":del}}; {2}.addEventListener('click', del, true); {2}.addEventListener('touchEnd', del, true); }}", this, clickFunctionName, element, this.clickEventDelegates);
                         }
                     }
                     else
@@ -1346,7 +1350,6 @@ namespace BL.UI
 
                         // hook click functions if they exist in the form of functions called v_on<ElementId>Click
                         String clickFunctionName = "v_on" + elementId.Substring(0, 1).ToUpperCase() + elementId.Substring(1, elementId.Length) + "Click";
-
                         Script.Literal("if ({0}[{1}] != null) {{ if ({3} == null) {{ {3} = {{}}; }} var del = ss.Delegate.create({0}, {0}[{1}]); {3}[{3}.length-1]={{\"element\":{2},\"event\":del}}; {2}.addEventListener('click', del, true); {2}.addEventListener('touchEnd', del, true); }}", this, clickFunctionName, element, this.clickEventDelegates);
 
                         this.setElements.Add("e_" + elementId);

@@ -8,6 +8,7 @@
     <ProjectGuid>{F14E3B79-F2AF-4CB8-9FFB-3052675F64E2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <DisableHandlePackageFileConflicts>true</DisableHandlePackageFileConflicts>
     <RootNamespace>BL.UI.KendoControls</RootNamespace>
     <AssemblyName>bl.ui.kendocontrols</AssemblyName>
     <ScriptTemplate>Properties\Script.template</ScriptTemplate>

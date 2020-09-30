@@ -8,6 +8,7 @@
     <ProjectGuid>{27575206-0A9C-45EB-B59A-FD9789B3AD1A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <DisableHandlePackageFileConflicts>true</DisableHandlePackageFileConflicts>
     <RootNamespace>BL.BS</RootNamespace>
     <AssemblyName>bl.bs</AssemblyName>
     <ScriptTemplate>Properties\Script.template</ScriptTemplate>

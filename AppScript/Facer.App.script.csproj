@@ -7,6 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{718A124B-8490-490C-988C-C4A730EAB0E7}</ProjectGuid>
     <OutputType>Library</OutputType>
+    <DisableHandlePackageFileConflicts>true</DisableHandlePackageFileConflicts>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BL.UI.App</RootNamespace>
     <AssemblyName>bl.ui.app</AssemblyName>

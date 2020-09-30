@@ -33,6 +33,5 @@ namespace BL.BS
 
    //         this.dropDownList.Bind("change", this.HandleDateChange);
         }
-
     }
 }
